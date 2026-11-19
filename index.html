@@ -2226,7 +2226,7 @@ function filled(it,ok,word){var q=it.q;if(q.indexOf("___")<0)return document.cre
 var cdT=0;function cdStop(){if(cdT){clearInterval(cdT);cdT=0}var e=$q("qzcd");if(e){e.textContent="";e.style.display="none"}}
 function startCd(nx){cdStop();var n=4,e=$q("qzcd");e.style.display="flex";e.textContent=n;cdT=setInterval(function(){n--;if(n>0){e.textContent=n}else{cdStop();nx.click()}},1000)}
 var tmT=0;function tmStop(){if(tmT){clearInterval(tmT);tmT=0}}
-function tmStart(TL,tm,onEnd){tmStop();var bar=tm.firstChild.firstChild,num=tm.lastChild,left=TL*1000,last=Date.now();function upd(){var s=Math.ceil(left/1000);num.textContent=s+"\ucd08";bar.style.width=(left/(TL*1000)*100)+"%";tm.classList.toggle("low",s<=10)}upd();tmT=setInterval(function(){var now=Date.now(),d=now-last;last=now;if(document.hidden)return;left-=Math.min(d,600);if(left<=0){left=0;upd();tmStop();onEnd();return}upd()},200)}
+function tmStart(TL,tm,onEnd){tmStop();if(round===0&&items.length>=20&&idx===items.length-1)TL+=15;var bar=tm.firstChild.firstChild,num=tm.lastChild,left=TL*1000,last=Date.now();function upd(){var s=Math.ceil(left/1000);num.textContent=s+"\ucd08";bar.style.width=(left/(TL*1000)*100)+"%";tm.classList.toggle("low",s<=10)}upd();tmT=setInterval(function(){var now=Date.now(),d=now-last;last=now;if(document.hidden)return;left-=Math.min(d,600);if(left<=0){left=0;upd();tmStop();onEnd();return}upd()},200)}
 function chkW(v,A){function nz(s){return String(s).toLowerCase().replace(/[\u2018\u2019\u00b4`]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/[.,!?"]/g," ").replace(/\s+/g," ").trim()}var x=nz(v);return A.some(function(a){return nz(a)===x})}
 function showW(S,it,h,q,r,nx){var B=$q("qzbody");if(it.H){q.textContent=it.q;q.style.whiteSpace="pre-line"}else q.textContent="\ud2c0\ub9b0 \uacf3\uc744 \ud55c \uad70\ub370 \ucc3e\uc544 \ubb38\uc7a5 \uc804\uccb4\ub97c \uace0\uccd0 \uc4f0\uc138\uc694.";q.className="qq sm";
 var ta=document.createElement("textarea");ta.className="qwta";ta.value=it.H?"":it.q;ta.rows=it.H?4:3;ta.spellcheck=false;ta.autocomplete="off";ta.setAttribute("autocapitalize","off");ta.setAttribute("autocorrect","off");ta.setAttribute("enterkeyhint","done");
@@ -6541,6 +6541,11 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&Math.random()<
   return{res:res,seen:seen}}
  function pathTo(R,x,z){var k=x+','+z,out=[];while(k&&R.seen[k]&&R.seen[k].p!==null){var p=k.split(',');out.unshift([+p[0],+p[1]]);k=R.seen[k].p}return out}
  function adj(a,b){return Math.abs(a.x-b.x)+Math.abs(a.z-b.z)===1}
+ /* 자동 전투: 공격할 수 있는 칸까지 남은 실제 이동 비용 (층 올라가는 비용 포함, 2026-11-19) */
+ function goalDist(){var D={},q=[],DD=[[1,0],[-1,0],[0,1],[0,-1]],sv={x:H.x,z:H.z};
+  for(var z=0;z<N;z++)for(var x=0;x<N;x++){if(!passable(x,z))continue;var o=unitAt(x,z);if(o&&o!==H)continue;H.x=x;H.z=z;if(foes().some(function(f){return inAtk(f)})){D[x+','+z]=0;q.push([x,z,0])}}H.x=sv.x;H.z=sv.z;
+  while(q.length){var c=popMin(q);if(D[c[0]+','+c[1]]<c[2])continue;DD.forEach(function(d){var px=c[0]+d[0],pz=c[1]+d[1],k=px+','+pz;if(!passable(px,pz))return;var o=unitAt(px,pz);if(o&&!o.hero)return;if(Math.abs(G[pz][px].h-G[c[1]][c[0]].h)>1)return;var nd=c[2]+stepCost(H,px,pz,c[0],c[1]);if(D[k]!=null&&D[k]<=nd)return;D[k]=nd;q.push([px,pz,nd])})}
+  return D}
  function foes(){return B.units.filter(function(u){return !u.hero&&!u.dead})}
  /* 필살기·전체 공격 범위: 화면을 가장 작게(최대 축소) 했을 때 내 캐릭터 기준으로 보이는 적까지만 */
  var VQ=null;function inView(u,o,vw0){o=o||H;try{var w=m.clientWidth||innerWidth,h=m.clientHeight||innerHeight,vw=vw0||26,vh=vw*h/w;if(!VQ){VQ={r:new T.Vector3(1,0,0).applyQuaternion(cam.quaternion),u:new T.Vector3(0,1,0).applyQuaternion(cam.quaternion)}}var d=new T.Vector3(u.wx-o.wx,(u.wy||0)-(o.wy||0),u.wz-o.wz);return Math.abs(d.dot(VQ.r))<=vw/2*.9&&Math.abs(d.dot(VQ.u))<=vh/2*.82}catch(e){return true}}
@@ -6596,10 +6601,11 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&Math.random()<
  /* 스나이퍼 사거리 [최소, 최대] · 일반 모드는 1~2 (1칸은 개머리판 치기: 피해 1/3, 2칸 사격은 운 절반)
     저격 모드(켜고 끌 때 각각 1턴 · 물약은 사용 가능): 1층 3~4 · 2층 4~6 · 3층 5~7 · 4층 5~9
     고글: 저격 모드 최대 +1 (1층 제외) · 스카우터: 고글 + 최소 −1 · 호크아이(눈 개조): 1·2층은 스카우터와 같음, 3층 1~9 · 4층 1~12
-    5층(특수 미션)은 아직 미정 → 4층 값 사용 */
- function sniperRange(u){var f=Math.min(3,flr(u)),g=u.sgear||'';if(!u.snipeOn)return{min:1,max:2,mode:'normal'};
+    5층(특수 미션): 기본 5~10 · 고글 4~11 · 스카우터 3~12 · 호크아이 1~13 */
+ function sniperRange(u){var f=Math.min(4,flr(u)),g=u.sgear||'';if(!u.snipeOn)return{min:1,max:2,mode:'normal'};
+  if(f===4){var F5={'':[5,10],goggle:[4,11],scouter:[3,12],hawk:[1,13]}[g]||[5,10];return{min:F5[0],max:F5[1],mode:'snipe'}}/* 5층은 따로 정함 (15:00 확정) */
   var T0=[[3,4],[4,6],[5,7],[5,9]][f].slice();
-  if(g==='hawk'&&f>=2)return{min:1,max:f===2?9:12,mode:'snipe'};
+  if(g==='hawk'&&f>=2)return{min:1,max:[0,0,9,12][f],mode:'snipe'};
   if((g==='goggle'||g==='scouter'||g==='hawk')&&f>=1)T0[1]+=1;
   if(g==='scouter'||g==='hawk')T0[0]-=1;
   return{min:T0[0],max:T0[1],mode:'snipe'}}
@@ -6921,7 +6927,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&Math.random()<
   if(!B.moved){var R2=reach(H,H.mv),cands=[[H.x,H.z]].concat(Object.keys(R2.res).map(function(k){return k.split(',').map(Number)})),best=null,bs=-1e9;
    cands.forEach(function(c){var sv={x:H.x,z:H.z};H.x=c[0];H.z=c[1];foes().forEach(function(q){if(!inAtk(q))return;var pv=dmgPrev(q),sc2=pv.dmg+(pv.dmg>=q.hp?60:0)+(pv.dk==='back'?6:pv.dk==='side'?3:0)-man(sv,{x:c[0],z:c[1]})*.3;if(sc2>bs){bs=sc2;best={c:c,u:q}}});H.x=sv.x;H.z=sv.z});
    if(best&&(best.c[0]!==H.x||best.c[1]!==H.z)){var path=pathTo(R2,best.c[0],best.c[1]);B.moved=true;B.phase='busy';clearHL();walkPath(H,path,function(){B.phase='player';refreshHL();setTimeout(autoStep,350)});return}
-   if(!best){var tgt=null,bd2=1e9;cands.forEach(function(c){foes().forEach(function(q){var dd=Math.abs(c[0]-q.x)+Math.abs(c[1]-q.z);if(dd<bd2){bd2=dd;tgt=c}})});
+   if(!best){var tgt=null,bd2=1e9;try{var GD=goalDist();cands.forEach(function(c){var v=GD[c[0]+','+c[1]];if(v!=null&&v<bd2){bd2=v;tgt=c}})}catch(e){}/* 층·계단을 생각한 실제 거리로 다가감 (2026-11-19) */if(!tgt){bd2=1e9;cands.forEach(function(c){foes().forEach(function(q){var dd=Math.abs(c[0]-q.x)+Math.abs(c[1]-q.z);if(dd<bd2){bd2=dd;tgt=c}})})}
     if(tgt&&(tgt[0]!==H.x||tgt[1]!==H.z)){var path2=pathTo(R2,tgt[0],tgt[1]);B.moved=true;B.phase='busy';clearHL();walkPath(H,path2,function(){B.phase='player';refreshHL();setTimeout(autoStep,350)});return}}}
   if(adjF.length){var sk2=bestAttackSkill();if(sk2){var tl2=skillTargets(SK[sk2]);doSkill(sk2,tl2&&tl2.length?tl2.sort(function(a,b){return a.hp-b.hp})[0]:null);return}
    var tq=adjF.slice().sort(function(a,b){return dmgPrev(b).dmg-dmgPrev(a).dmg||a.hp-b.hp})[0];heroAttack(tq);return}
