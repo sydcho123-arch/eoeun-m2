@@ -9500,6 +9500,19 @@ function rankBtns(){try{var pq=$('plaque');if(!pq||!pq.parentNode)return;var par
  if(!a){a=document.createElement('button');a.type='button';a.className='rkb rkb1';a.innerHTML='🏆';a.title='랭킹 등록';a.setAttribute('aria-label','랭킹 등록');a.onclick=function(e){e.stopPropagation();rankQR()};par.appendChild(a)}
  if(!b){b=document.createElement('button');b.type='button';b.className='rkb rkb2';b.innerHTML='📊';b.title='레벨 전광판';b.setAttribute('aria-label','레벨 전광판');b.onclick=function(e){e.stopPropagation();rankBoard()};par.appendChild(b)}
  var pr=par.getBoundingClientRect(),r=pq.getBoundingClientRect(),x=r.right-pr.left+5,y=-28;/* 버튼 아랫변이 칠판 윗끝 선에 닿게 */a.style.left=x+'px';a.style.top=y+'px';b.style.left=(x+31)+'px';b.style.top=y+'px'}catch(e){}}
+/* ===== 📊 주간 성장 전광판 (2026-11-19 선생님 확정)
+   순위 = 이번 QR 누적 게이지 − 지난 QR 누적 게이지 (누적 = (레벨−1)×100 + 게이지%) · 매주 금요일 밤 10시 갱신 · TOP 10
+   1~5등: 이름(별명)·반·이번 주 성장 공개 / 6~10등: 이름 없이 레벨·게이지만 / 10등 밖: 내 레벨·게이지만 (등수 안 보임)
+   RANKDATA={d:'월/일',top:[[반,이름,레벨,게이지,성장%]×5],low:[[레벨,게이지,해시]×5],rows:[]} — 해시=rkHash(반+'|'+이름+RK_SALT) ===== */
+rankBoard=function(){CH.sfx('pop');var me=ST().nm||'',mc=rkCls(),l=L(),T=RANKDATA.top||[],Lo=RANKDATA.low||[],mh=rkHash(mc+'|'+me+RK_SALT),h='',inTop=false;
+ if(!T.length&&!Lo.length)h='<div class="rkempty">📊 주간 성장 순위는 매주 <b>금요일 밤 10시</b>에 새로 발표돼요.<br>한 주 동안 레벨 게이지를 가장 많이 올린 친구 TOP 10!<br>🏆 랭킹 등록을 눌러 QR을 선생님께 보여 주세요.</div>';
+ else{h='<div class="vgsub">'+(RANKDATA.d?RANKDATA.d+' 밤 10시 발표 · ':'')+'이번 주 게이지를 가장 많이 올린 TOP 10'+(RANKDATA.demo?' <b>(예시 화면)</b>':'')+'</div><div class="rklist">';
+  T.forEach(function(r,i){var mine=r[0]===mc&&r[1]===me;if(mine)inTop=true;h+='<div class="rkrow'+(i<3?' top'+(i+1):'')+(mine?' me':'')+'"><i>'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</i><b>'+esc(r[1])+'<small>'+esc(r[0])+'</small></b><span>+'+r[4]+'%<small>Lv.'+r[2]+' · '+r[3]+'%</small></span></div>'});
+  Lo.forEach(function(r,i){var mine=r[2]===mh;if(mine)inTop=true;h+='<div class="rkrow'+(mine?' me':'')+'"><i>'+(T.length+i+1)+'</i><b style="color:#a8702a">'+(mine?'나 🙂':'🙂')+'</b><span>Lv.'+r[0]+'<small>'+r[1]+'%</small></span></div>'});
+  h+='</div>';
+  if(!inTop)h+='<div class="rkmine">내 기록 <b>Lv.'+l.lv+' · '+Math.floor(l.g||0)+'%</b><br><small>다음 금요일 밤 10시에 TOP 10에 도전해 보세요!</small></div>'}
+ if(window.__rankTeacher)h='<button type="button" class="rkt" style="margin:0 0 10px">📷 랭킹 모으기 (선생님 전용)</button>'+h;
+ var p=panel('📊 주간 성장 전광판',h),tb=p.querySelector('.rkt');if(tb)tb.onclick=function(){window.__rankTeacher()}};
 setInterval(rankBtns,800);
 /* 칠판이 그려지는 순간 위쪽 버튼(옷·⚡·🏆·📊)도 바로 자리 잡기 — 늦게 뜨던 문제 */
 (function(){var ob=LVH.badge;LVH.badge=function(st){var r=ob.apply(this,arguments);try{topLay()}catch(e){}try{rankBtns()}catch(e){}return r};try{topLay();rankBtns()}catch(e){}
