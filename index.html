@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>중2반 수업 필기장</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -11,7 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-
+<title>중2반 수업 필기장</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -2103,7 +2102,7 @@ function layerClose(n){
 let GUARD=false, ARM=0;
 window.addEventListener("popstate",()=>{
   if(LSKIP>0){ LSKIP--; return; }
-  const it=LY.pop(); if(it){ if(it.n==="qz"&&window.__qzAsk&&window.__qzAsk()){ try{ history.pushState({ly:"qz"},""); }catch(e){} LY.push({n:"qz",h:true}); return; } LRAW[it.n](); return; }
+  const it=LY.pop(); if(it){ if(it.n==="qz"&&window.__qzAsk&&window.__qzAsk()){ try{ history.pushState({ly:"qz"},""); }catch(e){} LY.push({n:"qz",h:true}); return; } if(it.n==="vgv"&&window.__vgExitAsk&&window.__vgExitAsk()){ try{ history.pushState({ly:"vgv"},""); }catch(e){} LY.push({n:"vgv",h:true}); return; } LRAW[it.n](); return; }
   if(!GUARD) return;
   const eq=document.getElementById("exq");
   if(eq&&eq.classList.contains("on")){ eq.classList.remove("on"); try{ history.pushState({guard:1},""); }catch(e){} return; }
@@ -5842,7 +5841,7 @@ function fmtT(t){var d=new Date(t);return(d.getMonth()+1)+'/'+d.getDate()+' '+('
 function slotsHTML(mode){var q=QS(),h='';q.save.forEach(function(sv,i){h+='<button type="button" class="svs'+(sv?'':' empty')+'" data-sv="'+i+'"><b>'+(i+1)+'번 칸</b>'+(sv?'<span>📍 '+locName(sv)+'</span><small>'+fmtT(sv.t)+' · 체력 '+sv.hp+'</small>':'<span>비어 있음</span>')+'</button>'});
  return'<div class="vgsub">'+(mode==='save'?'지금 있는 곳을 저장해요. 별·아이템·장비는 언제나 자동으로 저장돼요.':'저장해 둔 곳에서 다시 시작해요.')+'</div><div class="svlist">'+h+'</div>'}
 function savePanel(){var p=panel('💾 저장하기 <small>(1번에 ⭐5)</small>',slotsHTML('save'));[].forEach.call(p.querySelectorAll('[data-sv]'),function(b){b.onclick=function(){var i=+b.dataset.sv,q=QS(),l=curLoc();if(!l){X.toast('지금은 저장할 수 없어요');return}
-  function doSave(){if(ST().pt<5){CH.sfx('deny');X.toast('⭐ 저장하려면 별 5개가 필요해요 (지금 '+ST().pt+'개)');return}X.spend(5,'💾 저장하기');l.t=Date.now();l.hp=CH.stats().cur;q.save[i]=l;X.sv();CH.sfx('save');refreshPt();savePanel();X.toast('💾 '+(i+1)+'번 칸에 저장했어요! (⭐-5)',true)}
+  function doSave(){if(ST().pt<5){CH.sfx('deny');X.toast('⭐ 저장하려면 별 5개가 필요해요 (지금 '+ST().pt+'개)');return}X.spend(5,'💾 저장하기');l.t=Date.now();l.hp=CH.stats().cur;q.save[i]=l;X.sv();CH.sfx('save');refreshPt();savePanel();X.toast('💾 '+(i+1)+'번 칸에 저장했어요! (⭐-5)',true);try{window.__vgAfterSave&&window.__vgAfterSave()}catch(_){}}
   if(q.save[i])X.ask((i+1)+'번 칸에 덮어쓸까요?','지금 저장된 「'+locName(q.save[i])+' · '+fmtT(q.save[i].t)+'」 기록이 지워지고 지금 위치로 바뀌어요. (⭐5 필요)','덮어쓰기','취소',doSave);else X.ask((i+1)+'번 칸에 저장할까요?','저장할 때마다 ⭐5개가 필요해요. (지금 ⭐'+ST().pt+'개)','저장하기','취소',doSave)}})}
 function loadPanel(){var p=panel('📂 불러오기 <small>(1번에 ⭐5)</small>',slotsHTML('load'));[].forEach.call(p.querySelectorAll('[data-sv]'),function(b){b.onclick=function(){var i=+b.dataset.sv,sv=QS().save[i];if(!sv){X.toast('비어 있는 칸이에요');return}
   X.ask('정말 불러오시겠습니까?',(i+1)+'번 칸 「'+locName(sv)+' · '+fmtT(sv.t)+'」 위치에서 다시 시작해요. 별·아이템은 그대로예요. (⭐5 필요 · 지금 ⭐'+ST().pt+'개)','불러오기','취소',function(){if(sv.map==='f'&&typeof apN==='function'&&apN()<1){CH.sfx('deny');X.toast('⚡ 행동력이 0이라 숲으로 불러올 수 없어요 · 공부로 ⚡를 모은 뒤 불러와요');return}if(ST().pt<5){CH.sfx('deny');X.toast('⭐ 불러오려면 별 5개가 필요해요');return}X.spend(5,'📂 불러오기');p.classList.remove('on');CH.sfx('save');goLoc(sv);if(sv.hp!=null){QS().hp=sv.hp;X.sv()}X.toast('📂 불러왔어요!',true)})}})}
@@ -9513,6 +9512,30 @@ rankBoard=function(){CH.sfx('pop');var me=ST().nm||'',mc=rkCls(),l=L(),T=RANKDAT
   if(!inTop)h+='<div class="rkmine">내 기록 <b>Lv.'+l.lv+' · '+Math.floor(l.g||0)+'%</b><br><small>다음 금요일 밤 10시에 TOP 10에 도전해 보세요!</small></div>'}
  if(window.__rankTeacher)h='<button type="button" class="rkt" style="margin:0 0 10px">📷 랭킹 모으기 (선생님 전용)</button>'+h;
  var p=panel('📊 주간 성장 전광판',h),tb=p.querySelector('.rkt');if(tb)tb.onclick=function(){window.__rankTeacher()}};
+/* ===== 📊 전광판 (2026-11-19 선생님 확정) — TOP 10, 1~5등 이름·반·기록 공개(이름을 누르면 그 아이 칠판), 6~10등은 이름 없이 레벨·게이지만, 10등 밖은 내 기록만
+   RANKDATA={d:'월/일',mode:'rec'|'growth',top:[[반,이름,레벨,게이지,성장%,별,캐릭터]×5],low:[[레벨,게이지,해시]×5],rows:[]} — 해시=rkHash(반+'|'+이름+RK_SALT), 캐릭터=rkChEnc 문자열
+   QR 형식 R2|반|이름|레벨|게이지|별|캐릭터|검증값 (R1도 읽음) ===== */
+function rkKeys(){return CH.HP.map(function(x){return x.k}).concat(['tp','bt','ht','ou','sh'])}
+function rkChEnc(c){try{if(!c||c.t!=='h'||!c.p)return'';return(c.g||'m')+'.'+(+c.sk||0)+'.'+rkKeys().map(function(k){return+c.p[k]||0}).join('-')}catch(e){return''}}
+function rkChDec(t){try{if(!t)return null;var a=String(t).split('.');if(a.length!==3)return null;var v=a[2].split('-'),p={};rkKeys().forEach(function(k,i){p[k]=+v[i]||0});return{t:'h',g:a[0]==='f'?'f':'m',sk:+a[1]||0,p:p}}catch(e){return null}}
+rkPayload=function(){var l=L(),b=[rkCls(),(ST().nm||'이름없음').replace(/[|;]/g,''),l.lv,Math.floor(l.g||0),ST().pt||0,rkChEnc(ST().ch)].join('|');return'R2|'+b+'|'+rkHash(b+RK_SALT)};
+rkParse=function(t){try{t=decodeURIComponent(t)}catch(e){}var p=String(t||'').split('|'),b;
+ if(p[0]==='R1'&&p.length===6){b=p.slice(1,5).join('|');if(rkHash(b+RK_SALT)!==p[5])return null;return[p[1],p[2],+p[3],+p[4]]}
+ if(p[0]==='R2'&&p.length===8){b=p.slice(1,7).join('|');if(rkHash(b+RK_SALT)!==p[7])return null;return[p[1],p[2],+p[3],+p[4],+p[5],p[6]]}return null};
+function rkView(r){var c=rkChDec(r[6]),svg='';if(!c)return;try{svg=CH.render(c,null,null)}catch(e){return}
+ var g=Math.floor(r[3]||0),h='<div class="rkview"><button type="button" class="rkt" style="margin:0 0 6px" data-rkback="1">← 전광판으로</button><header class="board" style="margin-top:28px"><div class="plaque chpq">'+esc(r[0])+'</div><div id="chStage"><div class="chfw"><div class="chfig">'+svg+'</div><div class="chnm">'+esc(r[1])+'</div></div><div class="chtop"><button type="button" class="chcal" style="pointer-events:none">📅</button><button type="button" class="chpill" style="pointer-events:none">⭐ '+(r[5]|0)+'</button></div><div class="chside"><button type="button" class="chlvb" style="pointer-events:none"><b>Lv.'+r[2]+'</b><i><u style="width:'+Math.min(100,g)+'%"></u></i><small>'+g+'%</small></button></div></div><i class="chalk y"></i><i class="chalk"></i></header><div class="vgsub" style="margin-top:10px;text-align:center">'+(RANKDATA.d?RANKDATA.d+' 기준 모습이에요':'')+'</div></div>';
+ var p=panel('🔎 '+esc(r[1])+'의 칠판',h),b=p.querySelector('[data-rkback]');if(b)b.onclick=function(){rankBoard()}}
+rankBoard=function(){CH.sfx('pop');var me=ST().nm||'',mc=rkCls(),l=L(),T=RANKDATA.top||[],Lo=RANKDATA.low||[],mh=rkHash(mc+'|'+me+RK_SALT),h='',inTop=false,rec=RANKDATA.mode==='rec',canView=false;
+ if(!T.length&&!Lo.length)h='<div class="rkempty">📊 전광판은 매주 <b>금요일 밤 10시</b>에 새로 발표돼요.<br>레벨 게이지를 열심히 모아 TOP 10에 도전해 보세요!<br>🏆 랭킹 등록을 눌러 QR을 선생님께 보여 주세요.</div>';
+ else{T.forEach(function(r){if(r[6])canView=true});
+  h='<div class="vgsub">'+(RANKDATA.d?RANKDATA.d+' 밤 10시 발표 · ':'')+(rec?'가장 기록이 좋은 TOP 10':'이번 주 게이지를 가장 많이 올린 TOP 10')+(RANKDATA.demo?' <b>(예시 화면)</b>':'')+'</div>'+(canView?'<div class="vgsub" style="margin-top:-2px">👀 1~5등 친구 이름을 누르면 그 친구의 칠판을 볼 수 있어요</div>':'')+'<div class="rklist">';
+  T.forEach(function(r,i){var mine=r[0]===mc&&r[1]===me;if(mine)inTop=true;var v=!!r[6];h+='<div class="rkrow'+(i<3?' top'+(i+1):'')+(mine?' me':'')+'"'+(v?' data-rkv="'+i+'" style="cursor:pointer"':'')+'><i>'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</i><b>'+esc(r[1])+(v?' 👀':'')+'<small>'+esc(r[0])+'</small></b><span>'+(rec?'Lv.'+r[2]+'<small>'+r[3]+'%</small>':'+'+r[4]+'%<small>Lv.'+r[2]+' · '+r[3]+'%</small>')+'</span></div>'});
+  Lo.forEach(function(r,i){var mine=r[2]===mh;if(mine)inTop=true;h+='<div class="rkrow'+(mine?' me':'')+'"><i>'+(T.length+i+1)+'</i><b style="color:#a8702a">'+(mine?'나 🙂':'🙂')+'</b><span>Lv.'+r[0]+'<small>'+r[1]+'%</small></span></div>'});
+  h+='</div>';
+  if(!inTop)h+='<div class="rkmine">내 기록 <b>Lv.'+l.lv+' · '+Math.floor(l.g||0)+'%</b><br><small>다음 금요일 밤 10시에 TOP 10에 도전해 보세요!</small></div>'}
+ if(window.__rankTeacher)h='<button type="button" class="rkt" style="margin:0 0 10px">📷 랭킹 모으기 (선생님 전용)</button>'+h;
+ var p=panel('📊 레벨 전광판',h),tb=p.querySelector('.rkt');if(tb)tb.onclick=function(){window.__rankTeacher()};
+ [].forEach.call(p.querySelectorAll('[data-rkv]'),function(e){e.onclick=function(){rkView(T[+e.getAttribute('data-rkv')])}})};
 setInterval(rankBtns,800);
 /* 칠판이 그려지는 순간 위쪽 버튼(옷·⚡·🏆·📊)도 바로 자리 잡기 — 늦게 뜨던 문제 */
 (function(){var ob=LVH.badge;LVH.badge=function(st){var r=ob.apply(this,arguments);try{topLay()}catch(e){}try{rankBtns()}catch(e){}return r};try{topLay();rankBtns()}catch(e){}
@@ -9826,6 +9849,32 @@ try{window.__vgP=window.__vgP||{};window.__vgP.gaia=function(){gaiaDream(functio
  var chip=null;function tick(){if(on()){if(!chip){chip=document.createElement('div');chip.className='evchip';chip.textContent='❄️ 수능날 첫눈 이벤트 · 별 ×1.5 · 오늘 밤 11:59까지';document.body.appendChild(chip)}chip.style.display=document.querySelector('.vgscr.on,#vgb.on')?'none':''}else if(chip){chip.remove();chip=null}}
  function settle(){try{if(Date.now()<T1)return;var s=X.st();if(s.evFin||!(s.evF>0))return;s.evFin=1;var r=Math.round(s.evF);s.evF=0;X.sv();if(r>0)X.gain(r,'❄️ 첫눈 이벤트 마무리 (남은 0.5 반올림)')}catch(e){}}
  setInterval(function(){tick();settle()},5000);setTimeout(function(){tick();if(!on())return;try{var s=X.st();if(!s.ev1119){s.ev1119=1;X.sv();snow();X.gain(50,'❄️ 수능날 첫눈 이벤트 접속 선물',true);setTimeout(function(){X.toast('❄️ 오늘 하루 별을 모으면 1.5배! (밤 11시 59분까지)',true)},2600)}}catch(e){console.error(e)}},2500)})();
+
+/* 마을에서 폰 뒤로가기 → 바로 칠판으로 나가지 않고 물어보기 (2026-11-19 18:50 선생님 요청)
+   💾 저장하고 나가기(저장 창 → 저장하면 바로 나감) · 🚪 그냥 나가기 · ▶ 계속하기
+   - 묻는 창이 떠 있을 때 뒤로가기를 한 번 더 누르면 = 계속하기(창만 닫힘)
+   - 저장 창(#vgp)이 열려 있으면 뒤로가기는 그 창만 닫음
+   - 화면의 「나가기」 버튼은 그대로 (일부러 누른 것이니까) */
+(function(){
+ var EXA=0;
+ function leaveVillage(){EXA=0;window.__vgSaveExit=0;var p=$('vgp');if(p)p.classList.remove('on');var a=$('chA');if(a)a.className='';
+  try{var k=0;for(var i=LY.length-1;i>=0;i--){if(/^vg/.test(LY[i].n)){if(LY[i].h)k++;LY.splice(i,1)}}if(k){LSKIP++;history.go(-k)}}catch(e){}
+  try{closeVillage()}catch(e){try{hideAll()}catch(_){}}try{X.upd()}catch(e){}}
+ window.__vgLeave=leaveVillage;
+ window.__vgAfterSave=function(){if(!window.__vgSaveExit)return;window.__vgSaveExit=0;setTimeout(function(){CH.sfx('exit');leaveVillage();X.toast('💾 저장하고 마을을 나왔어요')},650)};
+ function show(){var a=$('chA');if(!a){a=document.createElement('div');a.id='chA';document.body.appendChild(a)}EXA=1;
+  var sv=(QS().save||[]).filter(Boolean).length;
+  a.innerHTML='<div class="chab vgexa"><b>정말 나가시겠습니까?</b><p>지금 있는 곳은 <b style="font-size:inherit">💾 저장</b>해야 다음에 그 자리에서 이어 할 수 있어요.<br><small>(별·아이템·장비는 언제나 자동으로 저장돼요 · 저장은 ⭐5'+(sv?' · 저장된 칸 '+sv+'개':'')+')</small></p><div class="chabt" style="flex-direction:column"><button type="button" class="y" data-x="s">💾 저장하고 나가기</button><button type="button" data-x="q">🚪 그냥 나가기</button><button type="button" data-x="c">▶ 계속하기</button></div></div>';
+  a.className='on';
+  a.querySelector('[data-x="s"]').onclick=function(){a.className='';EXA=0;window.__vgSaveExit=1;try{savePanel();var p=$('vgp');if(p){var x=p.querySelector('.chpx');if(x){var o=x.onclick;x.onclick=function(){window.__vgSaveExit=0;o&&o()}}}}catch(e){window.__vgSaveExit=0}};
+  a.querySelector('[data-x="q"]').onclick=function(){CH.sfx('exit');leaveVillage()};
+  a.querySelector('[data-x="c"]').onclick=function(){a.className='';EXA=0}}
+ window.__vgExitAsk=function(){
+  var a=$('chA');if(EXA&&a&&a.className==='on'){a.className='';EXA=0;return true}
+  var p=$('vgp');if(p&&p.classList.contains('on')){p.classList.remove('on');window.__vgSaveExit=0;return true}
+  if(a&&a.className==='on'){a.className='';return true}
+  show();return true};
+})();
 
 /* ===== Lv.10부터 화폐 = 크라운 (2026-11-17): ⭐ → 왕관 새긴 은화 그림, 화폐로 쓰인 「별」 → 「크라운」 =====
    값(ST().pt)은 그대로, 보이는 것만 바꿈. 필기장 앱·게임 화면 전체에 적용 */
@@ -10585,11 +10634,5 @@ window.__chBk={make:make,parse:parse,apply:apply,open:open};
 setTimeout(function(){try{var S=X.st(),n=Date.now(),dk=X.dk();if(S.ch&&(!S.bk||n-S.bk>3*864e5)&&S.bkn!==dk){S.bkn=dk;X.sv();X.toast('💾 내 기록 코드를 저장해 두면 사라져도 되살릴 수 있어요! (🏅 레벨 → 기록 저장)',true)}}catch(e){}},6000);
 })();
 </script>
-<div id="pgver" style="text-align:center;font-size:10px;color:#a89a84;padding:6px 0 10px">v1118-1655</div><script>setTimeout(function(){try{var v=document.getElementById("pgver");if(window.__verE&&window.__verE.length){v.textContent="v1118-1655 ⚠ "+window.__verE[0]}else{v.textContent="v1118-1655 ✓"+(document.querySelector(".rkb1")?" R":" r0")}}catch(e){}},3000)</script><style id="student-mode">.chgift,.chgift2,.chgift3,.chgift4,.chgift5,.mnqp{display:none!important}</style><script>(function(){function z(){try{["__vgT","__vgP","__vgB","__vg"].forEach(function(k){try{delete window[k]}catch(e){window[k]=undefined}})}catch(e){}}z();setTimeout(z,0);setTimeout(z,1500);addEventListener("load",z)})();</script><div id="pwaTip" style="display:none;position:fixed;left:10px;right:10px;bottom:12px;z-index:2147483000;background:#2f5d50;color:#fff;border-radius:14px;padding:12px 14px 12px;font:15px/1.5 -apple-system,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.3)"><b id="pwaT" style="display:block;font-size:16px;margin-bottom:4px"></b><span id="pwaB"></span><button id="pwaX" type="button" style="position:absolute;right:8px;top:6px;border:0;background:none;color:#fff;font-size:20px">✕</button></div>
-<script>(function(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
-try{var ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),sa=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(sa)return;var k=/KAKAOTALK/i.test(ua),t=document.getElementById('pwaTip'),T=document.getElementById('pwaT'),B=document.getElementById('pwaB');
-if(k){T.textContent='⚠️ 카카오톡 안에서는 캐릭터·기록이 저장되지 않아요';B.innerHTML=ios?'오른쪽 아래 <b>공유(⬆) 또는 ⋯</b> → <b>Safari로 열기</b>를 누른 뒤, 홈 화면에 추가해서 써 주세요.':'오른쪽 위 <b>⋮</b> → <b>다른 브라우저로 열기</b>(크롬)를 누른 뒤, 홈 화면에 추가해서 써 주세요.'}
-else if(ios){var n=0;try{n=+localStorage.getItem('pwaN')||0;localStorage.setItem('pwaN',n+1)}catch(e){}T.textContent='📲 홈 화면에 추가해서 쓰세요';B.innerHTML='아래 <b>공유(⬆)</b> 버튼 → <b>홈 화면에 추가</b> → <b>추가</b>. 그 다음부터는 바탕화면 아이콘으로 열면 캐릭터·기록이 안전하게 저장돼요.'}
-else return;t.style.display='block';document.getElementById('pwaX').onclick=function(){t.style.display='none'}}catch(e){}})();</script>
-</body>
+<div id="pgver" style="text-align:center;font-size:10px;color:#a89a84;padding:6px 0 10px">v1118-1655</div><script>setTimeout(function(){try{var v=document.getElementById("pgver");if(window.__verE&&window.__verE.length){v.textContent="v1118-1655 ⚠ "+window.__verE[0]}else{v.textContent="v1118-1655 ✓"+(document.querySelector(".rkb1")?" R":" r0")}}catch(e){}},3000)</script><style id="student-mode">.chgift,.chgift2,.chgift3,.chgift4,.chgift5,.mnqp{display:none!important}</style><script>(function(){function z(){try{["__vgT","__vgP","__vgB","__vg"].forEach(function(k){try{delete window[k]}catch(e){window[k]=undefined}})}catch(e){}}z();setTimeout(z,0);setTimeout(z,1500);addEventListener("load",z)})();</script></body>
 </html>
