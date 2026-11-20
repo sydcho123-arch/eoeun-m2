@@ -3909,7 +3909,7 @@ idbRestore();if(!LSOK)setTimeout(function(){toast('⚠️ 이 화면에서는 �
 var X=window.__CHX,LVH=window.__chLv;if(!X||!LVH)return;
 var $=X.$,esc=X.esc;
 function ST(){return X.st()}
-function L(){var s=ST();if(!s.lv)s.lv={lv:1,g:0,keys:{},un:{},tot:{app:0,nb:0,sv:0}};if(!s.lv.tot)s.lv.tot={app:0,nb:0,sv:0};return s.lv}
+function L(){var s=ST();if(!s.lv)s.lv={lv:1,g:0,keys:{},un:{},tot:{app:0,nb:0,sv:0}};if(!s.lv.tot)s.lv.tot={app:0,nb:0,sv:0};var l=s.lv,n=l.lv+1;if(l.g>150&&n%10===0&&n<=90&&!(l.un||{})[n])l.g=150;return l}
 function H(){var s=ST();if(!s.h)s.h={own:0,it:{}};return s.h}
 var PCT=[0,5,8,10];
 
@@ -3921,11 +3921,17 @@ LVH.quiz=function(cur,nw){LVH.add(PCT[nw]-PCT[cur],'퀴즈 '+['','GOOD','BETTER'
 /* ---------- 게이지 ---------- */
 function lockedNext(l){var n=l.lv+1;return n%10===0&&n<=90&&!l.un[n]}
 LVH.add=function(p,why){if(!(p>0))return;var l=L();l.g+=p;settle(l,why);X.sv();badge()};
+/* 2026-11-20 선생님 확정: 자물쇠가 잠겨 있으면 게이지는 다음 레벨의 50%까지만(=150%) 미리 쌓이고, 열면 다음 레벨 1번만 오름 (연달아 오르지 않음) */
+var GCAP=150;
 function settle(l,why){var ups=0;
+ if(lockedNext(l)&&l.g>GCAP){var lost=l.g>GCAP+.001,first=!l.capN;l.g=GCAP;if(lost){var tn=Date.now();if(first||!l.capT||tn-l.capT>20000){l.capT=tn;l.capN=1;setTimeout(function(){capWin(l)},300)}}}
  while(l.g>=100){if(l.lv>=99){l.g=0;break}if(lockedNext(l)){break}l.g-=100;l.lv++;ups++}
- if(ups){var n=0;for(var k=l.lv-ups+1;k<=l.lv;k++)n+=(k>=5?100:20);setTimeout(function(){X.gain(n,'🎉 레벨 업! Lv.'+l.lv);try{levelFx(l.lv,n,ups)}catch(e){}if(l.lv===10&&!H().own&&window.__CH_HOUSE_BOARD){H().own=1;X.sv();setTimeout(function(){X.toast('🏠 Lv.10 달성! 나의 집(원룸)이 생겼어요',true);X.upd()},16500)}},400)}
- else if(l.g>=100&&lockedNext(l))setTimeout(function(){X.toast('🔒 Lv.'+(l.lv+1)+' 자물쇠! 레벨 창에서 해금 조건을 확인하세요',true)},300);
+ if(ups){l.capN=0;var n=0;for(var k=l.lv-ups+1;k<=l.lv;k++)n+=(k>=5?100:20);setTimeout(function(){X.gain(n,'🎉 레벨 업! Lv.'+l.lv);try{levelFx(l.lv,n,ups)}catch(e){}},400)}
+ else if(l.g>=100&&lockedNext(l)&&l.g<GCAP)setTimeout(function(){X.toast('🔒 Lv.'+(l.lv+1)+' 자물쇠! 레벨 창에서 해금 조건을 확인하세요',true)},300);
  check()}
+/* 미리 쌓을 수 있는 만큼 다 찼을 때 안내 (처음 한 번은 큰 창, 그 뒤로는 20초에 한 번 작은 안내) */
+function capWin(l){var n=l.lv+1;if(!l.capW){l.capW=n;X.sv();try{bigWin({icon:'<div style="font-size:84px;line-height:1">🔒</div>',title:'게이지가 더 쌓이지 않아요',sub:'Lv.'+n+' 게이지를 <b>50%</b>까지 미리 모았어요!<br>더 모으려면 먼저 <b>Lv.'+n+' 자물쇠를 열어야</b> 해요.<br><small>레벨 창에서 해금 조건을 확인하세요</small>'});return}catch(e){}}
+ X.toast('🔒 Lv.'+n+' 게이지 50%까지 미리 모았어요! 더 쌓으려면 자물쇠를 먼저 열어야 해요',true)}
 /* ---------- 레벨업 연출 ---------- */
 var LUBADGE=function(n){var s=String(n),fs=s.length>1?58:70;return '<svg class="lu-badge" viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="luG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c0"/><stop offset=".5" stop-color="#ffcf3a"/><stop offset="1" stop-color="#d48a0c"/></linearGradient><linearGradient id="luW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfe3ff"/></linearGradient><radialGradient id="luP" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#9b6bff"/><stop offset="1" stop-color="#3a1d8a"/></radialGradient></defs>'
 +'<g stroke="#e0a21e" stroke-width="3" stroke-linejoin="round" fill="url(#luW)"><path d="M92 120 C60 112 28 96 8 62 C34 70 54 66 66 54 C60 74 78 84 98 86 Z"/><path d="M92 138 C58 140 28 132 10 106 C34 108 52 104 66 96 C64 112 80 122 98 124 Z"/><path d="M96 156 C70 166 44 164 26 148 C44 146 58 140 70 132 C72 146 86 152 100 150 Z"/>'
@@ -4097,17 +4103,17 @@ CH.bigWin=bigWin;CH.KEYSVG=KEYSVG;CH.clink=clink;LVH.L=L;
 
 
 var UCOST=100;
-function unlock(n){var l=L();if(!l.keys[n]||l.un[n])return;if(X.st().pt<UCOST){X.toast('⭐ 별이 부족해요. 자물쇠를 열려면 ⭐'+UCOST+'개가 필요해요 (지금 '+X.st().pt+'개)');return}X.spend(UCOST,'🔓 Lv.'+n+' 자물쇠 열기');l.un[n]=1;X.toast('🔓 Lv.'+n+' 자물쇠가 열렸어요!',true);settle(l);X.sv();badge();renderLv()}
+function unlock(n){var l=L();if(!l.keys[n]||l.un[n])return;if(X.st().pt<UCOST){X.toast('⭐ 별이 부족해요. 자물쇠를 열려면 ⭐'+UCOST+'개가 필요해요 (지금 '+X.st().pt+'개)');return}X.spend(UCOST,'🔓 Lv.'+n+' 자물쇠 열기');l.un[n]=1;if(l.g>GCAP)l.g=GCAP;l.capW=0;l.capN=0;X.toast('🔓 Lv.'+n+' 자물쇠가 열렸어요!',true);settle(l);X.sv();badge();renderLv()}
 
 /* ---------- 칠판 배지 ---------- */
 var tapN=0,tapT=0;
 function badge(st){st=st||$('chStage');if(!st)return;var l=L(),old=st.querySelector('.chlvb');if(old)old.remove();var oh=st.querySelector('.chhouse');if(oh)oh.remove();
  var side=st.querySelector('.chside');if(!side)return;
  var b=document.createElement('button');b.type='button';b.className='chlvb'+(l.g>=100&&lockedNext(l)?' lock':'');
- b.innerHTML='<b>Lv.'+l.lv+'</b><i><u style="width:'+Math.min(100,l.g)+'%"></u></i><small>'+(l.g>=100&&lockedNext(l)?'🔒 해금 필요':Math.floor(l.g)+'%')+'</small>';
+ b.innerHTML='<b>Lv.'+l.lv+'</b><i><u style="width:'+Math.min(100,l.g)+'%"></u></i><small>'+(l.g>=100&&lockedNext(l)?'🔒 해금 필요'+(l.g>100?' · 미리 '+Math.floor(l.g-100)+'%':''):Math.floor(l.g)+'%')+'</small>';
  b.onclick=function(){var now=Date.now();tapN=now-tapT<700?tapN+1:1;tapT=now;openLv()};
  side.insertBefore(b,side.firstChild);
- if(H().own&&window.__CH_HOUSE_BOARD){var hb=document.createElement('button');hb.type='button';hb.className='chhouse';hb.title='나의 집';hb.innerHTML=houseSVG(56)+'<span>나의 집</span>';hb.onclick=enterHouse;st.appendChild(hb)}}
+ /* Lv.10 원룸(나의 집) 버튼 없앰 — 2026-11-20 (마을에서 집을 지으니까) */}
 LVH.badge=badge;
 function houseSVG(sz){return'<svg viewBox="0 0 100 90" width="'+sz+'" height="'+(sz*.9)+'"><path d="M8 44 L50 10 L92 44 Z" fill="#c75b39" stroke="#6b2d1c" stroke-width="3" stroke-linejoin="round"/><rect x="16" y="42" width="68" height="40" fill="#f5e6c8" stroke="#6b4a2c" stroke-width="3"/><rect x="42" y="54" width="16" height="28" rx="2" fill="#8a5a33" stroke="#5a3a1c" stroke-width="2.5"/><circle cx="54.5" cy="69" r="1.8" fill="#f4c430"/><rect x="22" y="50" width="14" height="12" fill="#bfe3ff" stroke="#5a3a1c" stroke-width="2"/><rect x="64" y="50" width="14" height="12" fill="#bfe3ff" stroke="#5a3a1c" stroke-width="2"/><rect x="66" y="16" width="8" height="14" fill="#8a5a33" stroke="#5a3a1c" stroke-width="2"/></svg>'}
 
@@ -4119,7 +4125,7 @@ function openLv(){renderLv();openP('chlv')}
 function renderLv(){var m=panel('chlv'),l=L(),d=X.day(),h='';
  h+='<div class="chlh"><b>🏅 내 레벨</b><button type="button" class="chpx" data-x="chlv">✕</button></div>';
  h+='<div class="chlvbig">Lv.'+l.lv+'<small>/ 99</small></div><div class="chbar big"><i style="width:'+Math.min(100,l.g)+'%"></i><em>'+Math.min(100,Math.floor(l.g))+'%</em></div>';
- if(l.g>=100&&lockedNext(l))h+='<div class="chnote2 warn">🔒 게이지가 가득 찼지만 Lv.'+(l.lv+1)+' 자물쇠가 잠겨 있어요. 아래 조건을 모두 달성하면 열쇠를 받아요.</div>';
+ if(l.g>=100&&lockedNext(l))h+='<div class="chnote2 warn">🔒 게이지가 가득 찼지만 Lv.'+(l.lv+1)+' 자물쇠가 잠겨 있어요. 아래 조건을 모두 달성하면 열쇠를 받아요.<br>📦 자물쇠가 잠겨 있는 동안 <b>Lv.'+(l.lv+1)+' 게이지를 50%까지만</b> 미리 모을 수 있어요. (지금 미리 모은 양: <b>'+Math.floor(l.g-100)+'% / 50%</b>)'+(l.g>=GCAP?'<br>⛔ <b>더 이상은 쌓이지 않아요.</b> 자물쇠를 열면 다시 쌓여요.':'')+'</div>';
  h+='<div class="chlt">게이지 모으는 방법</div><ul class="chul"><li>📱 <b>앱 이용</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📖 <b>필기장 보기</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📅 <b>출석 도장</b> 1개 +2% <small>(+5⭐)</small></li><li>🎬 <b>숏츠</b> 1개 +1% <small>(하루 최대 5%, 같은 영상은 중복 안 됨)</small></li><li>📝 <b>퀴즈</b> GOOD +5% · BETTER +8% · PERFECT +10% <small>(더 높은 등급이 되면 차이만큼만 · 같은 문제 세트에서 PERFECT는 2번째에 +5%, 그 뒤로는 게이지 없음)</small></li><li>👑 <b>UNBELIEVABLE</b> 달성 +30%</li><li>⭐ 레벨 업 1번마다 별 지급! <b>Lv.4까지 20개</b> · <b>Lv.5부터 100개</b></li></ul>';
  h+='<div class="chlt">자물쇠 (10레벨마다)</div><div class="chlocks">';
  for(var n=10;n<=90;n+=10){var un=l.un[n],key=l.keys[n],cur=l.lv===n-1,cls=un?'open':key?'key':'lock';h+='<button type="button" class="chlk '+cls+'" data-n="'+n+'"><span>'+(n===10&&!un&&l.lv>=9&&CH.lock3?CH.lock3(30):(un?'🔓':key?'🔑':'🔒'))+'</span><b>Lv.'+n+'</b><small>'+(un?'해금 완료':key?(cur&&l.g>=100?'🔑+⭐100으로 열기!':'열쇠 보유'):cur?'조건 공개됨':'Lv.'+(n-1)+' 달성 시 공개')+'</small></button>'}
@@ -4141,7 +4147,7 @@ function testMenu(){var m=panel('chtm'),l=L();
  [].forEach.call(m.querySelectorAll('[data-a]'),function(b){b.onclick=function(){var a=b.dataset.a;
   if(a==='9'){l.lv=9;l.g=100;l.keys={};l.un={}}
   else if(a==='key'){l.lv=9;l.g=100;l.keys={10:1};l.un={};l.tot={app:7300,nb:7300,sv:21}}
-  else if(a==='10'){l.lv=10;l.g=0;l.keys={10:1};l.un={10:1};H().own=1}
+  else if(a==='10'){l.lv=10;l.g=0;l.keys={10:1};l.un={10:1}}
   else if(a==='star'){X.gain(500,'체험 메뉴')}
   else if(CH.testAct&&CH.testAct(a,l)){}
   else if(a==='reset'){ST().lv=null;ST().h=null;ST().wh=null}
