@@ -9484,7 +9484,7 @@ document.addEventListener('click',function(e){try{var k=e.target&&e.target.close
 
 /* ===== 🏆 랭킹 등록(QR) · 📊 레벨 전광판 (2026-11-18 선생님 요청 — 우선 고2 A반에서 모양 확인)
    학생: 칠판 반 이름표 오른쪽 🏆 → 내 이름·레벨·게이지가 담긴 QR / 선생님: 📷로 찍어 모은 뒤 코드를 Claude에게 → RANKDATA 갱신 ===== */
-var RANKDATA={d:'',rows:[]};/* 2026-11-18 16:42 선생님: 명단은 아직 공개하지 않음 — Claude가 따로 보관(claude/rank-roster-private.md) *//* rows: [반, 이름, 레벨, 게이지%] — 선생님이 모은 코드로 Claude가 채움 */
+var RANKDATA={"d":"11/20","mode":"rec","wk":1,"top":[["초6 B반","솧툌춋",9,46,0,0,"m.1.1-1-1-0-0-2-1-1-1-0-1-1-4-0-0-0-2-0"],["중2반","너 인정",8,68,0,0,"m.5.2-3-0-5-5-4-0-4-6-0-1-1-0-0-0-0-0-0"],["중1 A반","정시윤",3,3,0,0,"m.0.2-1-0-0-1-0-5-2-0-0-1-1-2-11-8-2-0-2"],["초6 B반","민상",2,8,0,0,"m.3.2-4-0-0-2-0-4-2-0-0-1-1-0-13-10-0-0-0"],["초6 A반","신효민",2,7,0,0,""]],"low":[[2,7,"1fyt6qg"],[2,3,"q0uy8"],[1,73,"1bdmdib"],[1,32,"gb7wgx"],[1,25,"13gbib1"]],"hist":[{"w":1,"d":"11/20","r":[["초6 B반","솧툌춋",9,46,300,0,"",1],["중2반","너 인정",8,68,250,0,"",1],["중1 A반","정시윤",3,3,200,0,"",1],["초6 B반","민상",2,8,150,0,"",1],["초6 A반","신효민",2,7,100,0,"",1]]}],"rows":[]};/* 2026-11-18 16:42 선생님: 명단은 아직 공개하지 않음 — Claude가 따로 보관(claude/rank-roster-private.md) *//* rows: [반, 이름, 레벨, 게이지%] — 선생님이 모은 코드로 Claude가 채움 */
 var RK_SALT='eoeun-rank-2026';
 function rkHash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 function rkCls(){try{return typeof CLASS_LABEL!=='undefined'?CLASS_LABEL:''}catch(e){return''}}
@@ -9543,6 +9543,46 @@ rankBoard=function(){CH.sfx('pop');var me=ST().nm||'',mc=rkCls(),l=L(),T=RANKDAT
  if(window.__rankTeacher)h='<button type="button" class="rkt" style="margin:0 0 10px">📷 랭킹 모으기 (선생님 전용)</button>'+h;
  var p=panel('📊 레벨 전광판',h),tb=p.querySelector('.rkt');if(tb)tb.onclick=function(){window.__rankTeacher()};
  [].forEach.call(p.querySelectorAll('[data-rkv]'),function(e){e.onclick=function(){rkView(T[+e.getAttribute('data-rkv')])}})};
+/* ===== 🏅 수상 통계 · 주간 상금 · 칠판 도장 (2026-11-20 선생님 확정)
+   RANKDATA.hist=[{w:주차,d:'월/일',r:[[반,이름,레벨,게이지,기본상금,추가상금,태그,연속회차]×5(1~5등 순서)]}] · 상금 1등300 2등250 3등200 4등150 5등100
+   추가상금: 1등 연속 +100 · 2등→1등 +50 · 3등→2등/1등 +50 (선생님이 정함) · 칠판에서 ⭐ 개수는 공개하지 않음 ===== */
+(function(){try{var s=document.createElement('style');s.textContent='.rkstat{font-size:14px}.rkstat .rkl{display:flex;flex-wrap:wrap;gap:6px 10px;margin:6px 0 10px;font-size:12px;color:#7a5a38}.rkstat .rkl i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}.rkstat .rkr{display:flex;align-items:center;gap:8px;margin:7px 0}.rkstat .rkr>b{flex:0 0 84px;font-size:13px;line-height:1.15;word-break:break-all}.rkstat .rkr>b small{display:block;font-weight:400;font-size:11px;color:#9a7b55}.rkstat .rkbar{flex:1}.rkstat .rkbar u{display:flex;height:22px;border-radius:7px;overflow:hidden;text-decoration:none;min-width:22px}.rkstat .rkbar u i{color:#fff;font:800 12px/22px system-ui,sans-serif;text-align:center;font-style:normal;text-shadow:0 1px 1px rgba(0,0,0,.35)}.rkstat .rkw{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}.rkstat .rkw button{border:2px solid #b98b52;background:#fff7e8;color:#6b4a22;border-radius:12px;padding:6px 12px;font:700 13px system-ui,sans-serif}.rkstat .rkw button.on{background:#b57a3a;color:#fff}.rkstat .rkwl .rkrow{margin:6px 0}.rkstat .rkwl small{display:block;color:#a8702a;font-size:11px;margin-top:1px}.rkstamp{position:absolute;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;pointer-events:none;transform:rotate(-12deg);opacity:.93;background:rgba(255,246,226,.12);box-shadow:0 0 0 2px currentColor inset,0 0 0 5px rgba(255,246,226,.0);border:4px double currentColor;font-family:system-ui,sans-serif;text-align:center;line-height:1}.rkstamp small{font-size:9px;font-weight:700;letter-spacing:-.3px;opacity:.95}.rkstamp b{font-size:30px;font-weight:900;margin:2px 0 1px;letter-spacing:-1px;text-shadow:0 0 1px currentColor}.rkstamp em{font-size:9px;font-style:normal;font-weight:800}.rks1{color:#ffd23f}.rks2{color:#e3e8ee}.rks3{color:#ffa45c}.rks4{color:#7fe3b0}.rks5{color:#8cc0ff}';document.head.appendChild(s)}catch(e){}})();
+var RKCOL=['#e0a100','#8f99a6','#b5703a','#3f9b6e','#4a7fd0'],RKMED=['🥇','🥈','🥉','4등','5등'];
+function rkHist(){return RANKDATA.hist||[]}
+function rkStatRows(){var m={};rkHist().forEach(function(w){(w.r||[]).forEach(function(r,i){var k=r[0]+'|'+r[1];(m[k]=m[k]||{cls:r[0],nm:r[1],c:[0,0,0,0,0],n:0}).c[i]++;m[k].n++})});
+ var a=Object.keys(m).map(function(k){return m[k]});a.sort(function(x,y){for(var i=0;i<5;i++)if(x.c[i]!==y.c[i])return y.c[i]-x.c[i];return 0});return a}
+function rkStatP(sel){CH.sfx('pop');var H=rkHist(),h='';
+ if(!H.length){h='<div class="rkempty">🏅 아직 기록이 없어요.<br>매주 금요일 밤 10시 발표 후 1~5등 기록이 쌓여요!</div>'}
+ else{sel=sel||H[H.length-1].w;var A=rkStatRows(),mx=1;A.forEach(function(a){if(a.n>mx)mx=a.n});
+  h='<div class="rkstat"><div class="vgsub">1~5등을 한 친구들의 기록이에요 · 상금 1등 ⭐300 · 2등 250 · 3등 200 · 4등 150 · 5등 100</div><div class="rkl">'+RKMED.map(function(n,i){return'<span><i style="background:'+RKCOL[i]+'"></i>'+(i<3?n:n)+'</span>'}).join('')+'</div>';
+  A.forEach(function(a){h+='<div class="rkr"><b>'+esc(a.nm)+'<small>'+esc(a.cls)+'</small></b><div class="rkbar"><u style="width:'+Math.max(14,Math.round(a.n/mx*100))+'%">'+a.c.map(function(c,i){return c?'<i style="flex:'+c+';background:'+RKCOL[i]+'">'+c+'</i>':''}).join('')+'</u></div></div>'});
+  h+='<div class="rkw">'+H.map(function(w){return'<button type="button" data-rkw="'+w.w+'"'+(w.w===sel?' class="on"':'')+'>'+w.w+'주차</button>'}).join('')+'</div><div class="rkwl">';
+  var W=H.filter(function(w){return w.w===sel})[0];
+  if(W){h+='<div class="vgsub">'+w_(W)+'</div>';W.r.forEach(function(r,i){var sum=(r[4]|0)+(r[5]|0);h+='<div class="rkrow'+(i<3?' top'+(i+1):'')+'"><i>'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</i><b>'+esc(r[1])+'<small>'+esc(r[0])+' · '+(r[7]>1?'연속 '+r[7]+'회차 '+(i+1)+'등':(r[6]||''))+'</small></b><span>⭐'+sum+(r[5]?'<small>(+'+r[5]+')</small>':'')+'</span></div>'})}
+  h+='</div></div>'}
+ var p=panel('🏅 수상 통계',h);[].forEach.call(p.querySelectorAll('[data-rkw]'),function(b){b.onclick=function(){rkStatP(+b.getAttribute('data-rkw'))}})}
+function w_(W){return W.w+'주차 · '+W.d+' 발표'}
+function rkStampDraw(st,i,w,r){try{var cur=st.querySelector('.rkstamp'),n=r[7]|0,key=w.w+'|'+i+'|'+n;
+ if(!cur){cur=document.createElement('div');st.appendChild(cur)}
+ if(cur.getAttribute('data-k')!==key){cur.setAttribute('data-k',key);cur.className='rkstamp rks'+(i+1);cur.innerHTML='<small>'+esc(w.d)+' '+w.w+'주차</small><b>'+(i+1)+'등</b><em>'+(n>1?'연속 '+n+'회차':'TOP 5')+'</em>'}
+ var sr=st.getBoundingClientRect(),fw=st.querySelector('.chfw'),sd=st.querySelector('.chside'),x0=fw?fw.getBoundingClientRect().right-sr.left+12:96,x1=sd?sd.getBoundingClientRect().left-sr.left-6:sr.width-92,sz=Math.max(58,Math.min(88,x1-x0));
+ cur.style.width=cur.style.height=sz+'px';cur.style.left=Math.round(x0+(x1-x0-sz)/2)+'px';cur.style.top=Math.max(0,Math.round(sr.height-sz-8))+'px';cur.style.fontSize=(sz/88)+'em'}catch(e){}}
+function rkMyRow(){var H=rkHist();if(!H.length)return null;var w=H[H.length-1],n=ST().nm||'',c=rkCls();if(!n)return null;for(var i=0;i<w.r.length;i++)if(w.r[i][0]===c&&w.r[i][1]===n)return{w:w,i:i,r:w.r[i]};return null}
+function rkStageEl(){var a=document.querySelectorAll('#chStage');for(var i=0;i<a.length;i++)if(!a[i].closest('.rkview'))return a[i];return null}
+function rkStamp(){try{var st=rkStageEl();if(!st)return;var m=rkMyRow(),cur=st.querySelector('.rkstamp');if(!m){if(cur)cur.parentNode.removeChild(cur);return}
+ if(getComputedStyle(st).position==='static')st.style.position='relative';rkStampDraw(st,m.i,m.w,m.r)}catch(e){}}
+function rkClaim(){try{var H=rkHist(),s=ST(),n=s.nm,c=rkCls();if(!n||!H.length)return;var last=H[H.length-1].w,paid=s.rkPaid||0;if(paid>=last)return;var sum=0;H.forEach(function(w){if(w.w<=paid)return;w.r.forEach(function(r){if(r[0]===c&&r[1]===n)sum+=(r[4]|0)+(r[5]|0)})});
+  s.rkPaid=last;if(sum>0){s.pt=(s.pt||0)+sum;try{s.log.unshift({t:Date.now(),n:sum,w:'🏆 주간 랭킹 상금'});s.log=s.log.slice(0,60)}catch(e){}X.sv();X.upd();X.toast('🏆 주간 랭킹 상금 ⭐ +'+sum,true)}else X.sv()}catch(e){}}
+rkView=function(r){var c=rkChDec(r[6]),svg='';if(!c)return;try{svg=CH.render(c,null,null)}catch(e){return}
+ var g=Math.floor(r[3]||0),H=rkHist(),W=H.length?H[H.length-1]:null,ix=-1;if(W)W.r.forEach(function(x,i){if(x[0]===r[0]&&x[1]===r[1])ix=i});
+ var h='<div class="rkview"><button type="button" class="rkt" style="margin:0 0 6px" data-rkback="1">← 전광판으로</button><header class="board" style="margin-top:28px"><div class="plaque chpq">'+esc(r[0])+'</div><div id="chStage" style="position:relative"><div class="chfw"><div class="chfig">'+svg+'</div><div class="chnm">'+esc(r[1])+'</div></div><div class="chtop"><button type="button" class="chcal" style="pointer-events:none">📅</button></div><div class="chside"><button type="button" class="chlvb" style="pointer-events:none"><b>Lv.'+r[2]+'</b><i><u style="width:'+Math.min(100,g)+'%"></u></i><small>'+g+'%</small></button></div></div><i class="chalk y"></i><i class="chalk"></i></header><div class="vgsub" style="margin-top:10px;text-align:center">'+(RANKDATA.d?RANKDATA.d+' 기준 모습이에요':'')+'</div></div>';
+ var p=panel('🔎 '+esc(r[1])+'의 칠판',h),b=p.querySelector('[data-rkback]');if(b)b.onclick=function(){rankBoard()};
+ if(ix>=0){var st=p.querySelector('#chStage');if(st){rkStampDraw(st,ix,W,W.r[ix]);setTimeout(function(){rkStampDraw(st,ix,W,W.r[ix])},120)}}}
+var _rb3=rankBtns;rankBtns=function(){_rb3();try{var pq=$('plaque');if(!pq||!pq.parentNode)return;var par=pq.parentNode,c=par.querySelector('.rkb3'),b=par.querySelector('.rkb2');
+ if(!c){c=document.createElement('button');c.type='button';c.className='rkb rkb3';c.innerHTML='🏅';c.title='수상 통계';c.setAttribute('aria-label','수상 통계');c.onclick=function(e){e.stopPropagation();rkStatP()};par.appendChild(c)}
+ if(b){c.style.left=(parseFloat(b.style.left||0)+31)+'px';c.style.top=b.style.top}}catch(e){}};
+setInterval(function(){rkClaim();rkStamp()},900);
+
 setInterval(rankBtns,800);
 /* 칠판이 그려지는 순간 위쪽 버튼(옷·⚡·🏆·📊)도 바로 자리 잡기 — 늦게 뜨던 문제 */
 (function(){var ob=LVH.badge;LVH.badge=function(st){var r=ob.apply(this,arguments);try{topLay()}catch(e){}try{rankBtns()}catch(e){}return r};try{topLay();rankBtns()}catch(e){}
