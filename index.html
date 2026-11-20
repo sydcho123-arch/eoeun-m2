@@ -1447,7 +1447,7 @@ img.crn{width:1.08em;height:1.08em;vertical-align:-.2em;display:inline-block;mar
 #qz .qr{margin-top:18px;border-radius:14px;padding:14px 16px;font-size:17px;line-height:1.5;display:none}
 #qz .qr.ok{display:block;background:#e3f6ea;color:#14663a}#qz .qr.bad{display:block;background:#fde8e6;color:#a32a22}
 #qz .qr b{display:block;font-size:22px;margin-bottom:4px}
-#qz .qr span{display:block;color:var(--ink);font-size:16px}
+#qz .qr span{display:block;color:inherit;font-size:16px}
 #qz .qn{display:none;width:100%;margin-top:16px;font:inherit;font-size:19px;font-weight:800;min-height:56px;border:0;border-radius:14px;background:var(--accent);color:#fff;cursor:pointer}
 #qz .qsc{text-align:center;font-size:54px;font-weight:800;color:var(--accent);margin:6px 0 2px;font-variant-numeric:tabular-nums}
 #qz .qmsg{text-align:center;font-size:18px;font-weight:700;margin-bottom:18px}
@@ -2232,12 +2232,13 @@ var ta=document.createElement("textarea");ta.className="qwta";ta.value=it.H?"":i
 var sb=document.createElement("button");sb.type="button";sb.className="qsub";sb.textContent="\uc81c\ucd9c\ud558\uae30";sb.style.display="block";
 var tm=document.createElement("div");tm.className="qtm";var trk=document.createElement("span");trk.className="trk";trk.appendChild(document.createElement("i"));var tn=document.createElement("b");tm.append(trk,tn);
 function fin(ok,to){if(locked)return;locked=true;tmStop();ta.disabled=true;sb.style.display="none";if(ok)score++;else wrong.push(items[idx]);beep(ok);ta.classList.add(ok?"good":"bad");r.className="qr "+(ok?"ok":"bad");r.textContent="";var t=document.createElement("b");t.textContent=ok?"\uc815\ub2f5\uc785\ub2c8\ub2e4! \ud83c\udf89":(to?"\u23f0 \uc2dc\uac04 \ucd08\uacfc! \ud2c0\ub9b0 \uac83\uc73c\ub85c \ucc98\ub9ac\ub3fc\uc694":"\uc624\ub2f5\uc785\ub2c8\ub2e4 \ud83d\ude22");
-if(ok){var s=document.createElement("span");s.textContent=it.e;r.append(t,s)}else{var an=document.createElement("span");an.style.fontWeight="800";an.textContent="\uc815\ub2f5: "+it.ans[0];var s2=document.createElement("span");s2.textContent="\ud83d\udca1 "+it.e;r.append(t,an,s2)}
+if(ok){var s=document.createElement("span");s.textContent=it.e;r.append(t,s)}else{var an=document.createElement("span");an.style.fontWeight="800";an.textContent="\uc815\ub2f5: "+it.ans[0]+(beAlt(it).length>it.ans.length?"  ("+beAlt(it)[it.ans.length]+" 도 정답)":"");var s2=document.createElement("span");s2.textContent="\ud83d\udca1 "+it.e;r.append(t,an,s2)}
 nx.style.display="block";try{nx.scrollIntoView({block:"nearest"})}catch(e){}if(ok||to)startCd(nx)}
-sb.addEventListener("click",function(){if(locked)return;fin(chkW(ta.value,it.ans),false)});
+sb.addEventListener("click",function(){if(locked)return;fin(chkW(ta.value,beAlt(it)),false)});
 ta.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();sb.click()}});
 nx.addEventListener("click",function(){if(idx+1<items.length){idx++;show()}else finish()});
 B.append(tm,h,q,ta,sb,r,nx);tmStart(it.TL||(it.H?50:70),tm,function(){fin(false,true)})}
+function beAlt(it){var a=it.ans.slice(),f=String(it.q).split("\n")[0];if(String(it.q).indexOf("틀린 곳")<0||/\b(is|was|are|were|am)\b/.test(f)||/Yesterday|Last |ago|Tomorrow|Next |Two days/i.test(it.q))return a;it.ans.forEach(function(s){var t=s.replace(/\b(is|was)\b/,function(m){return m==="is"?"was":"is"});if(t!==s&&a.indexOf(t)<0)a.push(t)});return a}
 function ansTxt(it){return it.m?it.m.map(function(i){return it.o[i]}).join(" / "):it.o[it.a]}
 function showM(S,it,h,q,ob,r,nx){var B=$q("qzbody");var need=it.m.length,sel={},btns=[];var order=shuf(it.o.map(function(x,i){return i}));
 var hint=document.createElement("div");hint.style.cssText="font-size:13px;font-weight:800;color:#1e6fe0;margin:2px 0 8px";hint.textContent="정답 "+need+"개를 골라 ‘확인’을 눌러요";
