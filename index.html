@@ -9583,6 +9583,14 @@ var _rb3=rankBtns;rankBtns=function(){_rb3();try{var pq=$('plaque');if(!pq||!pq.
  if(b){c.style.left=(parseFloat(b.style.left||0)+31)+'px';c.style.top=b.style.top}}catch(e){}};
 setInterval(function(){rkClaim();rkStamp()},900);
 
+/* ===== 발표 시간 금요일 밤 11시 + 순위 기준 안내 (2026-11-20 선생님 확정) ===== */
+function rkFix11(){try{[].forEach.call(document.querySelectorAll('.rkempty,.rkmine small,.vgsub'),function(e){if(/밤 10시/.test(e.innerHTML)&&/(금요일|발표)/.test(e.innerHTML))e.innerHTML=e.innerHTML.replace(/밤 10시/g,'밤 11시')})}catch(e){}}
+var _rb4=rankBoard;rankBoard=function(){_rb4.apply(this,arguments);try{rkFix11();var l=document.querySelector('.rklist'),w=RANKDATA.wk||1;
+ if(l&&!document.querySelector('.rkrule')){var n=document.createElement('div');n.className='vgsub rkrule';n.style.cssText='margin:2px 0 8px;line-height:1.5';
+  n.innerHTML='📌 <b>매주 금요일 밤 11시</b>에 발표해요.<br>1주차(11/20)는 <b>가장 기록이 좋은 순서</b>, 2주차부터는 <b>지난주 기록에서 이번 주에 가장 많이 올린 순서</b>(지난주 기록을 기준으로 다시 잡아요)로 1~10등을 뽑아요.<br>🏆 상금은 1~5등만 · 1등 ⭐300 · 2등 250 · 3등 200 · 4등 150 · 5등 100';
+  l.parentNode.insertBefore(n,l)}}catch(e){}};
+var _rs4=rkStatP;rkStatP=function(){_rs4.apply(this,arguments);rkFix11()};
+
 setInterval(rankBtns,800);
 /* 칠판이 그려지는 순간 위쪽 버튼(옷·⚡·🏆·📊)도 바로 자리 잡기 — 늦게 뜨던 문제 */
 (function(){var ob=LVH.badge;LVH.badge=function(st){var r=ob.apply(this,arguments);try{topLay()}catch(e){}try{rankBtns()}catch(e){}return r};try{topLay();rankBtns()}catch(e){}
