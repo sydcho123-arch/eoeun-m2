@@ -4723,7 +4723,7 @@ CH.lock3=function(sz){var k=W().keys,hole=function(x,on){return on?'<g><circle c
 CH.keyCond=function(){var n=CH.keyCount();return{t:'🗝️ 숨겨진 열쇠 3개 찾기 + ⭐100',v:n/3,ok:n>=3,s:'열쇠 '+n+' / 3개 · 자물쇠를 열 때 ⭐100개가 필요해요'}};
 CH.hintHTML=function(){var l=L();if(l.lv<9||l.lv>=10)return'';mark9();var d=since9(),k=W().keys,h='<div class="chhint"><b>🗝️ 숨겨진 열쇠</b>';
  h+='<div class="chhk'+(k[1]?' ok':'')+'">'+(k[1]?'✅ 열쇠 1번 찾음':'🔑 열쇠 1번 · '+((d>=2||k[3])?'<span class="hn">💡 힌트: 앱에서 Syd를 찾으시오 (쌤 생일 10월 17일)</span>':'힌트는 Lv.9가 되고 이틀 뒤에 나타나요'))+'</div>';
- h+='<div class="chhk'+(k[2]?' ok':'')+'">'+(k[2]?'✅ 열쇠 2번 찾음':'🔑 열쇠 2번 · '+((d>=3||k[3])?'<span class="hn">💡 힌트: 스스로를 꾸며보세요</span>':'힌트는 Lv.9가 되고 3일 뒤에 나타나요'))+'</div>';
+ h+='<div class="chhk'+(k[2]?' ok':'')+'">'+(k[2]?'✅ 열쇠 2번 찾음':'🔑 열쇠 2번 · '+((d>=3||k[3])?'<span class="hn">💡 힌트: 스스로를 꾸며보세요</span>'+(k2x()>=1?'<br><span class="hn">💡 추가 힌트: 캐릭터에게 액세서리를 하나 사 주세요~</span>':''):'힌트는 Lv.9가 되고 3일 뒤에 나타나요'))+'</div>';
  h+='<div class="chhk'+(k[3]?' ok':'')+'">'+(k[3]?'✅ 열쇠 3번 찾음':'🔑 열쇠 3번 · '+(k3d()>=3?'<span class="hn">💡 힌트: 필기장 전체를 복습하세요</span>':'<span class="hn">❓ 힌트 없음 · 앱 어딘가에 숨어 있어요</span>'))+'</div></div>';return h};
 /* #21 (2026-11-20) 열쇠 3번: 「필기장 전체 보기」 목록의 필기장 하나에 걸려 있음 · 열쇠 1·2번을 찾고 3일 지나도 못 찾으면 힌트 */
 function k3d(){var w=W(),k=w.keys||{};if(!(k[1]&&k[2])||k[3])return 0;if(!w.k12){w.k12=Date.now();X.sv()}return Math.round((dayIdx(Date.now())-dayIdx(w.k12))/86400000)}
@@ -4735,9 +4735,12 @@ function k3d(){var w=W(),k=w.keys||{};if(!(k[1]&&k[2])||k[3])return 0;if(!w.k12)
   k.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();if(!ok())return;var r=k.getBoundingClientRect();k.classList.add('fall');try{CH.sfx&&CH.sfx('get')}catch(_){}setTimeout(function(){k.remove();try{CH.gotKey(3,r.left+r.width/2,r.top+r.height/2+40)}catch(_){}},650)},true)}
  function watch(){box=document.getElementById('daybox-n');if(!box){setTimeout(watch,1500);return}mo=new MutationObserver(function(){setTimeout(hang,30)});mo.observe(box,{childList:true});hang()}
  watch()})();
+/* 11-23 선생님: 열쇠 2번 힌트가 나온 다음 날에도 못 찾으면 추가 힌트(꾸미기 → 액세서리 새로 사기) */
+function k2x(){try{var l=L(),w=W(),k=w.keys||{};if(k[2]||l.lv<9||l.lv>=10)return 0;var d=since9();if(!(d>=3||k[3]))return 0;if(!w.h2t){w.h2t=Date.now();X.sv()}return Math.round((dayIdx(Date.now())-dayIdx(w.h2t))/86400000)}catch(e){return 0}}
 function hintToast(){var l=L();if(l.lv<9||(l.un&&l.un[10]))return;mark9();var d=since9(),w=W();
  if((d>=2||w.keys[3])&&!w.keys[1]&&!w.hs[1]){w.hs[1]=1;X.sv();X.toast('💡 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
  else if((d>=3||w.keys[3])&&!w.keys[2]&&!w.hs[2]){w.hs[2]=1;X.sv();X.toast('💡 새 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
+ else if(k2x()>=1&&!w.hs[22]){w.hs[22]=1;X.sv();X.toast('💡 열쇠 2번 추가 힌트: 캐릭터에게 액세서리를 하나 사 주세요~',true)}
  else if(k3d()>=3&&!w.hs[3]){w.hs[3]=1;X.sv();X.toast('💡 열쇠 3번 힌트: 📚 필기장 전체를 복습하세요',true)}}
 
 /* 칠판: 창고 버튼 */
