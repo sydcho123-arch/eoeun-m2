@@ -6550,8 +6550,8 @@ var BPH={t:0,i:0,f:0};function bpPanel(){var tmp={},b=BP();if(b.int==null)b.int=
   p.querySelector('.bpreset').onclick=function(){if(!bpUsed()){X.toast('아직 올린 포인트가 없어요');return}if(ST().pt<500){CH.sfx('deny');X.toast('⭐ 스탯 초기화에는 별 500개가 필요해요 (지금 '+ST().pt+'개)');return}
    X.ask('보너스 스탯을 초기화할까요?','⭐500을 내면 올린 포인트 '+bpUsed()+'개를 모두 돌려받아요. (낸 별은 돌려받지 못해요)','초기화','취소',function(){X.spend(500,'↺ 스탯 초기화');var q=QS();if(CTX==='arch'){ARC().bp={hp:0,atk:0,def:0,agi:0,luk:0,int:0};b=ARC().bp}else{q.bp={hp:0,atk:0,def:0,agi:0,luk:0,int:0};b=q.bp}Object.keys(tmp).forEach(function(k){tmp[k]=0});var o2=CH.stats();if(CTX!=='arch')q.hp=Math.min(o2.hp,q.hp==null?o2.hp:q.hp);X.sv();CH.sfx('swish');X.toast('↺ 보너스 스탯을 초기화했어요');draw();try{renderEq()}catch(e){}})};
   p.querySelector('.bpok').onclick=function(){var NM={hp:'체력',atk:'공격력',def:'방어력',agi:'민첩성',luk:'운',int:'지능'},ls=Object.keys(tmp).filter(function(k){return tmp[k]}).map(function(k){return NM[k]+' +'+tmp[k]}).join(', ');if(!ls)return;
-   X.ask('보너스 스탯을 확정할까요?',ls+' 포인트를 올려요. 확정한 뒤 되돌리려면 ⭐500 초기화가 필요해요.','확정','다시 고르기',function(){var o0=CH.stats();Object.keys(tmp).forEach(function(k){b[k]+=tmp[k]});var o1=CH.stats();HPS().hp=Math.min(o1.hp,o0.cur+(o1.hp-o0.hp));X.sv();CH.sfx('equip');X.toast('✨ 보너스 스탯을 올렸어요!',true);p.classList.remove('on');try{renderEq()}catch(e){}})}}
- draw()}
+   X.ask('보너스 스탯을 확정할까요?',ls+' 포인트를 올려요. 확정한 뒤 되돌리려면 ⭐500 초기화가 필요해요.','확정','다시 고르기',function(){var o0=CH.stats();try{document.getElementById('vgp')._bp=null}catch(_){}Object.keys(tmp).forEach(function(k){b[k]+=tmp[k]});var o1=CH.stats();HPS().hp=Math.min(o1.hp,o0.cur+(o1.hp-o0.hp));X.sv();CH.sfx('equip');X.toast('✨ 보너스 스탯을 올렸어요!',true);p.classList.remove('on');try{renderEq()}catch(e){}})}}
+ draw();try{document.getElementById('vgp')._bp={tmp:tmp,b:b,ctx:CTX}}catch(_){}}
 /* ---- 유령 · 부활 · 선물 ---- */
 /* 2026-11-18: 마을 버튼 위 큰 부활 그림 대신 → 칠판의 유령 캐릭터를 누르면 「부활하시겠습니까?」 */
 window.addEventListener('click',function(e){try{if(!isGhost())return;var f=e.target&&e.target.closest&&e.target.closest('#chStage #chFig');if(!f)return;e.stopPropagation();e.preventDefault();revive()}catch(_){}},true);
@@ -8399,7 +8399,7 @@ function queenNest(A){var T=A.T;var nest=new T.Mesh(new T.CircleGeometry(7,24),n
  A.ANIM.push(function(t,dt){var p=(t/900)%1;q.userData.tick(dt||.016,{atk:p<.4?p/.4:null});ar.position.y=Math.abs(Math.sin(t/300))*.1});
  var sg=A.textSprite(T,'⚔️ 누군가 여왕거미와 싸우고 있다!','rgba(90,20,40,.92)','#fff',.8);sg.position.set(0,4.4,-9);A.sc.add(sg);
  A.trigger(0,-5,3.4,'🏹 아저씨를 도우러 가기',function(){queenEvent()},false)}
-function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 다시 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. ⭐ 권장: 내 레벨 Lv.13 이상 · 회복 아이템 10개 이상','싸우러 가기','조금 더 준비',queenBattle);return}
+function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. ⭐ 권장: 내 레벨 Lv.13 이상 · 회복 아이템 10개 이상','싸우러 가기','조금 더 준비',function(){qsReady(archName())});return}
  CH.sfx('help');dlg([{n:'???',t:'크윽… 이 여왕거미 녀석, 사흘째 버티는 중인데…! 누, 누구냐?!'},{n:'',t:'(깃털 꽂힌 초록 사냥 모자를 쓴 날렵한 아저씨가 거미줄을 피하며 활을 쏘고 있다)'},{n:esc(ST().nm||'나'),t:'혹시… <b>단비 아빠</b> 아니세요?! 마을에서 다들 걱정하고 있어요!'},
   {n:'단비 아빠',t:'단비를 안다고?! 허허… 숲에서 늑대 떼에 쫓기다가 이 동굴로 피했는데, 입구는 가시로 막고… 그만 여왕거미 둥지에 갇혀 버렸지 뭐냐.'},
   {n:'단비 아빠',t:'혼자서는 도저히 못 이기겠더구나. 너, 꽤 강해 보이는데… 나랑 같이 싸워 주겠니?'},{n:'',t:'🏹 <b>궁수 아저씨가 동료가 되었어요!</b> (나와 같은 레벨)'}],null,function(){archJoin('단비 아빠')})}
@@ -8408,8 +8408,11 @@ function archNameModal(def,cb){var m=document.createElement('div');m.className='
 function archJoin(nm){var q=QS();q.arch={joined:Date.now(),nm:nm,ub0:skUB(),lv:13,lvb:1,g:0,sk:{},bp:{hp:0,atk:0,def:0,agi:0,luk:0},eq:{bd:'aa2',hd:'ah1'},hp:null,sg:0};/* 2026-11-18: 숲 순찰복 + 초록 깃털 모자 입고 합류 (이전: 가죽 조끼) */X.sv();try{LVH.badge&&LVH.badge()}catch(e){}CH.sfx('victory');
  setTimeout(function(){CH.gainFx({head:'🏹 동료 합류!',icon:'<span style="font-size:80px">🏹</span>',title:esc(nm)+' · Lv.'+L().lv,sub:'아직 능력치·스킬 포인트를 하나도 안 썼어요! 지금 바로 나눠 줘요'})},300);
  waitGfx(function(){dlg([{n:esc(nm),t:'좋아, 싸우기 전에 몸부터 풀어야겠다! <b>능력치 포인트</b>를 먼저 나눠 주렴. (활은 공격·민첩이 중요하단다)'}],null,function(){archerBP();waitClose('vgp',function(){
-  dlg([{n:esc(nm),t:'이번엔 <b>스킬 트리</b>다! 나는 2칸 이상 떨어진 적만 스킬로 맞힐 수 있어. 붙어 있는 적은 활로 툭 치는 정도란다.'}],null,function(){archerTree();waitClose('vgsk',function(){
-   CH.sfx('hiss');dlg([{n:'',t:'(쉬이이익—! 둥지 깊은 곳에서 거대한 그림자가 몸을 일으킨다)'},{n:esc(nm),t:'준비 끝! 온다, 여왕거미다! <b>7턴마다 새끼거미를 낳으니</b> 서두르자!'}],null,function(){queenBattle()})})})})})})}
+  dlg([{n:esc(nm),t:'이번엔 <b>스킬 트리</b>다! 나는 2칸 이상 떨어진 적만 스킬로 맞힐 수 있어. 붙어 있는 적은 활로 툭 치는 정도란다.'}],null,function(){archerTree();waitClose('vgsk',function(){qsReady(nm)})})})})})}
+/* 11-23 선생님: 싸우기 전에 「이제 싸워 볼까?」 / 「능력치·스킬 다시 조정」 선택 (못 찍었을 때 대비) */
+function qsReady(nm){nm=nm||archName();dlg([{n:esc(nm),t:'자, 준비는 다 됐니? 한번 붙으면 물러설 수 없다.'}],[{t:'⚔️ 이제 그럼 싸워 볼까?',fn:function(){CH.sfx('hiss');dlg([{n:'',t:'(쉬이이익—! 둥지 깊은 곳에서 거대한 그림자가 몸을 일으킨다)'},{n:esc(nm),t:'준비 끝! 온다, 여왕거미다! <b>7턴마다 새끼거미를 낳으니</b> 서두르자!'}],null,function(){queenBattle()})}},{t:'🔧 능력치·스킬 다시 조정해 보기',fn:function(){qsAdjust(nm)}}])}
+function qsAdjust(nm){dlg([{n:'',t:'무엇을 다시 볼까요?'}],[{t:'🏹 아저씨 능력치',fn:function(){archerBP();waitClose('vgp',function(){qsAdjust(nm)})}},{t:'🏹 아저씨 스킬',fn:function(){archerTree();waitClose('vgsk',function(){qsAdjust(nm)})}},
+ {t:'🛡️ 내 능력치',fn:function(){CTX='hero';bpPanel();waitClose('vgp',function(){qsAdjust(nm)})}},{t:'🛡️ 내 스킬',fn:function(){CTX='hero';SKDIR=HDIR;skillTree();waitClose('vgsk',function(){qsAdjust(nm)})}},{t:'✅ 다 했어요',fn:function(){qsReady(nm)}}])}
 function waitGfx(fn){var t0=Date.now();setTimeout(function(){var iv=setInterval(function(){if(!document.querySelector('.gfx')||Date.now()-t0>15000){clearInterval(iv);setTimeout(fn,200)}},200)},600)}
 function waitClose(id,fn){var seen=false,t0=Date.now(),iv=setInterval(function(){var e=$(id),on=!!(e&&e.classList.contains('on'));if(on)seen=true;if((seen&&!on)||(!seen&&Date.now()-t0>4000)){clearInterval(iv);setTimeout(fn,250)}},200)}
 function queenBattle(){if(BT)return;try{X.toast('🕷️ 여왕거미 Lv.14 · ⭐ 권장 레벨 Lv.13 이상'+(L().lv<13?' (지금 Lv.'+L().lv+' — 조금 힘들 수 있어요!)':''),true)}catch(e){}var pos=WORLD&&WORLD.P?[WORLD.P.x,WORLD.P.z]:[0,-5];CH.sfx('hiss');
@@ -8457,7 +8460,7 @@ var _chiefTalkQ=chiefTalk;chiefTalk=function(){var q=QS();if(!(q.boss_qs15&&hasA
   if(q.chiefQs)return;need.forEach(function(x){CH.addItem(x[0],x[1])});q.qswordP=0;q.bpx=(q.bpx||0)+3;q.skx=(q.skx||0)+2;var a=ARC();a.bpx=(a.bpx||0)+3;a.skx=(a.skx||0)+2;q.chiefQs=Date.now();X.sv();CH.sfx('chest');
   CH.gainFx({head:'🎁 촌장님의 감사 선물',icon:'<span style="font-size:64px">🥤🧪</span>',title:'프로틴 2 · 최하급 물약 5',sub:'두 사람 모두 능력치 +3 · 스킬 +2 (메뉴에서 나눠 주세요)'});try{LVH.badge&&LVH.badge()}catch(e){}})};
 try{if(window.__vgT)window.__vgT.chief=function(){chiefTalk()}}catch(e){}
-window.__vgP={ev:function(){queenEvent()},queen:function(){queenBattle()},reward:function(){queenReward()},menu:function(a){partyMenu(a)},eq:function(c,id){return inCtx(c,function(){equip(id);return JSON.stringify(EQ())})},shot:function(){return[CH.hero3dShot(THREE,archerChar(),240,320),inCtx('hero',function(){return CH.hero3dShot(THREE,CH.heroCh(),240,320)}),CH.hero3dShot(THREE,archerCh(),240,320)]}};
+window.__vgP={ev:function(){queenEvent()},queen:function(){queenBattle()},qsEv:function(){queenEvent()},reward:function(){queenReward()},menu:function(a){partyMenu(a)},eq:function(c,id){return inCtx(c,function(){equip(id);return JSON.stringify(EQ())})},shot:function(){return[CH.hero3dShot(THREE,archerChar(),240,320),inCtx('hero',function(){return CH.hero3dShot(THREE,CH.heroCh(),240,320)}),CH.hero3dShot(THREE,archerCh(),240,320)]}};
 /* 여왕거미 둥지 앞(아저씨와 만나는 곳)에서는 잡몹 전투가 시작되지 않게 */
 var _encQ=encounter;encounter=function(m){try{if(FZ==='c3'&&!QS().boss_qs15&&WORLD&&WORLD.P&&Math.hypot(WORLD.P.x,WORLD.P.z+12)<12)return}catch(e){}_encQ(m)};
 
@@ -9794,7 +9797,7 @@ var _bvT5=buildVillage;buildVillage=function(A){_bvT5(A);try{var T=A.T,q=QS();
  var n=A.npc(ch,bx+2.4,bz+.6,{wander:0,rot:Math.PI*.8,name:W.nm,talk:function(nn){var m=topOn();CH.sfx('talk',{who:W.role});
    if(t5once(W.k)){dlg(W.lines.map(function(x){return{n:wName(x.n),t:x.t}}),null,function(){think(W.after.replace(/^\(|\)$/g,''),500)})}
    else if(m)say(m,'<small>'+W.nm+'</small><br>'+(W.day?W.day()[(nn._bi=(nn._bi==null?0:nn._bi+1))%2]:pick(W.bark)),'keep')}});
- try{n.sh.material.opacity=0}catch(e){}}catch(e){console.error(e)}};
+ try{n.sh.material.opacity=0}catch(e){}try{if(W.k==='w2'||W.k==='w3'){n.o.userData.noShd=1;n.o.traverse(function(o){if(o.isMesh)o.castShadow=false})}}catch(e){}/* 11-23: 떠돌이 악사·순례자(빛의 신 변장)는 그림자 없음 */}catch(e){console.error(e)}};
 
 /* ---------- 4. 촌장님: 그란데우스 · 바인베일 · 돌잔치 ---------- */
 var _chiefTalkT5=chiefTalk;chiefTalk=function(){var q=QS();if(q.id&&!T5().chief&&!(q.home&&!q.fpermit)&&!(q.boss_qs15&&!q.chiefQs)){T5().chief=1;X.sv();
@@ -12498,7 +12501,7 @@ function balcony(A){var s=S(),q=QS(),W=WORLD;if(s.balc||!W||W.API!==A||!PZ||!PZ.
   var sl=new T.Mesh(new T.CylinderGeometry(.33,.3,.34,16),WM);sl.position.y=top*.66;g.add(sl);var hood=new T.Mesh(new T.SphereGeometry(.46,14,10,0,Math.PI*2,0,Math.PI*.55),WM);hood.position.set(0,top*.8,-.06);hood.scale.set(1.05,1.05,1.05);g.add(hood);
   try{g.userData.armsL.forEach(function(sh){sh.children.slice(0,2).forEach(function(m){if(m.isMesh)m.material=WM});if(g.userData.legsL)g.userData.legsL.forEach(function(l){l.visible=false})})}catch(e){}var gt=new T.Mesh(new T.TorusGeometry(.28,.03,6,18),new T.MeshBasicMaterial({color:0xfff0b0}));gt.rotation.x=Math.PI/2;gt.position.y=top*.4;g.add(gt);
   var gl=glowS(A,0xfff6c8,2.6);gl.position.y=.05;gl.material.opacity=.85;g.add(gl);var pl=new T.PointLight(0xfff2c0,.9,4,1.5);pl.position.y=.25;g.add(pl);
-  g.position.set(0,BY,ZD-.9);A.sc.add(g);return{g:g,path:[],sp:.75,face:0,gl:gl}})();
+  g.position.set(0,BY,ZD-.9);g.userData.noShd=1;g.traverse(function(o){if(o.isMesh)o.castShadow=false});/* 11-23 선생님: 빛의 신(대신)은 그림자가 없음 */A.sc.add(g);return{g:g,path:[],sp:.75,face:0,gl:gl}})();
  /* 문을 여닫는 근위병 두 명 */
  var GD=[-1,1].map(function(sd){var ch=rch('guard',rngS(1400+sd));try{ch.p.tp=0}catch(e){}var g=CH.hero3d(T,ch);g.scale.setScalar(1.18);var post=[sd*2.45,-40.35];g.position.set(post[0],BY,post[1]);A.sc.add(g);
   var sp=new T.Mesh(new T.CylinderGeometry(.025,.025,2.2,6),new T.MeshLambertMaterial({color:0x8a6a40}));sp.position.set(sd*-.0,0,0);var tip=new T.Mesh(new T.ConeGeometry(.06,.22,6),new T.MeshLambertMaterial({color:0xd8d8e0}));tip.position.y=1.2;sp.add(tip);
@@ -13830,6 +13833,33 @@ setInterval(function(){try{var q=QS();if(!q.apBack||!WORLD||WORLD.map!=='v'||win
  setInterval(function(){try{[].forEach.call(document.querySelectorAll('[data-g="lamp"],[data-g="map"]'),function(b){var id=b.dataset.g;if(!own(id)||b._own)return;b._own=1;b.textContent='✅ 장착중';b.style.opacity='.6';var r=b.closest('.vgrow');var sm=r&&r.querySelector('small');if(sm)sm.innerHTML=sm.innerHTML.replace(/ · 창고에 \d+개/,'')})}catch(e){}},400);
  mig();setTimeout(mig,1500);
 }catch(e){console.warn('auto-equip',e)}})();
+
+/* ===== 2026-11-23 21:44 선생님: 숲 1-1~1-3 몬스터 강화 (평균 무리 4~5마리에 체력 30~40% 소모 목표 · 고2 A반 먼저) =====
+   [체력, 공격] 최종값 — 1-1 체력×1.2·공격×1.8 / 1-2 체력×1.2·공격×1.5 / 1-3 체력×1.3·공격×1.1 */
+try{(function(){var NB={r1:[36,23],r2:[48,24],f3:[45,25],f4:[50,26],d4:[78,27],d5:[96,30],p6:[84,28],wc7:[98,33],b8:[143,35],w9:[117,36],w10:[130,38]};/* 22:01 선생님 확정 (아이들이 크라운 1500 이상으로 장비를 맞추고 온다는 기준) */for(var k in NB){var m=MON[k];if(m){m.hp=NB[k][0];m.atk=NB[k][1]}}})()}catch(e){console.warn('forest bal',e)}
+
+/* ===== 2026-11-23 22:12 선생님: 마을 분수대 쪽 끊김 → 그림자 줄이기 =====
+   사람·몬스터·작은 소품은 진짜 그림자를 끄고 발밑에 동그란 그림자만. 건물·큰 나무 등 큰 것만 진짜 그림자 (주인공은 그대로) */
+try{(function(){var GEO=null,MAT=null,box=null;
+ function blob(T,g,r){if(!GEO){GEO=new T.CircleGeometry(1,20);MAT=new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.26,depthWrite:false})}var m=new T.Mesh(GEO,MAT);m.rotation.x=-Math.PI/2;m.position.y=.03;m.scale.setScalar(r);m.renderOrder=-1;m.userData.blob=1;g.add(m)}
+ function off(o){o.traverse(function(x){if(x.isMesh)x.castShadow=false})}
+ function pass(){try{var W=WORLD;if(!W||!W.sc||!W.T||!W.map)return;var T=W.T,sc=W.sc;if(!box)box=new T.Box3();var sz=new T.Vector3();
+  sc.children.forEach(function(c){if(c._shd||c===W.hero||c.isLight||c.isCamera)return;var u=c.userData||{};
+   var has=false;c.traverse(function(x){if(x.isMesh&&x.castShadow)has=true});if(u.noShd){c._shd=1;off(c);return}if(!has){c._shd=1;return}/* 이미 그림자 없는 마을 사람(발밑 그림자 따로 있음)은 건드리지 않음 */
+   if(u.head||u.k||u.legsL){c._shd=1;off(c);blob(T,c,.42);return}
+   box.setFromObject(c);box.getSize(sz);c._shd=1;if(Math.max(sz.x,sz.z)<2.2&&sz.y<2.6)off(c)})}catch(e){}}
+ setInterval(pass,1500);window.__shdPass=pass})()}catch(e){console.warn('shadow lite',e)}
+
+/* ===== 2026-11-23 22:17 선생님: 숲 상향에 맞춰 동굴·늑대 군락·보스 상향 (약간 어렵게 · 고2 A반 먼저) [체력, 공격] ===== */
+try{(function(){var NB={rt10:[143,40],bt11:[124,41],sp12:[175,43],vb12:[156,44],ss11:[137,45],pb12:[156,47],rb12:[182,48],cs13:[195,52],cs14:[221,54],
+ w15:[235,63],w15f:[218,61],w16:[253,66],w17:[316,70],qs15:[1450,60],dw:[1650,80]};for(var k in NB){var m=MON[k];if(m){m.hp=NB[k][0];m.atk=NB[k][1]}}})()}catch(e){console.warn('cave bal',e)}
+
+/* ===== 2026-11-23 22:50 선생님: 능력치 창 — 찍고 「확정」 안 누른 채 닫으면 「찍은 포인트를 저장할까요?」 · 확정 버튼 반짝 ===== */
+try{(function(){var st=document.createElement('style');st.textContent='@keyframes bpokP{0%,100%{box-shadow:0 0 0 0 rgba(255,190,40,.9);transform:scale(1)}50%{box-shadow:0 0 0 10px rgba(255,190,40,0);transform:scale(1.04)}}#vgp .bpok:not([disabled]){animation:bpokP .9s infinite;background:linear-gradient(#ffd75a,#f0a51e)!important;color:#3a2400!important;font-weight:900}';document.head.appendChild(st);
+ function pend(P){return P&&P.tmp&&Object.keys(P.tmp).some(function(k){return P.tmp[k]>0})}
+ function askSave(P){if(!pend(P))return;var NM={hp:'체력',atk:'공격력',def:'방어력',agi:'민첩성',luk:'운',int:'지능'},ls=Object.keys(P.tmp).filter(function(k){return P.tmp[k]>0}).map(function(k){return NM[k]+' +'+P.tmp[k]}).join(', '),t=P.tmp;P.tmp=null;
+  X.ask('찍은 포인트를 저장할까요?',ls+' — 아직 확정하지 않았어요. 저장하지 않으면 찍은 포인트가 사라져요.','저장','버리기',function(){try{inCtx(P.ctx||'hero',function(){var o0=CH.stats();Object.keys(t).forEach(function(k){P.b[k]=(P.b[k]||0)+(t[k]||0)});var o1=CH.stats();try{HPS().hp=Math.min(o1.hp,o0.cur+(o1.hp-o0.hp))}catch(_){}});X.sv();CH.sfx('equip');X.toast('✨ 보너스 스탯을 저장했어요!',true);try{renderEq()}catch(_){}}catch(e){console.error(e)}})}
+ var _bp=bpPanel;bpPanel=function(){var p0=document.getElementById('vgp');if(p0&&p0._bp){var P=p0._bp;p0._bp=null;if(pend(P)){askSave(P);return}}_bp.apply(this,arguments);var p=document.getElementById('vgp');if(p&&!p._bpObs){p._bpObs=new MutationObserver(function(){if(!p.classList.contains('on')&&p._bp){var P=p._bp;p._bp=null;setTimeout(function(){askSave(P)},60)}});p._bpObs.observe(p,{attributes:true,attributeFilter:['class']})}}})()}catch(e){console.warn('bp save ask',e)}
 
 
 
