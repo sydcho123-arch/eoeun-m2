@@ -5001,7 +5001,7 @@ Object.assign(S,{
   tone({t:t,f:55,f2:40,d:3.5,v:.3});noise({t:t,ft:'lowpass',f:200,a:.5,d:3,v:.06})}
 });
 CH._snd={S:S,get:function(){return{name:SQ.name,st:AC&&AC.state,mode:mode}},test:function(){var c=ctx(),bad=[];Object.keys(S).forEach(function(k){try{S[k](c.currentTime,{})}catch(e){bad.push(k+':'+e.message)}});Object.keys(TH).forEach(function(n){var th=TH[n];for(var i=0;i<th.mel.length;i++){try{var bar=Math.floor(i/th.spb);var m=th.mel[i];if(m>0)th.lead(c.currentTime+1,m,.3,.0001,BG);th.acc(c.currentTime+1,i%th.spb,th.ch[bar%th.ch.length],.3,BG,bar)}catch(e){bad.push(n+i+':'+e.message);break}}});return bad}};
-var FT=null;CH.fount=function(v){var c=ctx();if(!c||c.state==='closed')return;try{if(!FT){FT={s:c.createBufferSource(),f:c.createBiquadFilter(),h:c.createBiquadFilter(),g:c.createGain(),l:c.createOscillator(),lg:c.createGain()};FT.s.buffer=NZ;FT.s.loop=true;FT.f.type='bandpass';FT.f.frequency.value=900;FT.f.Q.value=.5;FT.h.type='highshelf';FT.h.frequency.value=3000;FT.h.gain.value=6;FT.l.frequency.value=3.3;FT.lg.gain.value=260;FT.l.connect(FT.lg);FT.lg.connect(FT.f.frequency);FT.s.connect(FT.f);FT.f.connect(FT.h);FT.h.connect(FT.g);FT.g.connect(FX);FT.g.gain.value=0;FT.s.start();FT.l.start()}FT.g.gain.setTargetAtTime(mode>0?Math.max(0,Math.min(1,v))*.3:0,c.currentTime,.35)}catch(e){}};
+var FT=null;CH.fount=function(v){var c=ctx();if(!c||c.state==='closed')return;try{if(!FT){FT={s:c.createBufferSource(),f:c.createBiquadFilter(),h:c.createBiquadFilter(),g:c.createGain(),l:c.createOscillator(),lg:c.createGain()};FT.s.buffer=NZ;FT.s.loop=true;FT.f.type='bandpass';FT.f.frequency.value=900;FT.f.Q.value=.5;FT.h.type='highshelf';FT.h.frequency.value=3000;FT.h.gain.value=6;FT.l.frequency.value=3.3;FT.lg.gain.value=260;FT.l.connect(FT.lg);FT.lg.connect(FT.f.frequency);FT.s.connect(FT.f);FT.f.connect(FT.h);FT.h.connect(FT.g);FT.g.connect(FX);FT.g.gain.value=0;FT.s.start();FT.l.start()}FT.g.gain.setTargetAtTime(mode>0?Math.max(0,Math.min(1,v))*.1:0,c.currentTime,.35)}catch(e){}};
 CH.sfx=function(name,o){if(mode<1)return;var c=ctx();if(!c||c.state==='closed'||!S[name])return;try{S[name](c.currentTime+.005,o||{})}catch(e){}};
 /* ===== 배경음악 ===== */
 function C(r,q){var Q={M:[0,4,7],m:[0,3,7],M7:[0,4,7,11],m7:[0,3,7,10],d7:[0,4,7,10]}[q||'M'];return Q.map(function(x){return r+x})}
@@ -6180,20 +6180,19 @@ function m3beast(T,k){var K=m3kit(T),P=K.P,QV=new T.Quaternion(),EU=new T.Euler(
   sn=pup?1.3:king?2.2:2.05;
   P(b,.25,0,.66,.2,.8,1.05,1.05,fur);P(b,.19,0,.63,-.1*bl,.72,.88,1.75,fur);P(b,.2,0,.64,-.37*bl,.82,.92,1,fur);P(b,.15,0,.5,.02,.6,.55,1.6*bl,bel);
   P(b,.15,0,.84,.4,.8,1,.9,fur,-.55);P(b,.1,0,.82,-.02,.55,.35,2.6*bl,dk);
-  if(king){/* 늑대왕 갈기: 목둘레에서 뒤·바깥으로 뻗은 은빛 털 뭉치 (여러 겹) */P(b,.2,0,.84,.36,.95,1.05,1,m3shade(0x9a9aa8,.75),-.5);
-   [[.17,.09,.42,16,.22],[.2,.095,.3,16,.27],[.17,.085,.16,12,.22]].forEach(function(L,li){for(var i=0;i<L[3];i++){var a=i/L[3]*Math.PI*2+li*.2;if(Math.sin(a)<-.6)continue;var ox=Math.cos(a)*L[0],oy=Math.sin(a)*L[0]*.85;PD(b,L[1],L[4],ox,.8+oy,L[2],ox*1.1,oy*.9+.06,-1,i%3===0?0xd8dae4:i%3===1?0x9a9aa8:0x74747f)}});
-   for(var i=0;i<7;i++)PD(b,.045,.16,0,.88,.02-i*.11,0,1,-.75,0xc8ccd8)}
+  if(king){/* 11-24 선생님: 목둘레 삐죽한 갈기 없앰 → 털은 dwFur(털 카드)로 */}
   else if(al){var n=7;for(var i=0;i<n;i++){var a=i/n*Math.PI*2;P(b,.12,Math.cos(a)*.14,.8+Math.sin(a)*.1,.36-Math.abs(Math.sin(a))*.05,.7,1.25,.8,i%2?ruff:m3shade(ruff,.82),-.6+Math.sin(a)*.4,0,-Math.cos(a)*.6)}
    for(var i=0;i<4;i++)P(b,.06,0,.98-i*.025,.22-i*.13,.45,1.8,.6,DK,-.45,0,0,'cone')}
   if(king){P(b,.04,.14,.72,.28,1,6,.6,0xb83a3a,0,0,.6)}
   P(h,.15*hs,0,0,0,.92,.82,1.08,fur);P(h,.085*hs,0,-.045*hs,.22*hs,.82,.68,sn,muz);P(h,.075*hs,0,-.09*hs,.2*hs,.75,.4,sn*.9,m3shade(muz,.9));P(h,.04*hs,0,-.005*hs,(pup?.33:.4)*hs,1.15,.85,1,DK);
-  [-1,1].forEach(function(s2){P(h,(pup?.07:.11)*hs,s2*.09*hs,-.07*hs,-.02*hs,.6,.95,.9,ruff);if(king)PD(h,.045*hs,.2*hs,s2*.13*hs,-.04*hs,-.02*hs,s2*1,.1,-.6,0xb8bac6);P(h,.035*hs,s2*.06*hs,.085*hs,.11*hs,1.7,.45,.9,dk,0,0,s2*.35);
+  [-1,1].forEach(function(s2){P(h,(pup?.07:.11)*hs,s2*.09*hs,-.07*hs,-.02*hs,.6,.95,.9,ruff);if(king){}P(h,.035*hs,s2*.06*hs,.085*hs,.11*hs,1.7,.45,.9,dk,0,0,s2*.35);
    var fl=pup?.7:king?1.35:1.1;P(h,.022*hs,s2*.04*hs,-.135*hs,(pup?.28:.32)*hs,1,3.2*fl,1,TH,Math.PI,0,0,'cone');P(h,.014*hs,s2*.022*hs,-.13*hs,(pup?.31:.36)*hs,1,2.2,1,TH,Math.PI,0,0,'cone')});
   if(king||al)P(h,.02*hs,-.08*hs,.1*hs,.12*hs,1,6,1,0xb83a3a,0,0,-.5);
   [-1,1].forEach(function(s2){P(e,.036*hs,s2*.075*hs,.05*hs,.15*hs,1.25,.7,.6,Q[3],0,0,s2*.2);P(e,.012*hs,s2*.072*hs,.06*hs,.175*hs,1,1,1,0xffffff)});
   P(ear,.06,0,.12,0,.85,2.6,.5,fur,0,0,0,'cone');P(ear,.035,0,.11,.02,.7,2.1,.3,m3shade(fur,.7),0,0,0,'cone');
   P(lg,.062,0,-.09,0,1,3.3,1,fur);P(lg,.054,0,-.33,.03,1,.6,1.45,muz);
   P(tl,.075,0,-.03,-.22,.75,.8,2.6,fur,-.85);P(tl,.07,0,-.2,-.36,.7,.75,1.6,m3shade(fur,.75),-1.1);
+  if(king){/* 11-24 발마다 날카로운 발톱 3개 */[-1,0,1].forEach(function(c){PD(lg,.017,.11,c*.032,-.35,.09,c*.18,-.45,1,0xf4efe2)})}
   D.lay={head:[.84,.56*bl],leg:[.14,.37*(Q[7]||1),.24*bl,-.36*bl],earP:[.08*hs,.13*hs],tail:[.66,-.5*bl]};D.olb=[];P(D.olb,.23,0,.64,-.06,.8,.98,2.35*bl,0)}
  D.body=m3merge(T,b);D.bodyO=m3merge(T,K.OL(D.olb||b.slice(0,1),.022));D.head=m3merge(T,h);D.headO=m3merge(T,K.OL(h.slice(0,2),.02));D.eyes=m3merge(T,e);D.ear=m3merge(T,ear);
  D.leg=m3merge(T,lg);D.legO=m3merge(T,K.OL(lg.slice(0,1),.016));D.tail=m3merge(T,tl);D.mouth=new T.TorusGeometry(.07*hs,.01,6,14,Math.PI);M3C[k]=D;return D}
@@ -6212,6 +6211,49 @@ function m3quad(T,k){if(M3C[k])return M3C[k];var K=m3kit(T),P=K.P,Q=QPAL[k],fur=
  var lg=[];P(lg,.075,0,-.14,0,1,2.1,1,fur);P(lg,.07,0,-.3,.03,1,.6,1.3,ft==='boar'?0x2a1a10:muz);D.leg=m3merge(T,lg);D.legO=m3merge(T,K.OL(lg.slice(0,1),.018));
  var tl=[];if(ft==='rat')P(tl,.035,0,.02,-.42,.8,.8,9,muz,-.2);else if(ft==='boar')P(tl,.04,0,0,-.12,1,1,3,fur);else P(tl,.07,0,.05,-.2,.8,.8,2.6,fur,-.5);D.tail=m3merge(T,tl);
  D.mouth=new T.TorusGeometry(.08*hs,.012,6,14,Math.PI);M3C[k]=D;return D}
+/* ===== 11-24 선생님: 은빛 늑대왕 털 — 반투명 털 카드 수백 장을 몸·얼굴·다리·꼬리에 겹겹이 ===== */
+var DWF=null;
+function dwFurTex(T){var c=document.createElement('canvas');c.width=128;c.height=256;var x=c.getContext('2d');x.clearRect(0,0,128,256);
+ var rnd=(function(){var s=7;return function(){s=(s*16807)%2147483647;return s/2147483647}})();
+ for(var i=0;i<46;i++){var bx=10+rnd()*108,w=3+rnd()*5,L=150+rnd()*100,bend=(rnd()-.5)*36,g=200+Math.floor(rnd()*55);
+  x.beginPath();x.moveTo(bx-w,256);x.quadraticCurveTo(bx-w*.6+bend*.4,256-L*.55,bx+bend,256-L);x.quadraticCurveTo(bx+w*.6+bend*.4,256-L*.55,bx+w,256);x.closePath();
+  var gr=x.createLinearGradient(0,256,0,256-L);gr.addColorStop(0,'rgba('+(g-60)+','+(g-60)+','+(g-50)+',1)');gr.addColorStop(.6,'rgba('+g+','+g+','+g+',1)');gr.addColorStop(1,'rgba(255,255,255,.9)');x.fillStyle=gr;x.fill()}
+ var t=new T.CanvasTexture(c);t.anisotropy=2;return t}
+function dwFurMat(T){if(DWF)return DWF;DWF=new T.MeshLambertMaterial({map:dwFurTex(T),vertexColors:true,alphaTest:.42,side:T.DoubleSide});return DWF}
+/* 카드 목록 → 하나의 메시. card=[x,y,z, dx,dy,dz(털 방향), nx,ny,nz(바깥), 길이, 폭, 색] */
+function dwCards(T,list){var P=[],N=[],UV=[],C=[],I=[],v=0,Y=new T.Vector3(),Z=new T.Vector3(),X=new T.Vector3(),col=new T.Color();
+ list.forEach(function(c){Y.set(c[3],c[4],c[5]).normalize();Z.set(c[6],c[7],c[8]);Z.addScaledVector(Y,-Z.dot(Y));if(Z.lengthSq()<1e-6)Z.set(0,1,0).cross(Y);Z.normalize();X.crossVectors(Y,Z).normalize();
+  var L=c[9],W=c[10]/2,bend=.12*L;col.setHex(c[11]);
+  [[-W,0,0],[W,0,0],[-W,L*.55,bend*.4],[W,L*.55,bend*.4],[-W*.8,L,bend],[W*.8,L,bend]].forEach(function(q,qi){P.push(c[0]+X.x*q[0]+Y.x*q[1]+Z.x*q[2],c[1]+X.y*q[0]+Y.y*q[1]+Z.y*q[2],c[2]+X.z*q[0]+Y.z*q[1]+Z.z*q[2]);N.push(Z.x,Z.y,Z.z);UV.push(qi%2,qi<2?0:qi<4?.55:1);var k=qi<2?.8:1;C.push(col.r*k,col.g*k,col.b*k)});
+  I.push(v,v+1,v+2,v+1,v+3,v+2,v+2,v+3,v+4,v+3,v+5,v+4);v+=6});
+ var g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(P,3));g.setAttribute('normal',new T.Float32BufferAttribute(N,3));g.setAttribute('uv',new T.Float32BufferAttribute(UV,2));g.setAttribute('color',new T.Float32BufferAttribute(C,3));g.setIndex(I);return g}
+var DWG=null;
+function dwFurGeo(T){if(DWG)return DWG;var bl=1.3,hs=1.12,SV=[0xc9d0dc,0xaab3c2,0x939cad,0xb9c1ce,0xdde2ea],LT=[0xe6eaf0,0xd6dce6,0xf2f4f8],B=[],H=[],Lg=[],Tl=[],r=function(i){var s=Math.sin(i*12.9898)*43758.5453;return s-Math.floor(s)};
+ /* 몸: 12줄 × 14가닥, 등은 진하게·배와 가슴은 밝게, 앞쪽 3줄은 길고 풍성한 갈기 */
+ for(var zi=0;zi<12;zi++){var z=.5-zi*.085*bl*.92,front=zi<4,rx=.2+(front?.06:0)-(zi>9?.03:0),ry=.2+(front?.07:0)-(zi>9?.02:0),cy=.66+(front?.06:0);
+  for(var ai=0;ai<14;ai++){var a=-.75+ai*(Math.PI+1.5)/13+(zi%2)*.11,cx=Math.cos(a),sy=Math.sin(a),n=zi*14+ai,j=r(n);
+   var px=cx*rx*.92,py=cy+sy*ry*.92,len=(front?.3:.26)+j*.07,dir=front?[cx*.45,-.55+sy*.25,-.55]:[cx*.28,-.12+sy*.08,-1];
+   var c=sy>.55?SV[2+(n%2)]:sy<-.1?LT[n%3]:SV[n%5];if(front&&sy<.2)c=LT[n%3];
+   B.push([px,py,z,dir[0],dir[1],dir[2],cx,sy,0,len,.13+j*.04,c])}}
+ /* 어깨·목 위 둥근 부분 덮기 (두 겹) */for(var li=0;li<2;li++)for(var i=0;i<15;i++){var a=-.35+i/14*(Math.PI+.7),cx=Math.cos(a),sy=Math.sin(a),zz=.42-li*.12;B.push([cx*.2*.9,.8+sy*.2*.9,zz,cx*.4,sy*.2-.25,-1,cx,sy,0,.3,.15,sy>.6?SV[2+(i%2)]:SV[(i+li)%5]])}
+ /* 엉덩이 둥글게 덮기 */for(var i=0;i<14;i++){var a=i/14*Math.PI*2,cx=Math.cos(a),sy=Math.sin(a);if(sy<-.7)continue;B.push([cx*.13,.66+sy*.13,-.46*bl,cx*.3,sy*.3-.2,-1,cx,sy,-.4,.22,.14,SV[i%5]])}
+ /* 얼굴: 볼·머리 뒤 털 고리 + 이마 */
+ for(var i=0;i<22;i++){var a=-1.1+i/21*(Math.PI+2.2),cx=Math.cos(a),sy=Math.sin(a);H.push([cx*.13*hs,(-.02+sy*.11)*hs,-.03*hs,cx*.55,sy*.35-.15,-.8,cx,sy,0,.2*hs+r(i+300)*.05,.11*hs,sy<0?LT[i%3]:SV[i%5]])}
+ for(var i=0;i<6;i++){var x=(i%3-1)*.045*hs;H.push([x,.11*hs,(.07-Math.floor(i/3)*.07)*hs,x*2,.25,-1,0,1,.2,.14*hs,.08*hs,SV[i%5]])}
+ /* 11-24 얼굴까지 이어지게: 이마 → 머리 위·옆 (뒤로 눕는 짧은 털, 눈은 가리지 않게) */
+ /* 11-24 선생님: 눈~코 사이 주둥이 털은 뺌 */
+ for(var ri=0;ri<4;ri++){var zz=(.13-ri*.055)*hs;for(var ai=0;ai<13;ai++){var a=-.6+ai/12*(Math.PI+1.2),cx=Math.cos(a),sy=Math.sin(a);if(zz>.08*hs&&sy>.05&&sy<.7&&Math.abs(cx)>.35)continue;/* 눈 자리 비움 */
+   H.push([cx*.13*hs,sy*.115*hs+.005*hs,zz,cx*.3,sy*.15,-1,cx,sy,.2,(.1+ri*.02)*hs,.06*hs,sy<-.2?LT[(ai+ri)%3]:SV[(ai+ri)%5]])}}
+ /* 볼 아래 둥근 털뭉치(턱살) 덮기 */[-1,1].forEach(function(sd){for(var i=0;i<12;i++){var a=i/12*Math.PI*2,u=Math.cos(a),v=Math.sin(a);H.push([sd*(.1+.055*Math.abs(u))*hs,(-.075+v*.085)*hs,(-.02+u*.05)*hs,sd*.5,-.35+v*.2,-.8,sd,v,u,.13*hs,.07*hs,v<0?LT[i%3]:SV[i%5]])}});
+ /* 다리: 윗다리 위주로 아래·뒤로 흐르는 털 */
+ for(var yi=0;yi<5;yi++)for(var ai=0;ai<6;ai++){var a=ai/6*Math.PI*2+yi*.4,cx=Math.cos(a),sz=Math.sin(a),y=.1-yi*.075;Lg.push([cx*.06,y,sz*.06,cx*.15,-1,-.25+sz*.1,cx,0,sz,.15-yi*.012,.08,yi>2?LT[(ai+yi)%3]:SV[(ai+yi)%5]])}
+ /* 꼬리: 크고 복슬복슬하게 */
+ for(var ti=0;ti<9;ti++)for(var ai=0;ai<7;ai++){var t=ti/8,a=ai/7*Math.PI*2+ti*.5,cx=Math.cos(a),cz=Math.sin(a),ax=[0,-.6,-.8],px=cx*(.05+.04*Math.sin(t*3)),py=-.04-t*.32+cz*.03,pz=-.15-t*.42+cz*.04;
+  Tl.push([px,py,pz,cx*.5,-.6+cz*.2,-.85,cx,cz*.5,cz,.22+.08*Math.sin(t*3),.12,ti>6?LT[ai%3]:SV[(ti+ai)%5]])}
+  /* 귀: 원뿔 귀 겉면을 따라 위로 눕는 털 + 안쪽 밝은 털 */var E=[];for(var li=0;li<2;li++)for(var i=0;i<9;i++){var a=-1.4+i/8*2.8,cx=Math.sin(a),cz=Math.cos(a)*-1,r0=li?.032:.046,y0=li?.1:.055;E.push([cx*r0,y0,cz*r0*.6,-cx*.25,1,-cz*.2,cx,0,cz,li?.07:.08,.035,SV[(i+li)%5]])}
+ for(var i=0;i<3;i++)E.push([(i-1)*.012,.055,.028,(i-1)*.08,1,-.1,0,0,1,.08,.03,LT[i]]);
+ DWG={b:dwCards(T,B),h:dwCards(T,H),l:dwCards(T,Lg),t:dwCards(T,Tl),e:dwCards(T,E)};return DWG}
+function dwFur(T,body,head,legs,tail,ears){var G=dwFurGeo(T),M=dwFurMat(T);try{var OLM=m3mats(T).ol;body.children.forEach(function(m){if(m.material===OLM)m.visible=false})}catch(e){}/* 털 사이로 갈색 테두리(목걸이처럼 보임)가 비치지 않게 */body.add(new T.Mesh(G.b,M));head.add(new T.Mesh(G.h,M));legs.forEach(function(l){l.add(new T.Mesh(G.l,M))});tail.add(new T.Mesh(G.t,M));(ears||[]).forEach(function(e){e.position.y-=.055;e.add(new T.Mesh(G.e,M))})/* 귀가 떠 보이지 않게 머리에 붙임 */}
 function mon3dQ(T,k,own){var D=m3quad(T,k),MM=m3mats(T),skin=own?MM.skin.clone():MM.skin,Q=QPAL[k],bl=Q[6],ll=Q[7];
  var root=new T.Group(),lift=new T.Group(),body=new T.Group();root.add(lift);lift.add(body);
  function add(par,g,mat,sh){var o=new T.Mesh(g,mat);if(sh)o.castShadow=true;par.add(o);return o}
@@ -6221,7 +6263,8 @@ function mon3dQ(T,k,own){var D=m3quad(T,k),MM=m3mats(T),skin=own?MM.skin.clone()
  var ears=[-1,1].map(function(s2){var p=new T.Group();p.position.set(s2*(LY?LY.earP[0]:.11*Q[5]),LY?LY.earP[1]:.15*Q[5],-.02);p.rotation.z=-s2*.3;add(p,D.ear,skin);head.add(p);return p});
  var legs=[[-1,1],[1,1],[-1,-1],[1,-1]].map(function(q){var p=new T.Group();if(LY){p.position.set(q[0]*LY.leg[0],LY.leg[1],q[1]>0?LY.leg[2]:LY.leg[3])}else{p.position.set(q[0]*.17,.36*ll,q[1]*.34*bl);p.scale.y=ll}add(p,D.leg,skin,true);add(p,D.legO,MM.ol);lift.add(p);return p});
  var tail=new T.Group();tail.position.set(0,LY?LY.tail[0]:.6,LY?LY.tail[1]:-.4*bl);add(tail,D.tail,skin);body.add(tail);
- var U={k:k,skin:skin,t:Math.random()*10,yaw:0,want:0,gait:0};root.userData=U;
+ if(k==='dw')try{dwFur(T,body,head,legs,tail,ears)}catch(e){console.error(e)}
+var U={k:k,skin:skin,t:Math.random()*10,yaw:0,want:0,gait:0};root.userData=U;
  U.tick=function(dt,o){o=o||{};U.t+=dt;var t=U.t;var dy=U.want-U.yaw;while(dy>Math.PI)dy-=Math.PI*2;while(dy<-Math.PI)dy+=Math.PI*2;U.yaw+=dy*Math.min(1,dt*(o.fastTurn?18:9));root.rotation.y=U.yaw;
   var run=o.hop!=null;if(run)U.gait+=dt*(o.chase?13:9);var g=U.gait,sw=run?Math.sin(g):0;
   legs.forEach(function(l,i){var ph=(i===0||i===3)?0:Math.PI;l.rotation.x=run?Math.sin(g+ph)*.75:0});
@@ -7627,7 +7670,7 @@ M('w17',{nm:'정예 늑대',lv:17,hp:260,atk:46,def:22,mv:4,eva:12,luk:10,sgr:18
 /* 늑대왕(다이어 울프)이 3턴마다 부르는 늑대 (2026-11-16) */
 M('wl13',{nm:'무리 늑대',lv:13,hp:125,atk:33,def:19,mv:4,eva:10,luk:7,sgr:18,drop:['wfang',1],snd:'bark',bs:1.18,sk:[{id:'b',nm:'찢어발기기',ic:'🩸',k:'bite',m:1.3,bl:4,g:45,cd:2}]});
 M('wl14',{nm:'무리 늑대',lv:14,hp:140,atk:35,def:20,mv:4,eva:10,luk:8,sgr:18,drop:['wfang',1],snd:'bark',bs:1.22,sk:[{id:'m',nm:'연속 물기',ic:'⚔️',k:'multi',n:2,m:.75,g:45,cd:2}]});
-M('dw',{nm:'다이어 울프',lv:18,hp:950,atk:55,def:26,mv:4,eva:8,luk:12,sgr:22,drop:['dwfang',1],extra:[['enh',1],['potion6',2],['wfang',5]],snd:'roar',bs:3.6,boss:1,
+M('dw',{nm:'다이어 울프',lv:18,hp:950,atk:55,def:26,mv:4,eva:8,luk:12,sgr:22,drop:['dwfang',1],extra:[['enh',1],['potion6',2],['wfang',5]],snd:'roar',bs:3.04,boss:1,
  sk:[{id:'h',nm:'피의 포효',ic:'🩸',k:'heal',p:18,at:.6,g:60,cd:4},{id:'a',nm:'강철 이빨',ic:'🦷',k:'bite',m:1.8,bl:7,g:35,cd:1},
      {id:'e',nm:'대지 강타',ic:'💥',k:'aoe',r:2,m:1.3,g:50,cd:2},{id:'c',nm:'치명의 발톱',ic:'🩸',k:'crit',m:1.6,g:70,cd:3},{id:'w',nm:'우두머리의 울부짖음',ic:'🐺',k:'howl',g:45,cd:5}]});
 ['wc7','b8','w9','w10'].forEach(function(k,i){FS[k]=[1.45,1.9,1.85,1.95][i]});
@@ -7640,7 +7683,7 @@ QPAL.w15=[0x7a8088,0xc0c4c8,0x9aa0a8,0xffd23a,'wolf',1.05,1.15,1.1];
 QPAL.w15f=[0xe8f0fa,0xffffff,0xd0dcec,0x4ad8ff,'wolf',1,1.15,1.1];
 QPAL.w16=[0x2a2630,0x4a4452,0x3a3442,0xc04aff,'wolf',1,1.2,1.12];
 QPAL.w17=[0x3a3a3e,0x6a6460,0x4a4644,0xff2a2a,'alpha',1.08,1.22,1.15];
-QPAL.dw=[0x3a3634,0x6a645e,0x4a4440,0xff1a1a,'king',1.12,1.3,1.18];
+QPAL.dw=[0x7e8696,0xd4d9e2,0x9aa2b0,0xff1a1a,'king',1.12,1.3,1.18];/* 11-24 은빛 늑대왕 */
 /* 부산물 (강화 재료 등급: 숲1-1·1-2=1단계, 숲1-3·1-4=2단계, 동굴1-1=3단계, 동굴1-2=4단계, 동굴1-3=5단계) */
 [['tail',1],['leg',1],['fang',1],['claw',1],['psac',1]].forEach(function(a){if(CH.ITEMDB[a[0]])CH.ITEMDB[a[0]].tier=a[1]});
 CH.ITEMDB.wpup={ic:'🐺',nm:'새끼 늑대 털',p:20,mat:1,tier:2,d:'보송보송한 새끼 늑대의 털 · 2단계 강화 재료'};
@@ -7667,7 +7710,7 @@ M('rb12',{nm:'큰 들쥐',lv:12,hp:150,atk:33,def:13,mv:4,eva:9,luk:6,sgr:18,dro
 M('ss11',{nm:'작은 독거미',lv:11,hp:110,atk:30,def:11,mv:3,eva:10,luk:6,sgr:18,drop:['pfang',1],snd:'hiss',bs:1,sk:[{id:'p',nm:'독 물기',ic:'☠️',k:'bite',m:1.1,psn:7,g:40,cd:2}]});
 M('cs13',{nm:'자식 독거미',lv:13,hp:165,atk:35,def:15,mv:3,eva:10,luk:8,sgr:18,drop:['pfang',2],snd:'hiss',bs:1,sk:[{id:'p',nm:'맹독 물기',ic:'☠️',k:'bite',m:1.2,psn:10,g:40,cd:2},{id:'w',nm:'거미줄',ic:'🕸️',k:'ranged',r:3,m:.5,web:1,g:50,cd:3}]});
 M('cs14',{nm:'자식 독거미',lv:14,hp:180,atk:37,def:16,mv:3,eva:11,luk:8,sgr:18,drop:['pfang',2],snd:'hiss',bs:1,sk:[{id:'p',nm:'맹독 물기',ic:'☠️',k:'bite',m:1.25,psn:12,g:40,cd:2},{id:'w',nm:'거미줄',ic:'🕸️',k:'ranged',r:3,m:.5,web:1,g:50,cd:3}]});
-M('qs15',{nm:'여왕거미',lv:15,hp:1100,atk:44,def:22,mv:3,eva:6,luk:10,sgr:22,drop:['qsac',1],extra:[['enh',1],['qsilk',3],['potion6',2]],snd:'hiss',bs:1,boss:1,
+M('qs15',{nm:'여왕거미',lv:15,hp:1100,atk:44,def:22,mv:3,eva:6,luk:10,sgr:22,drop:['qsac',1],extra:[['enh',1],['qsilk',3],['potion6',2]],snd:'hiss',bs:.92,boss:1,
  sk:[{id:'v',nm:'맹독 송곳니',ic:'☠️',k:'bite',m:1.5,psn:15,pt:4,g:40,cd:1},{id:'w',nm:'거미줄 그물',ic:'🕸️',k:'aoe',r:3,m:.7,web:1,g:50,cd:3},{id:'a',nm:'산성 독액',ic:'🧪',k:'ranged',r:4,m:1.2,psn:10,g:45,cd:2},{id:'h',nm:'알 껍질 재생',ic:'🥚',k:'heal',p:15,at:.6,g:60,cd:4}]});
 /* 여왕거미가 4턴마다 낳는 새끼거미 (2026-11-16) */
 M('sb8',{nm:'새끼거미',lv:8,hp:60,atk:19,def:9,mv:3,eva:8,luk:4,sgr:18,drop:['silk',1],snd:'hiss',bs:.62,sk:[{id:'p',nm:'독 물기',ic:'☠️',k:'bite',m:1.0,psn:4,g:40,cd:2}]});
@@ -8319,7 +8362,7 @@ function buildF14(A){var T=A.T,r=A.rnd,Z=ZONES['1-4'],P=Z.path;A.noMon=calmCamp(
  var cs=A.textSprite(T,'🕳️ 거대한 동굴','rgba(30,24,20,.92)','#ffd8a0',.9);cs.position.set(0,7.4,-37);A.sc.add(cs);
  A.trigger(0,-35.4,2.6,'🕳️ 동굴 입구로 들어가기',function(){_caveIn()},false);
  /* 다이어 울프 + 늑대들 */
- if(!calmCamp()){var dw=CH.mon3d(T,'dw');var S=1.75*3.6;dw.scale.setScalar(S);dw.position.set(0,1.6,-24);A.sc.add(dw);CAMP.boss=dw;
+ if(!calmCamp()){var dw=CH.mon3d(T,'dw');var S=4.0;dw.scale.setScalar(S);dw.position.set(0,1.6,-24);A.sc.add(dw);CAMP.boss=dw;
   var pack=['w17','w17','w15','w15f','w16','w15','w16','w15f','w10','w9'];pack.forEach(function(k,i){var g=CH.mon3d(T,k);g.scale.setScalar(1.75*(MON[k].bs||1));var a=i/pack.length*6.28,rr=8+(i%3)*4;var o={g:g,k:k,hx:Math.cos(a)*rr,hz:-22+Math.sin(a)*rr*.6,t:Math.random()*6};o.x=o.hx;o.z=o.hz;g.position.set(o.x,0,o.z);A.sc.add(g);CAMP.sleep.push(o)});
   var zz=[];CAMP.sleep.concat([{g:dw,big:1}]).forEach(function(o){var s3=A.textSprite(T,'💤','rgba(255,255,255,0)','#bcd8ff',o.big?1.4:.7);A.sc.add(s3);zz.push({s:s3,o:o})});
   A.ANIM.push(function(t,dt){if(!CAMP||CAMP.A!==A)return;var night=nightCamp();dt=dt||.016;
@@ -10945,15 +10988,15 @@ M('g17',{nm:'덩굴 골렘',lv:17,hp:375,atk:64,def:36,mv:3,eva:4,luk:8,sgr:19,g
  sk:[{id:'v',nm:'덩굴 휘감기',ic:'🌿',k:'ranged',r:3,m:1.1,web:1,g:45,cd:3},{id:'r',nm:'자가 수복',ic:'🌱',k:'heal',p:18,at:.5,g:55,cd:5},{id:'e',nm:'감각 공유',ic:'👁️',k:'howl',g:45,cd:5}]});
 M('g18',{nm:'얼음 골렘',lv:18,hp:400,atk:67,def:38,mv:3,eva:4,luk:9,sgr:20,gol:1,drop:['gice',1],snd:'smash',bs:1.15,
  sk:[{id:'f',nm:'서리 강타',ic:'❄️',k:'bite',m:1.6,web:1,g:45,cd:2},{id:'o',nm:'오버클럭',ic:'⚙️',k:'buff',f:'bfA',p:40,t:2,over:1,lb:'오버클럭! 공격 +40% · 이동 +1',g:55,cd:5},{id:'t',nm:'얼음 바위 투척',ic:'🧊',k:'ranged',r:3,m:1.2,g:40,cd:2}]});
-M('gm19',{nm:'도끼창 골렘 장군',lv:19,hp:1850,atk:76,def:45,mv:3,eva:4,luk:10,sgr:22,gol:1,drop:['gaxe',1],extra:[['enh50',1],['potion6',2],['gst1',4]],snd:'roar',bs:1.75,boss:1,
+M('gm19',{nm:'도끼창 골렘 장군',lv:19,hp:1850,atk:76,def:45,mv:3,eva:4,luk:10,sgr:22,gol:1,drop:['gaxe',1],extra:[['enh50',1],['potion6',2],['gst1',4]],snd:'roar',bs:1.62,boss:1,
  sk:[{id:'x',nm:'도끼창 쪼개기',ic:'🪓',k:'crit',m:1.7,g:40,cd:2},{id:'q',nm:'대지 가르기',ic:'⚡',k:'quake',r:2,m:1.4,st:.35,g:55,cd:3},{id:'t',nm:'바위 투척',ic:'☄️',k:'ranged',r:4,m:1.3,g:40,cd:2},
      {id:'h',nm:'강철 경화',ic:'🛡️',k:'buff',f:'bfD',p:20,t:2,at:.75,lb:'강철 경화! 방어 +20% (2턴)',g:50,cd:10},{id:'r',nm:'자가 수복',ic:'🔧',k:'heal',at:.5,g:60,cd:5},{id:'o',nm:'폭주',ic:'⚙️',k:'buff',f:'bfA',p:35,t:2,over:1,ph:1,lb:'폭주! 공격 +35% · 이동 +1',g:60,cd:6}]});
-M('gb20',{nm:'고대 골렘',lv:20,hp:2000,atk:82,def:50,mv:3,eva:5,luk:12,sgr:22,mpMax:100,mpR:15,gol:1,drop:['gcore',1],extra:[['enh50',2],['potion6',3],['gamt',3]],snd:'roar',bs:2.0,boss:1,
+M('gb20',{nm:'고대 골렘',lv:20,hp:2000,atk:82,def:50,mv:3,eva:5,luk:12,sgr:22,mpMax:100,mpR:15,gol:1,drop:['gcore',1],extra:[['enh50',2],['potion6',3],['gamt',3]],snd:'roar',bs:2.03,boss:1,
  sk:[{id:'q',nm:'대지 분쇄',ic:'🌋',k:'quake',r:2,m:1.4,st:.35,g:50,cd:3},{id:'p',nm:'로켓 펀치',ic:'👊',k:'ranged',r:4,m:1.5,st:.2,g:45,cd:2},{id:'r',nm:'자가 수복',ic:'🔧',k:'heal',at:.5,g:60,cd:5},{id:'f',nm:'합체',ic:'🧩',k:'fuse',r:5,g:55,cd:4},
      {id:'b',nm:'마력 광선',ic:'🔷',k:'ranged',magic:1,r:7,m:1.6,mp:30,g:40,cd:2},{id:'n',nm:'마나 폭발',ic:'💠',k:'quake',magic:1,r:3,m:1.8,st:.3,mp:45,g:60,cd:4},{id:'a',nm:'골렘 아머',ic:'🛡️',k:'buff',f:'bfD',p:30,t:2,at:.8,mp:35,lb:'골렘 아머! 방어 +30% (2턴)',g:50,cd:10}]});
 M('gc',{nm:'코어 파편',lv:16,hp:180,atk:50,def:25,mv:4,eva:0,luk:5,sgr:35,gol:1,drop:['gst1',1],snd:'smash',bs:.72,
  sk:[{id:'b',nm:'마력 자폭',ic:'💥',k:'boom',r:1,m:2.0,g:50,cd:1}]});
-['g13','g14','g15','g16','g17','g18','gc'].forEach(function(k){FS[k]=1.55});FS.gm19=2.4;FS.gb20=2.7;
+['g13','g14','g15','g16','g17','g18','gc'].forEach(function(k){FS[k]=1.55});FS.gm19=1.97;FS.gb20=2.45;CH.__MON=MON;CH.__FS=FS;
 /* ---------- 1-5 신의 골렘 (가이아가 직접 빚은 초대형 고대 거신 · Lv40~60 · 대지 마법) ---------- */
 var GSB={rock:{nm:'바위 포격',ic:'☄️',k:'ranged',magic:1,r:6,m:1.3,mp:20,g:35,cd:2},spear:{nm:'암석 창',ic:'⛰️',k:'ranged',magic:1,r:5,m:1.6,bl:8,mp:30,g:45,cd:3},
  quake:{nm:'대지진',ic:'🌋',k:'quake',magic:1,r:3,m:1.5,st:.4,mp:40,g:55,cd:3},shatter:{nm:'대지 분쇄',ic:'💥',k:'quake',magic:1,r:2,m:1.8,st:.5,mp:35,g:50,cd:3},
@@ -10964,8 +11007,8 @@ var GGD=[['gg10','외눈 철갑 거신',40,['rock','arm','shield']],['gg8','푸�
  ['gg5','등불지기 거신',46,['root','rock','breath']],['gg2','붉은 뇌핵 거신',48,['quake','spear','giant']],['gg9','용암 핵 거신',50,['boulder','shatter','arm']],
  ['gg7','지팡이 현자 거신',52,['root','quake','shield','breath']],['gg1','가면의 수호 거신',55,['spear','boulder','shield','arm']],['gg4','성채 거신',58,['quake','giant','rock','shield']],
  ['gg3','대지의 거신',60,['boulder','quake','root','giant','shield']]];
-GGD.forEach(function(a){var L=a[2],k=a[0];M(k,{nm:a[1],lv:L,hp:9000+(L-40)*550,atk:200+(L-40)*9,def:110+Math.round((L-40)*4.5),mv:2,eva:5,luk:15,sgr:40,sg0:100,mpMax:200,mpR:30,gol:1,giant:1,boss:1,drop:['gst1',1],snd:'roar',bs:4.0,
- sk:a[3].map(function(n,i){var o={};for(var q in GSB[n])o[q]=GSB[n][q];o.id='s'+i;return o})});FS[k]=4.2});
+GGD.forEach(function(a){var L=a[2],k=a[0];M(k,{nm:a[1],lv:L,hp:9000+(L-40)*550,atk:200+(L-40)*9,def:110+Math.round((L-40)*4.5),mv:2,eva:5,luk:15,sgr:40,sg0:100,mpMax:200,mpR:30,gol:1,giant:1,boss:1,drop:['gst1',1],snd:'roar',bs:2.0,
+ sk:a[3].map(function(n,i){var o={};for(var q in GSB[n])o[q]=GSB[n][q];o.id='s'+i;return o})});FS[k]=2.1});
 CH.GGD=GGD;
 var IT=CH.ITEMDB;
 IT.gst1={ic:'🧱',nm:'골렘 돌조각',p:60,mat:1,tier:5,d:'지하 낭떠러지 골렘의 몸에서 떨어진 돌 · 5단계 강화 재료'};
@@ -11283,15 +11326,15 @@ function flashScr(col,ms){var o=document.createElement('div');o.className='uflas
 
 /* ---------- 1-5 신의 골렘 안치소 ---------- */
 var U5=null;
-function giantSpots(){/* 11-23 선생님: 내 쪽을 바라보며 반원으로 주르륵 · 한 기씩 잘 보이게 넉넉히 떨어뜨림 (가운데 큰 거신은 한 걸음 뒤) */var out=[],order=['gg10','gg8','gg6','gg5','gg3','gg2','gg9','gg7','gg1','gg4'];order.forEach(function(k,i){var a=(-165+i*(150/9))*Math.PI/180,r=k==='gg3'?50:42;out.push({k:k,x:Math.cos(a)*r,z:12+Math.sin(a)*r})});return out}
+function giantSpots(){/* 11-23 선생님: 내 쪽을 바라보며 반원으로 주르륵 · 한 기씩 잘 보이게 넉넉히 떨어뜨림 (가운데 큰 거신은 한 걸음 뒤) */var out=[],order=['gg10','gg8','gg6','gg5','gg3','gg2','gg9','gg7','gg1','gg4'];order.forEach(function(k,i){var a=(-165+i*(150/9))*Math.PI/180,r=k==='gg3'?26:22;out.push({k:k,x:Math.cos(a)*r,z:12+Math.sin(a)*r})});return out}
 function buildU5(A){var T=A.T,gaia=window.__u5mode==='gaia',q=QS();A.mB=22;
  /* 신전 바닥 · 거대한 기둥 · 깊은 곳의 빛 */
  var fl=A.add(new T.Mesh(new T.CylinderGeometry(54,54.8,.16,120),A.std(0x3a3d48)),false);fl.position.set(0,.08,-6);
  var rl=new T.Mesh(new T.RingGeometry(52.4,53.2,120),new T.MeshBasicMaterial({color:0x6ad8b8,transparent:true,opacity:.25,side:T.DoubleSide}));rl.rotation.x=-Math.PI/2;rl.position.set(0,.18,-6);A.sc.add(rl);
  for(var i=0;i<20;i++){var a=i/20*6.283,x=Math.cos(a)*57,z=-6+Math.sin(a)*57;if(z>20&&Math.abs(x)<16)continue;pillar(A,x,z,12,i%4===3,0x4a4d58)}
  [[-4,12],[4,12],[-4,4],[4,4]].forEach(function(p){torch(A,p[0],p[1],2.6)});upStairs(A,21,true);try{planStatue(A)}catch(e){}
- var G=[];giantSpots().forEach(function(s,i){var g=CH.mon3d(T,s.k,true),big=s.k==='gg3',S=(FS[s.k]||4.2)*(big?1.25:1);g.scale.setScalar(S);g.position.set(s.x,0,s.z);var yw=Math.atan2(0-s.x,6-s.z);g.userData.want=g.userData.yaw=yw;
-  g.userData.wake=(gaia||q.u5done)?(big?1:.55):0;A.sc.add(g);A.COL.push([s.x,s.z,big?3.4:2.6]);G.push({g:g,k:s.k,x:s.x,z:s.z,S:S,big:big})});
+ var G=[];giantSpots().forEach(function(s,i){var g=CH.mon3d(T,s.k,true),big=s.k==='gg3',S=(FS[s.k]||2.1)*(big?1.25:1);g.scale.setScalar(S);g.position.set(s.x,0,s.z);var yw=Math.atan2(0-s.x,6-s.z);g.userData.want=g.userData.yaw=yw;
+  g.userData.wake=(gaia||q.u5done)?(big?1:.55):0;A.sc.add(g);A.COL.push([s.x,s.z,big?1.7:1.3]);G.push({g:g,k:s.k,x:s.x,z:s.z,S:S,big:big})});
  var last=0;A.ANIM.push(function(t){var dt=last?Math.min(.05,(t-last)/1000):.016;last=t;G.forEach(function(o){o.g.userData.tick(dt,{})})});
  var dl=new T.PointLight(0x6ad8b8,gaia?2:.6,40,1.2);dl.position.set(0,10,-10);A.sc.add(dl);
  U5={A:A,G:G,dl:dl}}
@@ -11301,13 +11344,16 @@ function u5Wake(o,cb){var g=o.g,U=g.userData,t0=performance.now();try{CH.sfx('bo
 function shakeW(k){try{var A=WORLD.API,t0=performance.now(),sc=A.sc;(function s(){var p=(performance.now()-t0)/700;if(p>=1){sc.position.set(0,0,0);return}var a=k*(1-p)*.35;sc.position.set((Math.random()-.5)*a,(Math.random()-.5)*a*.5,(Math.random()-.5)*a);requestAnimationFrame(s)})()}catch(e){}}
 function banner(t,s,big){var o=document.createElement('div');o.className='ugban'+(big?' big':'');o.innerHTML='<b>'+t+'</b><small>'+s+'</small>';document.body.appendChild(o);setTimeout(function(){o.classList.add('out')},big?2600:1500);setTimeout(function(){o.remove()},big?3300:2100)}
 function u5Awake(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */,W=WORLD;if(!U5||!W)return;window.__storyOn=1;window.__fmus='under';
- try{W.camShow=1;W.camOv={p:[0,10,30],l:[0,9,-18],f:68}}catch(e){}
+ try{W.camShow=1;W.camOv={p:[0,8,30],l:[0,5,-18],f:68}}catch(e){}
  heroWalkTo([[0,12]],function(){planFind(function(){
   var L=[{n:'',t:'(설계도를 챙기고 고개를 들자… 숨이 막힐 만큼 거대한 공간이 눈앞에 펼쳐져 있었다)'},{n:'',t:'(어둠 속에 산처럼 커다란 무언가들이 줄지어 서 있다. 하나… 둘… 열이나 된다)'},{n:me,t:'…이게 다… 골렘이야? 아까 싸운 골렘들이랑은… 크기부터가 달라.'},
    ar?{n:an,t:'빛이 전부 꺼져 있구나. 잠들어 있는 건가… 아니면 누군가를 기다리고 있는 건가.'}:null,{n:me,t:'아까 그 수정구랑 같은 기운이 느껴져요. 아니, 그보다 훨씬… 훨씬 깊은 곳에서.'},
    {n:'',t:'(그때— 발밑 깊은 곳에서 거대한 심장 소리 같은 울림이 올라왔다)',onShow:function(){window.__fmus='titanwake';shakeW(1)}}].filter(Boolean);
-  dlg(L,null,function(){try{W.camOv={p:[0,26,48],l:[0,9,-16],f:70}}catch(e){}var i=0,G=U5.G.slice().sort(function(a,b){return(a.big?1:0)-(b.big?1:0)});
-   (function next(){if(i>=G.length){afterWake();return}var o=G[i++];u5Wake(o,function(){setTimeout(next,o.big?900:350)})})()})})})}
+  dlg(L,null,function(){var i=0,G=U5.G.slice().sort(function(a,b){return(a.big?1:0)-(b.big?1:0)});
+   /* 11-24 선생님: 깨어나는 거신을 하나씩 카메라가 비춤 → 마지막에 전체 */
+   function camTo(p,l,f,ms,cb){var o0=W.camOv||{p:[0,8,30],l:[0,5,-18],f:68},a={p:o0.p.slice(),l:o0.l.slice(),f:o0.f||60},t0=performance.now();(function go(){var k=Math.min(1,(performance.now()-t0)/ms),e=k*k*(3-2*k),c={p:[0,1,2].map(function(j){return a.p[j]+(p[j]-a.p[j])*e}),l:[0,1,2].map(function(j){return a.l[j]+(l[j]-a.l[j])*e}),f:a.f+(f-a.f)*e};try{W.camOv=c}catch(_){}if(k<1)requestAnimationFrame(go);else cb&&cb()})()}
+   function look(o,cb){var dx=0-o.x,dz=12-o.z,d=Math.hypot(dx,dz)||1,ux=dx/d,uz=dz/d,h=o.big?7.3:5.4,D=o.big?17:12.5;camTo([o.x+ux*D+uz*2.6,h*.7+1.6,o.z+uz*D-ux*2.6],[o.x,h*.5,o.z],58,650,cb)}
+   (function next(){if(i>=G.length){camTo([0,20,40],[0,3,-2],72,1200,function(){setTimeout(afterWake,700)});return}var o=G[i++];look(o,function(){u5Wake(o,function(){setTimeout(next,o.big?900:450)})})})()})})})}
 function afterWake(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;QS().u5awake=1;X.sv();var L=[{n:'',t:'(열 개의 거신이 한꺼번에 고개를 든다. 그 빛이… 전부 우리를 향하고 있다)'},ar?{n:an,t:'…전부 깨어났어! 이건 싸워서 어떻게 될 상대가 아니야!'}:null,{n:me,t:'뒤로… 뒤로 가요! 계단으로…!'},
   {n:'',t:'(쿠구구구궁—!! 내려온 빛의 계단이 산산이 무너져 내린다)',onShow:function(){shakeW(1.4);try{CH.sfx('boom')}catch(e){}}},ar?{n:an,t:'도망칠 길이 없어!! 이렇게 된 이상— 버틸 수 있는 만큼 버틴다! 내 뒤는 걱정 마라!'}:{n:me,t:'계단이…! …이제 정말, 맞서 싸우는 수밖에 없어.'}].filter(Boolean);
  window.__fmus='titan';dlg(L,null,function(){window.__storyOn=0;try{WORLD.camOv=null;WORLD.camShow=0}catch(e){}window.__fmus=null;giantFight()})}
@@ -11323,12 +11369,12 @@ function gaiaScene(){var q=QS();q.u5done=1;q.hp=null;try{inCtx('arch',function()
  setTimeout(function(){window.__uGo=1;try{openForest([0,6.8],'u5')}catch(e){console.error(e)}window.__uGo=0;
   var t0=Date.now(),iv=setInterval(function(){if((WORLD&&WORLD.zone==='u5'&&U5)||Date.now()-t0>9000){clearInterval(iv);setTimeout(function(){gaiaTalk();setTimeout(function(){cov.classList.add('out');setTimeout(function(){cov.remove()},1600)},600)},500)}},120)},1400)}
 function gaiaTalk(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */,W=WORLD,A=U5&&U5.A;if(!W||!A)return;var T=A.T;window.__storyOn=1;
- var gaia=U5.G.filter(function(o){return o.big})[0];if(gaia){gaia.g.position.set(0,0,-3.4);gaia.g.userData.want=gaia.g.userData.yaw=0;gaia.g.userData.wake=1}
+ var gaia=U5.G.filter(function(o){return o.big})[0];if(gaia){gaia.g.position.set(0,0,1.0);gaia.g.userData.want=gaia.g.userData.yaw=0;gaia.g.userData.wake=1}
  /* 쓰러진 두 사람 */
  var lay=[];try{var h=CH.hero3d(T,CH.heroCh());h.scale.setScalar(1.15);h.rotation.set(-Math.PI/2,0,.3);h.position.set(-.8,.28,5.2);A.sc.add(h);lay.push(h);
   if(ar){var a2=CH.hero3d(T,archerChar());try{archGear(T,a2)}catch(_){}a2.scale.setScalar(1.15);a2.rotation.set(-Math.PI/2,0,-.4);a2.position.set(1.1,.28,5.6);A.sc.add(a2);lay.push(a2)}}catch(e){console.error(e)}
  var aura=glow(A,0xbfffc0,.1,.0);aura.position.set(0,.8,5.3);var auL=new T.PointLight(0xd8ffb0,0,14,1.3);auL.position.set(0,2,5.3);A.sc.add(auL);
- W.P.x=0;W.P.z=7.2;W.camShow=0;W.camOv={p:[11,10,24],l:[0,6.5,-2],f:56};
+ W.P.x=0;W.P.z=7.2;W.camShow=0;W.camOv={p:[11,8,22],l:[0,4,2],f:56};
  function hug(){var t0=performance.now();try{CH.sfx('heal')}catch(e){}(function go(){var p=Math.min(1,(performance.now()-t0)/3200),e=p*p*(3-2*p);if(gaia){gaia.g.userData.pose='hug';gaia.g.userData.hugK=e}aura.scale.set(12*e+.1,12*e+.1,1);aura.material.opacity=.55*e;auL.intensity=2.4*e;if(p<1)requestAnimationFrame(go)})();try{W.camOv={p:[8,7.5,17],l:[0,3,2],f:54}}catch(e){}}
  var G='대지의 신 가이아';
  var L=[{n:'',t:'(…쿵. …쿵. 아주 멀리서, 땅이 천천히 숨을 쉬는 소리가 들린다)'},{n:'',t:'(차갑던 돌바닥이… 이상하게 따뜻하다)'},
