@@ -4155,7 +4155,7 @@ LVH.check=check;
 LVH.info=function(){var l=L();return{lv:l.lv,g:l.g}};
 /* ---------- Lv.10 숨겨진 열쇠 (선생님 생일 달력) ---------- */
 function first4(l,t,aq){return t.app>=7200&&t.nb>=7200&&t.sv>=40&&!!aq.ok}
-function huntCond(l,t,aq){var f=first4(l,t,aq);return{t:f||l.hunt?'🗝️ 숨겨진 열쇠 찾기':'❓ ???',v:l.hunt?1:0,ok:!!l.hunt,s:l.hunt?'열쇠를 찾았어요!':f?'Syd를 찾으세요':'앞의 조건을 모두 달성하면 힌트가 나타나요'}}
+function huntCond(l,t,aq){var f=first4(l,t,aq);return{t:f||l.hunt?'🗝️ 숨겨진 열쇠 찾기':'❓ ???',v:l.hunt?1:0,ok:!!l.hunt,s:l.hunt?'열쇠를 찾았어요!':f?'Syd를 찾으세요 (쌤 생일 10월 17일)':'앞의 조건을 모두 달성하면 힌트가 나타나요'}}
 window.__chHuntOn=function(){try{var l=L();if(l.lv<9||(l.un&&l.un[10]))return false;return CH.hasKey?!CH.hasKey(1):false}catch(e){return false}};
 var KEYSVG='<svg viewBox="0 0 64 64" width="44" height="44"><defs><linearGradient id="chkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#ffcf3a"/><stop offset="1" stop-color="#c98a10"/></linearGradient></defs><g fill="url(#chkg)" stroke="#8a5a0a" stroke-width="2.4" stroke-linejoin="round"><circle cx="20" cy="20" r="13"/><rect x="29" y="27" width="11" height="31" rx="3" transform="rotate(-45 20 20) translate(-9 -7)"/></g><circle cx="20" cy="20" r="5.5" fill="#fff7d6" stroke="#8a5a0a" stroke-width="2"/><path d="M44 44 l5 -5 M50 50 l5 -5" stroke="#8a5a0a" stroke-width="5" stroke-linecap="round" fill="none"/></svg>';
 function actx(){var A=window.AudioContext||window.webkitAudioContext;if(!A)return null;var c=clink.c||(clink.c=new A());if(c.state==='suspended')c.resume();return c}
@@ -4722,7 +4722,7 @@ CH.lock3=function(sz){var k=W().keys,hole=function(x,on){return on?'<g><circle c
 /* 조건 5번: 숨겨진 열쇠 3개 */
 CH.keyCond=function(){var n=CH.keyCount();return{t:'🗝️ 숨겨진 열쇠 3개 찾기 + ⭐100',v:n/3,ok:n>=3,s:'열쇠 '+n+' / 3개 · 자물쇠를 열 때 ⭐100개가 필요해요'}};
 CH.hintHTML=function(){var l=L();if(l.lv<9||l.lv>=10)return'';mark9();var d=since9(),k=W().keys,h='<div class="chhint"><b>🗝️ 숨겨진 열쇠</b>';
- h+='<div class="chhk'+(k[1]?' ok':'')+'">'+(k[1]?'✅ 열쇠 1번 찾음':'🔑 열쇠 1번 · '+((d>=2||k[3])?'<span class="hn">💡 힌트: 앱에서 Syd를 찾으시오</span>':'힌트는 Lv.9가 되고 이틀 뒤에 나타나요'))+'</div>';
+ h+='<div class="chhk'+(k[1]?' ok':'')+'">'+(k[1]?'✅ 열쇠 1번 찾음':'🔑 열쇠 1번 · '+((d>=2||k[3])?'<span class="hn">💡 힌트: 앱에서 Syd를 찾으시오 (쌤 생일 10월 17일)</span>':'힌트는 Lv.9가 되고 이틀 뒤에 나타나요'))+'</div>';
  h+='<div class="chhk'+(k[2]?' ok':'')+'">'+(k[2]?'✅ 열쇠 2번 찾음':'🔑 열쇠 2번 · '+((d>=3||k[3])?'<span class="hn">💡 힌트: 스스로를 꾸며보세요</span>':'힌트는 Lv.9가 되고 3일 뒤에 나타나요'))+'</div>';
  h+='<div class="chhk'+(k[3]?' ok':'')+'">'+(k[3]?'✅ 열쇠 3번 찾음':'🔑 열쇠 3번 · '+(k3d()>=3?'<span class="hn">💡 힌트: 필기장 전체를 복습하세요</span>':'<span class="hn">❓ 힌트 없음 · 앱 어딘가에 숨어 있어요</span>'))+'</div></div>';return h};
 /* #21 (2026-11-20) 열쇠 3번: 「필기장 전체 보기」 목록의 필기장 하나에 걸려 있음 · 열쇠 1·2번을 찾고 3일 지나도 못 찾으면 힌트 */
