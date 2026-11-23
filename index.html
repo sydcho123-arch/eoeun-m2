@@ -4145,16 +4145,16 @@ function allQuiz(){try{var q=window.__qzStatus?window.__qzStatus():null;if(!q||!
 function conds(n){var l=L(),t=l.tot;
  if(n===10){var aq=allQuiz();return[
   {t:'레벨 게이지 100% 채우기',v:Math.min(1,(l.g||0)/100),s:Math.min(100,Math.floor(l.g||0))+'% / 100%'},/* 11-23 선생님: 열쇠를 다 찾아도 게이지 100%를 채워야 자물쇠를 돌릴 수 있음 */
-  {t:'앱 이용 시간 4시간 이상',v:Math.min(1,t.app/14400),s:Math.floor(t.app/60)+'분 / 240분'},
-  {t:'필기장 공부 시간 4시간 이상',v:Math.min(1,t.nb/14400),s:Math.floor(t.nb/60)+'분 / 240분'},
-  {t:'숏츠 시청 50회 이상',v:Math.min(1,t.sv/50),s:t.sv+'회 / 50회'},
+  {t:'앱 이용 시간 2시간 이상',v:Math.min(1,t.app/7200),s:Math.floor(t.app/60)+'분 / 120분'},
+  {t:'필기장 공부 시간 2시간 이상',v:Math.min(1,t.nb/7200),s:Math.floor(t.nb/60)+'분 / 120분'},
+  {t:'숏츠 시청 40회 이상',v:Math.min(1,t.sv/40),s:t.sv+'회 / 40회'},
   {t:'모든 문제 GOOD 이상으로 풀기',v:aq.t?aq.n/aq.t:1,s:aq.t?aq.n+' / '+aq.t+'세트':'아직 문제 세트가 없어요',ok:aq.t?aq.ok:true},(CH.keyCond?CH.keyCond():huntCond(l,t,aq))]}
  return null}
 function check(){var l=L();if(l.lv===9&&!l.keys[10]){var c=conds(10),ok=c.every(function(x){return x.ok!=null?x.ok:x.v>=1});if(ok){l.keys[10]=1;X.sv();X.toast('🔑 Lv.10 해금 열쇠를 얻었어요! 레벨 창에서 ⭐100과 함께 자물쇠를 여세요',true);badge()}}}
 LVH.check=check;
 LVH.info=function(){var l=L();return{lv:l.lv,g:l.g}};
 /* ---------- Lv.10 숨겨진 열쇠 (선생님 생일 달력) ---------- */
-function first4(l,t,aq){return t.app>=7200&&t.nb>=7200&&t.sv>=50&&!!aq.ok}
+function first4(l,t,aq){return t.app>=7200&&t.nb>=7200&&t.sv>=40&&!!aq.ok}
 function huntCond(l,t,aq){var f=first4(l,t,aq);return{t:f||l.hunt?'🗝️ 숨겨진 열쇠 찾기':'❓ ???',v:l.hunt?1:0,ok:!!l.hunt,s:l.hunt?'열쇠를 찾았어요!':f?'Syd를 찾으세요':'앞의 조건을 모두 달성하면 힌트가 나타나요'}}
 window.__chHuntOn=function(){try{var l=L();if(l.lv<9||(l.un&&l.un[10]))return false;return CH.hasKey?!CH.hasKey(1):false}catch(e){return false}};
 var KEYSVG='<svg viewBox="0 0 64 64" width="44" height="44"><defs><linearGradient id="chkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#ffcf3a"/><stop offset="1" stop-color="#c98a10"/></linearGradient></defs><g fill="url(#chkg)" stroke="#8a5a0a" stroke-width="2.4" stroke-linejoin="round"><circle cx="20" cy="20" r="13"/><rect x="29" y="27" width="11" height="31" rx="3" transform="rotate(-45 20 20) translate(-9 -7)"/></g><circle cx="20" cy="20" r="5.5" fill="#fff7d6" stroke="#8a5a0a" stroke-width="2"/><path d="M44 44 l5 -5 M50 50 l5 -5" stroke="#8a5a0a" stroke-width="5" stroke-linecap="round" fill="none"/></svg>';
