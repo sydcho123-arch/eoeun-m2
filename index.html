@@ -5500,7 +5500,7 @@ function W(){var s=ST();if(!s.wh)s.wh={n:0,keys:{},hs:{},items:[]};if(!s.wh.item
 function lay(id,fn){try{LRAW[id]=fn;layerOpen(id)}catch(e){}}
 function unlay(id,fn){try{if(typeof layerClose==='function'&&LRAW[id]){layerClose(id);return}}catch(e){}fn()}
 /* ---- 칠판: 마을로 가기 버튼 ---- */
-var VCOST=50;
+var VCOST=1000;/* 2026-11-23 선생님: 50 → 1000 */
 function vOpen(){return L().lv>=VLV}
 var CHAIN='<svg class="chchain" viewBox="0 0 120 76" preserveAspectRatio="none"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M-4 6 L124 70" stroke="#5a5f6a"/><path d="M-4 70 L124 6" stroke="#5a5f6a"/><path d="M-4 6 L124 70" stroke="#c8ccd4" stroke-dasharray="7 5"/><path d="M-4 70 L124 6" stroke="#c8ccd4" stroke-dasharray="7 5"/></g></svg>';
 var PAD='<svg class="chpad" viewBox="0 0 40 46"><path d="M10 20 V13 Q10 4 20 4 Q30 4 30 13 V20" fill="none" stroke="#9aa3b4" stroke-width="5"/><rect x="4" y="18" width="32" height="25" rx="6" fill="#f2c230" stroke="#8a5a0a" stroke-width="2.5"/><circle cx="20" cy="28" r="3.6" fill="#5a3a08"/><path d="M18.5 30 L21.5 30 L21 37 L19 37Z" fill="#5a3a08"/></svg>';
@@ -7407,7 +7407,7 @@ function questPanel(){var q=QS(),r=readyInfo(),HN=['하늘이네','마루네','�
 /* ===== Lv.10: 마을 해금 + 그동안 쌓인 것 한꺼번에 적용 안내 ===== */
 function lv10Show(){var s=ST();if(s.v10c||L().lv<10||document.querySelector('.v10'))return;s.v10c=Date.now();X.sv();
  var o=CH.stats(),bpN=bpTotal()-bpUsed(),skN=skTotal()-skUsed(),pf=s.pf||0,ub=skUB(),k=L().lv-5;
- var rows=[['🏘️','별빛 마을 입구가 나타났어요!','칠판의 🔒 마을 열기 버튼에서 ⭐50을 내면 자물쇠가 풀려요','enter'],
+ var rows=[['🏘️','별빛 마을 입구가 나타났어요!','칠판의 🔒 마을 열기 버튼에서 ⭐1000을 내면 자물쇠가 풀려요','enter'],
   ['📈','레벨 5 → '+L().lv+' 성장분을 포인트로 환산 +'+(k*BPLV),'레벨마다 체력 25·공격 2·방어 1·민첩 1%·운 0.5% = 24포인트 · 원하는 대로 나눠 올려요','buff'],
   ['✨','보너스 스탯 포인트 총 '+bpN+'개','성장분 '+(k*BPLV)+' + 레벨 보너스 '+(bpN-k*BPLV)+' · 장비 창 「분배하기」에서 올려요','star'],
   ['🌳','스킬 포인트 '+skN+'개','레벨 '+(L().lv>=5?1+2*k:0)+'개 + UNBELIEVABLE '+ub+'번 · 캐릭터 메뉴 「스킬 트리」','skill'],
@@ -7833,13 +7833,14 @@ function inChief(A,i,H,exit){var T=A.T,B=A.box;hall(A,H.wall,0x8a5a34);
  var gd=rch('guard',A.rnd);gd.p.tp=0;A.npc(gd,5.6,3.6,{wander:0,rot:-PI/2,name:'호위병',extra:gGear(A),talk:lineSay('호위병',['촌장님께 볼일이 있으면 앞으로 가 봐.','이곳은 마을에서 제일 중요한 곳이다.'])});
  A.trigger(0,-2.6,1.6,'🏛️ 촌장님께 부탁하기',chiefTalk,false);A.trigger(0,5.4,1.3,'🚪 밖으로 나가기',exit,false)}
 function chiefTalk(){var q=QS();track('chief');
- var ch=[];if(!q.id)ch.push({t:'🪪 주민등록증 만들기 (⭐20)',fn:idAsk});else ch.push({t:'🪪 내 주민등록증 보기',fn:function(){idCard(false)}});
+ var ch=[];if(!q.id)ch.push({t:'🪪 주민등록증 만들기 (⭐100)',fn:idAsk});else ch.push({t:'🪪 내 주민등록증 보기',fn:function(){idCard(false)}});
  ch.push({t:q.permit?'🏠 집 짓기 허가 (받았어요)':'🏠 집 짓기 허가 받기',fn:permit});ch.push({t:'💬 마을 이야기 듣기',fn:function(){dlg([{n:'촌장님',t:pick(['우리 별빛 마을은 밤이 되면 등불이 반짝여서 별빛 마을이라 부르지.','숲에 몬스터가 늘어서 경비병을 세워 두었네. 함부로 들어가면 안 되네.','분수대 꼭대기의 별은 마을의 자랑일세. 허허.','강 건너 목수는 솜씨가 마을 제일이지. 집을 짓고 싶으면 그 친구를 찾아가게.'])}])}});ch.push({t:'안녕히 계세요',fn:function(){}});
  dlg([{n:'촌장님',t:q.id?'오, '+esc(ST().nm||'자네')+' 왔는가. 우리 마을 주민이 된 걸 환영하네.':'허허, 처음 보는 얼굴이구먼. 나는 이 <b>별빛 마을의 촌장</b>일세. 무슨 일로 왔는가?'}],ch)}
+var IDC=100;/* 2026-11-23 선생님: 주민등록증 100 */
 function idAsk(){var s=ST();if(QS().id){idCard(false);return}
- dlg([{n:'촌장님',t:'우리 마을에서 물건을 사거나 집을 지으려면 <b>주민등록증</b>이 있어야 하네.'},{n:'촌장님',t:'사진을 찍고 등록하는 데 <b>⭐20</b>일세. 만들어 주겠나?'}],
-  [{t:'🪪 만들게요 (⭐20)',fn:function(){if(ST().pt<20){CH.sfx('deny');dlg([{n:'촌장님',t:'별이 모자라구먼. 공부해서 별을 모아 오게. (지금 ⭐'+ST().pt+')'}]);return}
-    X.ask('주민등록증을 만들까요?','⭐ 20개를 내고 사진을 찍어 주민등록증을 만들어요. (지금 ⭐ '+ST().pt+'개)','만들기','취소',function(){X.spend(20,'🪪 주민등록증 발급');refreshPt();CH.sfx('sell');think('사진 한 장에 별 20개… 그래도 이걸로 이 마을 사람이 되는 거라면 싼 거지.',200);setTimeout(photo,2600)})}},{t:'다음에 할게요',fn:function(){}}])}
+ dlg([{n:'촌장님',t:'우리 마을에서 물건을 사거나 집을 지으려면 <b>주민등록증</b>이 있어야 하네.'},{n:'촌장님',t:'사진을 찍고 등록하는 데 <b>⭐'+IDC+'</b>일세. 적은 돈은 아니지만… 이 마을 주민이 되는 값이라 생각하게. 만들어 주겠나?'}],
+  [{t:'🪪 만들게요 (⭐'+IDC+')',fn:function(){if(ST().pt<IDC){CH.sfx('deny');dlg([{n:'촌장님',t:'별이 모자라구먼. 공부해서 별을 모아 오게. (지금 ⭐'+ST().pt+')'}]);return}
+    X.ask('주민등록증을 만들까요?','⭐ '+IDC+'개를 내고 사진을 찍어 주민등록증을 만들어요. (지금 ⭐ '+ST().pt+'개)','만들기','취소',function(){X.spend(IDC,'🪪 주민등록증 발급');refreshPt();CH.sfx('sell');think('크라운 '+IDC+'개… 적은 돈은 아니지만, 이걸로 이 마을 사람이 되는 거니까.',200);setTimeout(photo,2600)})}},{t:'다음에 할게요',fn:function(){}}])}
 function photo(){var o=document.createElement('div');o.className='vgphoto';o.innerHTML='<div class="phw"><div class="pht">📸 주민등록증 사진 촬영</div><div class="phf"><img alt=""><i class="phc">3</i></div><small>촌장님: 자, 웃어 보게~ 허허</small></div>';document.body.appendChild(o);
  var img=o.querySelector('img');try{img.src=CH.hero3dShot(THREE,ST().ch,300,360,'face')}catch(e){img.src=''}
  var c=o.querySelector('.phc'),n=3;CH.sfx('tick');var iv=setInterval(function(){n--;if(n>0){c.textContent=n;CH.sfx('tick')}else{clearInterval(iv);c.textContent='';o.classList.add('flash');CH.sfx('shutter');
@@ -7849,7 +7850,7 @@ function idCard(fresh){var q=QS(),s=ST(),id=q.id;if(!id)return;var face='';try{f
   +'<div class="chnote2">🛒 이제 <b>상점</b>과 <b>대장간</b>에서 물건을 살 수 있어요. 🏠 집을 지으려면 분수대 옆 <b>📋 의뢰 게시판</b>의 마을 의뢰를 <b>6개</b> 해내고 촌장님께 <b>집 짓기 허가</b>를 받으세요.</div>';
  panel('🪪 주민등록증',h);if(fresh){setTimeout(function(){CH.sfx('smash')},900);setTimeout(function(){CH.gainFx({small:true,kind:'quest',head:'🪪 주민등록증 발급!',icon:'<span style="font-size:84px">🪪</span>',title:'별빛 마을 주민이 되었어요',sub:'상점·대장간에서 물건을 살 수 있어요',to:'.vgscr.on .vghud'})},1800)}}
 function permit(){var q=QS();if(q.permit){dlg([{n:'촌장님',t:'허가서는 이미 써 주었네. 강 건너 <b>목수</b>에게 가 보게. 분수대에서 서쪽 길로 쭉 가서 다리를 건너면 되네.'}]);return}
- if(!q.id){dlg([{n:'촌장님',t:'집을 지으려면 먼저 우리 마을 <b>주민등록증</b>부터 있어야 하네. 외지인에게는 땅을 내어 줄 수 없지.'}],[{t:'🪪 주민등록증 만들기 (⭐20)',fn:idAsk},{t:'나중에요',fn:function(){}}]);return}
+ if(!q.id){dlg([{n:'촌장님',t:'집을 지으려면 먼저 우리 마을 <b>주민등록증</b>부터 있어야 하네. 외지인에게는 땅을 내어 줄 수 없지.'}],[{t:'🪪 주민등록증 만들기 (⭐100)',fn:idAsk},{t:'나중에요',fn:function(){}}]);return}
  dlg([{n:'촌장님',t:'집을 짓고 싶다고? 허허, 우리 마을에 뿌리를 내리겠다니 반가운 일이지.'},{n:'촌장님',t:'그리고 명심하게. 단비 아빠가 <b>늑대 군락</b>에서 돌아오지 않은 뒤로 내가 규칙을 하나 만들었네. <b>마을에 집이 있는 주민만</b> 군락에 들어갈 수 있다는 규칙이지.'},{n:'촌장님',t:'다쳐서 돌아왔을 때 쉴 <b>침대</b>가 있어야 하고, 혹시 돌아오지 못하면 수색대를 보낼 <b>주소</b>가 있어야 하니까. 그날 우리는 단비 아빠를 어디서부터 찾아야 할지조차 몰랐다네…'},{n:'촌장님',t:'집을 다 지으면 <b>군락 통행증</b>을 써 주지. 그러니 서두르게나.'},{n:'촌장님',t:'좋네, <b>집 짓기 허가서</b>를 써 주지. 강 건너 <b>목수</b>에게 이걸 보여 주게.'}],null,function(){q.permit=Date.now();X.sv();CH.sfx('quest');CH.gainFx({small:true,kind:'quest',head:'📜 허가서를 받았어요',icon:'<span style="font-size:84px">📜</span>',title:'집 짓기 허가서',sub:'강 건너 목수네 집에 가 보세요 (분수대 → 서쪽 길)',to:'.vgscr.on .vghud'})})}
 /* 목수네 집 */
 function inCarp(A,i,H,exit){var T=A.T,B=A.box;hall(A,0xc8a274,0x6a4426);
@@ -7911,7 +7912,7 @@ var BCLS='hero';var BSLOT={wp:'⚔️ 무기',sh:'🛡️ 방패',hd:'🪖 머�
 function bSlots(c){var o=[];['wp','sh','hd','bd','gl','bt'].forEach(function(sl){var any=Object.keys(CH.ITEMDB).some(function(id){var d=CH.ITEMDB[id];return d&&d.slot===sl&&!d.mat&&!d.nosell&&!d.noshop&&d.p&&(c==='arch'?!!d.arch:!d.arch)});if(any)o.push(sl)});return o}
 function buyPanel(){var w=W(),s=ST(),sm=SMODE==='smith',hasId=!!QS().id;if(sm){if(BCLS==='arch'&&!hasArch())BCLS='hero';var SL=bSlots(BCLS);if(SL.indexOf(BTAB)<0)BTAB=SL[0]||'wp'}if(!sm)BTAB='etc';
  var h='<div class="vgsub">⭐ '+s.pt+' · 창고 빈 칸 '+free()+'칸 <small>(같은 물건은 한 칸에 5개 · 강화 재료는 99개까지 쌓여요)</small></div>';
- if(!hasId)h+='<div class="idneed">🪪 <b>주민등록증</b>이 있어야 살 수 있어요<small>분수대에서 북쪽 끝 <b>촌장님 댁</b>에서 만들어요 (⭐20)</small></div>';
+ if(!hasId)h+='<div class="idneed">🪪 <b>주민등록증</b>이 있어야 살 수 있어요<small>분수대에서 북쪽 끝 <b>촌장님 댁</b>에서 만들어요 (⭐100)</small></div>';
  if(sm){h+='<div class="eqtabs bcls">'+[['hero','⚔️ 탱커 ('+esc(ST().nm||'나')+')']].concat(hasArch()?[['arch','🏹 궁수 ('+esc(archName())+')']]:[]).map(function(t){return'<button type="button" data-bc="'+t[0]+'" class="'+(BCLS===t[0]?'on':'')+'" style="font-size:15px;padding:9px 12px">'+t[1]+'</button>'}).join('')+'</div>';h+='<div class="eqtabs">'+bSlots(BCLS).map(function(sl){return'<button type="button" data-bt="'+sl+'" class="'+(BTAB===sl?'on':'')+'">'+BSLOT[sl]+'</button>'}).join('')+'</div>'}
  h+='<div class="vglist">';
 
@@ -8689,7 +8690,7 @@ ICO.push('🏡');
 var HOMEI=HOUSES.length-1;
 CH.ITEMDB.log={ic:'🪵',nm:'통나무',p:4,mat:1,d:'집 짓기 재료 · 속삭이는 숲 1-1, 들개 언덕 1-2의 나무 더미에서 구해요'};
 CH.ITEMDB.stone={ic:'🪨',nm:'돌덩이',p:4,mat:1,d:'집 짓기 재료 · 들개 언덕 1-2와 동굴의 돌무더기에서 구해요'};
-var HNEED=[['log',20,'🪵 통나무','숲 1-1 · 1-2의 나무 더미'],['stone',12,'🪨 돌덩이','숲 1-2 · 1-3의 돌무더기'],['wfur',4,'🐺 늑대 가죽','숲 1-3 늑대 (이불·카펫용)'],['tusk',3,'🐗 멧돼지 엄니','숲 1-3 멧돼지 (문고리·장식용)']],HSTAR=80;
+var HNEED=[['log',20,'🪵 통나무','숲 1-1 · 1-2의 나무 더미'],['stone',12,'🪨 돌덩이','숲 1-2 · 1-3의 돌무더기'],['wfur',4,'🐺 늑대 가죽','숲 1-3 늑대 (이불·카펫용)'],['tusk',3,'🐗 멧돼지 엄니','숲 1-3 멧돼지 (문고리·장식용)']],HSTAR=300;/* 2026-11-23 선생님: 집 짓는 삯 300 */
 function HQ(){return QS().hq||null}
 function hqLeft(){var h=HQ();if(!h)return 99;var n=0;HNEED.forEach(function(x){n+=Math.max(0,x[1]-(h.d[x[0]]||0))});return n+(h.paid?0:1)}
 function hqActive(){var h=HQ();return!!(h&&!QS().home&&hqLeft()>0)}
@@ -8827,7 +8828,7 @@ var DEXZ={r1:'숲 1-1',r2:'숲 1-1',f3:'숲 1-1',f4:'숲 1-1',d4:'숲 1-2',d5:'�
 function dexHTML(){var q=QS(),d=q.dex||{},h='<div class="vgsub">쓰러뜨린 몬스터가 기록돼요 · '+Object.keys(d).length+' / '+Object.keys(DEXZ).length+'종</div><div class="vglist">';Object.keys(DEXZ).forEach(function(k){var m=MON[k];if(!m)return;var n=d[k]||0,dr=m.drop&&CH.ITEMDB[m.drop[0]];var det=n?'<div class="dexd" style="display:none;margin-top:6px;font-size:13px;line-height:1.6;background:rgba(255,255,255,.55);border-radius:8px;padding:6px 8px">❤️ 체력 '+m.hp+' · ⚔️ 공격력 '+m.atk+' · 🛡️ 방어력 '+m.def+'<br>👣 이동 '+(m.mv||0)+'칸'+(m.eva?' · 💨 회피 '+m.eva+'%':'')+(m.boss?' · 👑 보스':'')+(Array.isArray(m.sk)&&m.sk.length?'<br>'+m.sk.map(function(s){return (s.ic||'✨')+' '+s.nm+(s.m?' (공격력 ×'+s.m+')':'')}).join('<br>'):'<br>🗡️ 기본 공격만 해요')+'</div>':'';h+='<div class="vgrow'+(n?'':' dexq')+'"'+(n?' style="cursor:pointer;flex-wrap:wrap" onclick="var d=this.querySelector(\'.dexd\');if(d)d.style.display=d.style.display===\'none\'?\'block\':\'none\'"':'')+'><span class="ic">'+(n?'<img src="'+mpic(k)+'" style="width:46px;height:46px;object-fit:contain">':'❓')+'</span><div><b>'+(n?m.nm+' Lv.'+dLv(m):'???')+'</b><small>📍 '+DEXZ[k]+(n?' · 처치 '+n+'마리'+(dr?' · 🎁 '+dr.nm:'')+(Array.isArray(m.sk)&&m.sk.length?' · 스킬 '+m.sk.map(function(s){return s.nm}).join(', '):'')+' · <b>눌러서 자세히</b>':'')+'</small>'+det+'</div></div>'});return h+'</div>'}
 /* ===== 퀘스트 수첩 ===== */
 function questLog(){var q=QS(),L1=[];function st(done,t,hint){L1.push([done,t,hint])}
- st(!!q.id,'주민등록증 만들기','분수대 북쪽 끝 촌장님 댁 (⭐20)');st(q.q>=2,'단비 할아버지의 부탁 듣기','집 5곳 방문 · 12명과 대화 · 보리네 식당 식사 → 아저씨들 이야기 → 단비네 할아버지');st(!!q.forest,'숲으로 들어가기','무기와 방어구를 갖추고 경비병에게 여러 번 말 걸기');st(!!q.home,'🏡 내 집 짓기 (늑대 군락 가기 전에!)','촌장님 허가서 → 강 건너 목수 → 숲 1-1~1-3에서 재료 모으기 → 하룻밤 자기');
+ st(!!q.id,'주민등록증 만들기','분수대 북쪽 끝 촌장님 댁 (⭐100)');st(q.q>=2,'단비 할아버지의 부탁 듣기','집 5곳 방문 · 12명과 대화 · 보리네 식당 식사 → 아저씨들 이야기 → 단비네 할아버지');st(!!q.forest,'숲으로 들어가기','무기와 방어구를 갖추고 경비병에게 여러 번 말 걸기');st(!!q.home,'🏡 내 집 짓기 (늑대 군락 가기 전에!)','촌장님 허가서 → 강 건너 목수 → 숲 1-1~1-3에서 재료 모으기 → 하룻밤 자기');
  st(!!(q.arch&&q.arch.joined)||!!q.boss_qs15,'늑대 군락 몰래 지나가기','숲 1-4 · 낮에는 늑대가 모두 깨어 있어요. 밤(19시~6시)에 잠든 늑대 곁을 천천히!');st(!!(q.arch&&q.arch.joined),'단비 아빠 찾기','늑대 군락 안쪽 동굴 → 동굴 1-3 여왕거미 둥지');st(!!q.boss_qs15,'여왕거미 쓰러뜨리기','아저씨와 함께 · 보스 쪽으로 다가가야 보스가 움직여요');
  st(!!q.chiefQs,'촌장님께 알리기','촌장님 댁');st(!!q.reunion,'단비네 가족에게 돌아가기','단비네 집');st(!!q.boss_dw,'늑대 군락의 다이어 울프','이제 아저씨와 함께라면… 숲 1-4 정면 승부 (낮)');st(!!q.sProph,'주술사 할머니의 이야기 듣기','마을 동쪽 주술사의 집 (군락의 🔍 흔적을 먼저 보면 더 좋아요)');st(!!q.sFest,'마을 잔치 (다이어 울프 사냥 성공)','주술사의 집에서 나와 마을 광장으로');st(!!q.pzIn,'왕궁 큰 광장 · 첫돌 큰잔치','남은 마을 이야기를 모두 보면 날짜가 정해져요 → 잔치 날, 촌장님 댁 뒤 북쪽 왕궁길 문');st(!!q.stRumor,'잔치 사흘째 · 석상 소문','잔치 3일째, 광장 놀이 부스에 가 봐요 (1·2일째는 마음껏 즐기기)');st(!!q.uCliff,'낭떠러지의 석상 살펴보기','마을에서 물약 준비 → 숲 1-4 늑대 군락 안쪽, 동굴 뒤편 낭떠러지');st(!!q.uIn||!!q.u5done,'동굴 안쪽에서 내려가는 길 찾기','동굴 1-3 여왕거미 둥지 (내려가면 마을로 못 돌아와요!)');st(!!q.boss_gb20,'지하 낭떠러지 1-1 ~ 1-4','골렘들을 뚫고 가장 깊은 곳으로');st(!!q.u5done,'푸른 수정구','빛의 제단');
  var h='<div class="qltab"><button type="button" data-ql="q" class="on">📒 퀘스트</button><button type="button" data-ql="d">📕 몬스터 도감</button></div><div class="qlbody"><div class="qlr now"><i>✨</i><div><b>오늘의 공부 축복 '+blLeft()+'개</b><small>오늘 퀴즈 UNBELIEVABLE 1개마다 축복 1개 · 전투를 시작할 때 1개가 쓰이고 그 전투 동안 모든 캐릭터 치명타 +5% · 회피 +5% (최대치 무시) · 오늘이 지나면 사라져요</small></div></div><div class="qlh">📖 1장 · 사라진 단비 아빠</div>',cur=false;
