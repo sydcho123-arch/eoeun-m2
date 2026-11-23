@@ -4144,6 +4144,7 @@ function levelFx(lv,stars,ups){if(lv>0&&lv%10===0)return levelFxBig(lv,stars,ups
 function allQuiz(){try{var q=window.__qzStatus?window.__qzStatus():null;if(!q||!q.length)return{ok:false,n:0,t:0};var n=0;q.forEach(function(s){if(s.g&&s.g!=='again')n++});return{ok:n===q.length,n:n,t:q.length}}catch(e){return{ok:false,n:0,t:0}}}
 function conds(n){var l=L(),t=l.tot;
  if(n===10){var aq=allQuiz();return[
+  {t:'레벨 게이지 100% 채우기',v:Math.min(1,(l.g||0)/100),s:Math.min(100,Math.floor(l.g||0))+'% / 100%'},/* 11-23 선생님: 열쇠를 다 찾아도 게이지 100%를 채워야 자물쇠를 돌릴 수 있음 */
   {t:'앱 이용 시간 4시간 이상',v:Math.min(1,t.app/14400),s:Math.floor(t.app/60)+'분 / 240분'},
   {t:'필기장 공부 시간 4시간 이상',v:Math.min(1,t.nb/14400),s:Math.floor(t.nb/60)+'분 / 240분'},
   {t:'숏츠 시청 50회 이상',v:Math.min(1,t.sv/50),s:t.sv+'회 / 50회'},
@@ -4207,7 +4208,7 @@ CH.bigWin=bigWin;CH.KEYSVG=KEYSVG;CH.clink=clink;LVH.L=L;
 
 
 var UCOST=100;
-function unlock(n){var l=L();if(!l.keys[n]||l.un[n])return;if(X.st().pt<UCOST){X.toast('⭐ 별이 부족해요. 자물쇠를 열려면 ⭐'+UCOST+'개가 필요해요 (지금 '+X.st().pt+'개)');return}X.spend(UCOST,'🔓 Lv.'+n+' 자물쇠 열기');l.un[n]=1;if(l.g>GCAP)l.g=GCAP;l.capW=0;l.capN=0;X.toast('🔓 Lv.'+n+' 자물쇠가 열렸어요!',true);settle(l);X.sv();badge();renderLv()}
+function unlock(n){var l=L();if(!l.keys[n]||l.un[n])return;if(n===10&&(l.g||0)<100){X.toast('🔒 레벨 게이지를 100%까지 채워야 자물쇠를 돌릴 수 있어요 (지금 '+Math.floor(l.g||0)+'%)',true);return}if(X.st().pt<UCOST){X.toast('⭐ 별이 부족해요. 자물쇠를 열려면 ⭐'+UCOST+'개가 필요해요 (지금 '+X.st().pt+'개)');return}X.spend(UCOST,'🔓 Lv.'+n+' 자물쇠 열기');l.un[n]=1;if(l.g>GCAP)l.g=GCAP;l.capW=0;l.capN=0;X.toast('🔓 Lv.'+n+' 자물쇠가 열렸어요!',true);settle(l);X.sv();badge();renderLv()}
 
 /* ---------- 칠판 배지 ---------- */
 var tapN=0,tapT=0;
@@ -4721,8 +4722,8 @@ CH.lock3=function(sz){var k=W().keys,hole=function(x,on){return on?'<g><circle c
 /* 조건 5번: 숨겨진 열쇠 3개 */
 CH.keyCond=function(){var n=CH.keyCount();return{t:'🗝️ 숨겨진 열쇠 3개 찾기 + ⭐100',v:n/3,ok:n>=3,s:'열쇠 '+n+' / 3개 · 자물쇠를 열 때 ⭐100개가 필요해요'}};
 CH.hintHTML=function(){var l=L();if(l.lv<9||l.lv>=10)return'';mark9();var d=since9(),k=W().keys,h='<div class="chhint"><b>🗝️ 숨겨진 열쇠</b>';
- h+='<div class="chhk'+(k[1]?' ok':'')+'">'+(k[1]?'✅ 열쇠 1번 찾음':'🔑 열쇠 1번 · '+(d>=2?'<span class="hn">💡 힌트: 앱에서 Syd를 찾으시오</span>':'힌트는 Lv.9가 되고 이틀 뒤에 나타나요'))+'</div>';
- h+='<div class="chhk'+(k[2]?' ok':'')+'">'+(k[2]?'✅ 열쇠 2번 찾음':'🔑 열쇠 2번 · '+(d>=3?'<span class="hn">💡 힌트: 스스로를 꾸며보세요</span>':'힌트는 Lv.9가 되고 3일 뒤에 나타나요'))+'</div>';
+ h+='<div class="chhk'+(k[1]?' ok':'')+'">'+(k[1]?'✅ 열쇠 1번 찾음':'🔑 열쇠 1번 · '+((d>=2||k[3])?'<span class="hn">💡 힌트: 앱에서 Syd를 찾으시오</span>':'힌트는 Lv.9가 되고 이틀 뒤에 나타나요'))+'</div>';
+ h+='<div class="chhk'+(k[2]?' ok':'')+'">'+(k[2]?'✅ 열쇠 2번 찾음':'🔑 열쇠 2번 · '+((d>=3||k[3])?'<span class="hn">💡 힌트: 스스로를 꾸며보세요</span>':'힌트는 Lv.9가 되고 3일 뒤에 나타나요'))+'</div>';
  h+='<div class="chhk'+(k[3]?' ok':'')+'">'+(k[3]?'✅ 열쇠 3번 찾음':'🔑 열쇠 3번 · '+(k3d()>=3?'<span class="hn">💡 힌트: 필기장 전체를 복습하세요</span>':'<span class="hn">❓ 힌트 없음 · 앱 어딘가에 숨어 있어요</span>'))+'</div></div>';return h};
 /* #21 (2026-11-20) 열쇠 3번: 「필기장 전체 보기」 목록의 필기장 하나에 걸려 있음 · 열쇠 1·2번을 찾고 3일 지나도 못 찾으면 힌트 */
 function k3d(){var w=W(),k=w.keys||{};if(!(k[1]&&k[2])||k[3])return 0;if(!w.k12){w.k12=Date.now();X.sv()}return Math.round((dayIdx(Date.now())-dayIdx(w.k12))/86400000)}
@@ -4735,8 +4736,8 @@ function k3d(){var w=W(),k=w.keys||{};if(!(k[1]&&k[2])||k[3])return 0;if(!w.k12)
  function watch(){box=document.getElementById('daybox-n');if(!box){setTimeout(watch,1500);return}mo=new MutationObserver(function(){setTimeout(hang,30)});mo.observe(box,{childList:true});hang()}
  watch()})();
 function hintToast(){var l=L();if(l.lv<9||(l.un&&l.un[10]))return;mark9();var d=since9(),w=W();
- if(d>=2&&!w.keys[1]&&!w.hs[1]){w.hs[1]=1;X.sv();X.toast('💡 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
- else if(d>=3&&!w.keys[2]&&!w.hs[2]){w.hs[2]=1;X.sv();X.toast('💡 새 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
+ if((d>=2||w.keys[3])&&!w.keys[1]&&!w.hs[1]){w.hs[1]=1;X.sv();X.toast('💡 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
+ else if((d>=3||w.keys[3])&&!w.keys[2]&&!w.hs[2]){w.hs[2]=1;X.sv();X.toast('💡 새 열쇠 힌트가 도착했어요! 레벨 창을 확인하세요',true)}
  else if(k3d()>=3&&!w.hs[3]){w.hs[3]=1;X.sv();X.toast('💡 열쇠 3번 힌트: 📚 필기장 전체를 복습하세요',true)}}
 
 /* 칠판: 창고 버튼 */
