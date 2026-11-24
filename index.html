@@ -3915,6 +3915,13 @@ function thud(){try{var A=window.AudioContext||window.webkitAudioContext;if(!A)r
 function akey(y,m,d){return y+'-'+(m+1)+'-'+d}
 function pad2(n){return('0'+n).slice(-2)}
 function attCount(y,m){var n=0,N=new Date(y,m+1,0).getDate();for(var d=1;d<=N;d++)if(ST.att[akey(y,m,d)])n++;return n}
+/* 11-24 16:26 선생님: 10일 연속 출석마다 ⭐300 · 게이지 +30% (이미 찍어 둔 도장도 자동으로 세서 못 받은 보너스를 줌) */
+function attRuns(){var ds=Object.keys(ST.att||{}).filter(function(k){return ST.att[k]}).map(function(k){var p=k.split('-');return Math.round(new Date(+p[0],+p[1]-1,+p[2]).getTime()/864e5)}).sort(function(a,b){return a-b});var runs=[],cur=0,prev=null;ds.forEach(function(d){if(prev!=null&&d===prev)return;if(prev!=null&&d===prev+1)cur++;else{if(cur)runs.push(cur);cur=1}prev=d});if(cur)runs.push(cur);return{runs:runs,last:prev,tot:ds.length}}
+function attToday(){var n=new Date();return Math.round(new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime()/864e5)}
+function attStreak(){var r=attRuns();if(r.last==null||r.last<attToday()-1)return 0;return r.runs[r.runs.length-1]||0}
+function attBonusCheck(){var r=attRuns(),earned=0;r.runs.forEach(function(n){earned+=Math.floor(n/10)});var got=ST.attBn||0;if(earned>got){var k=earned-got;ST.attBn=earned;sv();setTimeout(function(){gain(300*k,'🔥 10일 연속 출석 보너스'+(k>1?' ×'+k:''));try{LVH.add&&LVH.add(30*k,'연속출석')}catch(e){}},900)}}
+function attLine(){var r=attRuns(),st=attStreak(),nx=10-(st%10),got=ST.attBn||0;return'<div class="chnote2" style="background:#fff4d6;border:1.5px solid #f0c060;border-radius:10px;padding:7px 9px;line-height:1.55">🔥 지금 <b>'+st+'일</b> 연속 출석 · 지금까지 도장 <b>'+r.tot+'개</b><br>연속 <b>10일째·20일째·30일째…</b> 될 때마다 계속 <b>⭐300 · 게이지 +30%</b>!<br><small>다음 보너스까지 <b>'+nx+'일</b> 남았어요'+(got?' · 지금까지 받은 보너스 <b>'+got+'번</b>':'')+'</small></div>'}
+setTimeout(function(){try{attBonusCheck()}catch(e){}},6000);
 function attBody(slam){
  var now=new Date();if(!AV)AV={y:now.getFullYear(),m:now.getMonth()};
  var y=AV.y,m=AV.m,first=new Date(y,m,1).getDay(),N=new Date(y,m+1,0).getDate(),tk=dk(),done=!!ST.att[tk];
@@ -3930,7 +3937,7 @@ function attBody(slam){
    h+='<span class="chad'+(isT?' td':'')+(wd===0?' su':wd===6?' sa':'')+'"><em>'+d+'</em>'+(on?'<u class="chst'+(slam===k?' slam':'')+'" style="--r:'+(((d*37)%23)-11)+'deg"><b>출석</b></u>':'')+'</span>'}
   h+='</div>';
   h+='<button type="button" id="chaGo" class="chago'+(done?' done':'')+'"'+(done?' disabled':'')+'>'+(done?'✅ 오늘 출석 완료!':'🖐️ 출석하기  <small>+10⭐ · 게이지 +3%</small>')+'</button>';
-  h+='<div class="chnote2">하루에 한 번, 눌러서 도장을 쾅! 찍으면 별 1개를 받아요.</div>';
+  h+='<div class="chnote2">하루에 한 번, 눌러서 도장을 쾅! 찍어요.</div>'+attLine();
  }else{
   h+='<div class="chuhd">앱 전체 이용시간 (누적)</div><div class="chut" id="chaUT"></div><div class="chuhd">항목별 이용시간</div><div class="chuk" id="chaUK"></div><div class="chus" id="chaUS"></div>';
  }
@@ -3948,9 +3955,9 @@ function rAtt(slam){var a=$('cha');if(!a)return;clearInterval(AIV);var b=a.query
   $('chaN').onclick=function(){AV.m++;if(AV.m>11){AV.m=0;AV.y++}rAtt()};
   $('chaGo').onclick=function(){if(aBusy||ST.att[dk()])return;aBusy=true;var now=new Date();AV={y:now.getFullYear(),m:now.getMonth()};var k=dk();ST.att[k]=1;sv();rAtt(k);
    setTimeout(function(){thud();b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')},300);
-   setTimeout(function(){gain(10,'📅 출석체크');try{LVH.add&&LVH.add(false?1:2,'출석')}catch(e){}aBusy=false},360)}
+   setTimeout(function(){gain(10,'📅 출석체크');try{LVH.add&&LVH.add(false?1:2,'출석')}catch(e){}try{attBonusCheck()}catch(e){}aBusy=false},360)}
  }else{uTime();AIV=setInterval(uTime,250)}}
-function openAtt(){var a=$('cha');if(!a)return;ATAB='c';var n=new Date();AV={y:n.getFullYear(),m:n.getMonth()};rAtt();a.classList.add('on');try{layerOpen('cha')}catch(e){}}
+function openAtt(){var a=$('cha');if(!a)return;try{attBonusCheck()}catch(e){}ATAB='c';var n=new Date();AV={y:n.getFullYear(),m:n.getMonth()};rAtt();a.classList.add('on');try{layerOpen('cha')}catch(e){}}
 function rawCloseAtt(){var a=$('cha');if(a)a.classList.remove('on');clearInterval(AIV)}
 function closeAtt(){if(typeof layerClose==='function'&&typeof LRAW!=='undefined'&&LRAW.cha)layerClose('cha');else rawCloseAtt()}
 
@@ -5552,7 +5559,7 @@ function W(){var s=ST();if(!s.wh)s.wh={n:0,keys:{},hs:{},items:[]};if(!s.wh.item
 function lay(id,fn){try{LRAW[id]=fn;layerOpen(id)}catch(e){}}
 function unlay(id,fn){try{if(typeof layerClose==='function'&&LRAW[id]){layerClose(id);return}}catch(e){}fn()}
 /* ---- 칠판: 마을로 가기 버튼 ---- */
-var VCOST=1000;/* 2026-11-21 23:56 선생님: 50 → 1000 */
+var VCOST=500;/* 2026-11-21 23:56 선생님: 50 → 1000 · 11-24 16:26 선생님: 1000 → 500 */
 function vOpen(){return L().lv>=VLV}
 var CHAIN='<svg class="chchain" viewBox="0 0 120 76" preserveAspectRatio="none"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M-4 6 L124 70" stroke="#5a5f6a"/><path d="M-4 70 L124 6" stroke="#5a5f6a"/><path d="M-4 6 L124 70" stroke="#c8ccd4" stroke-dasharray="7 5"/><path d="M-4 70 L124 6" stroke="#c8ccd4" stroke-dasharray="7 5"/></g></svg>';
 var PAD='<svg class="chpad" viewBox="0 0 40 46"><path d="M10 20 V13 Q10 4 20 4 Q30 4 30 13 V20" fill="none" stroke="#9aa3b4" stroke-width="5"/><rect x="4" y="18" width="32" height="25" rx="6" fill="#f2c230" stroke="#8a5a0a" stroke-width="2.5"/><circle cx="20" cy="28" r="3.6" fill="#5a3a08"/><path d="M18.5 30 L21.5 30 L21 37 L19 37Z" fill="#5a3a08"/></svg>';
@@ -7773,7 +7780,7 @@ function questPanel(){var q=QS(),r=readyInfo(),HN=['하늘이네','마루네','�
 /* ===== Lv.10: 마을 해금 + 그동안 쌓인 것 한꺼번에 적용 안내 ===== */
 function lv10Show(){var s=ST();if(s.v10c||L().lv<10||document.querySelector('.v10'))return;s.v10c=Date.now();X.sv();
  var o=CH.stats(),bpN=bpTotal()-bpUsed(),skN=skTotal()-skUsed(),pf=s.pf||0,ub=skUB(),k=L().lv-5;
- var rows=[['🏘️','별빛 마을 입구가 나타났어요!','칠판의 🔒 마을 열기 버튼에서 ⭐1000을 내면 자물쇠가 풀려요','enter'],
+ var rows=[['🏘️','별빛 마을 입구가 나타났어요!','칠판의 🔒 마을 열기 버튼에서 ⭐500을 내면 자물쇠가 풀려요','enter'],
   ['📈','레벨 5 → '+L().lv+' 성장분을 포인트로 환산 +'+(k*BPLV),'레벨마다 체력 25·공격 2·방어 1·민첩 1%·운 0.5% = 24포인트 · 원하는 대로 나눠 올려요','buff'],
   ['✨','보너스 스탯 포인트 총 '+bpN+'개','성장분 '+(k*BPLV)+' + 레벨 보너스 '+(bpN-k*BPLV)+' · 장비 창 「분배하기」에서 올려요','star'],
   ['🌳','스킬 포인트 '+skN+'개','레벨 '+(L().lv>=5?1+2*k:0)+'개 + UNBELIEVABLE '+ub+'번 · 캐릭터 메뉴 「스킬 트리」','skill'],
