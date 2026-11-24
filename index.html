@@ -4234,8 +4234,8 @@ function allQuiz(){try{var q=window.__qzStatus?window.__qzStatus():null;if(!q||!
 function conds(n){var l=L(),t=l.tot;
  if(n===10){var aq=allQuiz();return[
   {t:'레벨 게이지 100% 채우기',v:Math.min(1,(l.g||0)/100),s:Math.min(100,Math.floor(l.g||0))+'% / 100%'},/* 11-23 선생님: 열쇠를 다 찾아도 게이지 100%를 채워야 자물쇠를 돌릴 수 있음 */
-  {t:'앱 이용 시간 4시간 이상',v:Math.min(1,t.app/14400),s:Math.floor(t.app/60)+'분 / 240분'},
-  {t:'필기장 공부 시간 4시간 이상',v:Math.min(1,t.nb/14400),s:Math.floor(t.nb/60)+'분 / 240분'},
+  {t:'앱 이용 시간 2시간 이상',v:Math.min(1,t.app/7200),s:Math.floor(t.app/60)+'분 / 120분'},
+  {t:'필기장 공부 시간 2시간 이상',v:Math.min(1,t.nb/7200),s:Math.floor(t.nb/60)+'분 / 120분'},
   {t:'숏츠 시청 40회 이상',v:Math.min(1,t.sv/40),s:t.sv+'회 / 40회'},
   {t:'모든 문제 GOOD 이상으로 풀기',v:aq.t?aq.n/aq.t:1,s:aq.t?aq.n+' / '+aq.t+'세트':'아직 문제 세트가 없어요',ok:aq.t?aq.ok:true},(CH.keyCond?CH.keyCond():huntCond(l,t,aq))]}
  if(n===20){var ab=allQuizB(),g=(l.lv===19?(l.g||0):l.lv>19?100:0),pt=X.st().pt,b=b10(l),ta=Math.max(0,t.app-b.app),tn=Math.max(0,t.nb-b.nb),ts=Math.max(0,t.sv-b.sv);return[/* 11-23 선생님: Lv.19→20 · 시간·숏츠는 Lv.10 달성 이후부터 새로 셈 */
