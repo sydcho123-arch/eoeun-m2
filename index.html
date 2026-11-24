@@ -73,6 +73,8 @@ section{margin-bottom:26px}
 #nbtools .clr{height:46px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);font:inherit;font-weight:700;color:var(--muted);cursor:pointer}
 #nbtools .all{height:46px;border:1.5px solid var(--accent);border-radius:12px;background:var(--card);color:var(--accent);font:inherit;font-weight:800;cursor:pointer}
 #nbtools .all.on{background:var(--accent);color:#fff}
+#nbtools .nb3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#nbtools .nb3 .all{height:40px;font-size:13px;padding:0 4px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ympk{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px}.ymr{display:flex;flex-wrap:wrap;gap:6px}.ymms .chip{min-width:54px;padding:6px 8px;min-height:34px;font-size:13.5px}.ympk .chip:disabled{opacity:.3;cursor:default}.rvbar{flex-wrap:wrap}
 .mh{font-size:15px;font-weight:700;color:var(--muted);margin:14px 0 6px}
 .list{display:flex;flex-direction:column;gap:10px}
 .sess{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -1669,11 +1671,11 @@ img.crn{width:1.08em;height:1.08em;vertical-align:-.2em;display:inline-block;mar
       <p>• 맞히면 4초 뒤 자동으로 넘어가고, 틀리면 직접 눌러서 넘어가요.<br>• 각 문제 아래 <b>📋 기록 보기</b>에서 최근 5번 기록을 볼 수 있어요. 가장 잘 본 기록은 색 띠로 표시돼요.<br>• 기록은 이 폰에 저장돼요.</p>
     </div>
     <script>(function(){var b=document.getElementById("goalbtn"),x=document.getElementById("goalbox");if(!b||!x)return;b.addEventListener("click",function(){x.hidden=!x.hidden;b.setAttribute("aria-expanded",String(!x.hidden))})})();</script>
-    <div class="rvbar"><button type="button" class="chip" id="qm1" aria-pressed="true">날짜순 보기</button><button type="button" class="chip" id="qm2" aria-pressed="false">문법종류별 보기</button></div>
+    <div class="rvbar"><button type="button" class="chip" id="qm1" aria-pressed="true">날짜순 보기</button><button type="button" class="chip" id="qm2" aria-pressed="false">문법종류별 보기</button><button type="button" class="chip" id="qm3" aria-pressed="false">월별로 보기</button></div>
     <div id="qtabbox"></div>
   </div>
   <div id="pane-r" hidden>
-    <div class="rvbar" id="rvbar"><button type="button" class="chip" id="rvm1" aria-pressed="true">날짜순 보기</button><button type="button" class="chip" id="rvm2" aria-pressed="false">문법종류별 보기</button></div>
+    <div class="rvbar" id="rvbar"><button type="button" class="chip" id="rvm1" aria-pressed="true">날짜순 보기</button><button type="button" class="chip" id="rvm2" aria-pressed="false">문법종류별 보기</button><button type="button" class="chip" id="rvm3" aria-pressed="false">월별로 보기</button></div>
     <div id="rvbox"></div>
   </div>
     <div id="pane-n" hidden>
@@ -1872,7 +1874,15 @@ function renderCal(mode){
   box.appendChild(el("div","legend", mode==="s" ? "색이 칠해진 날짜가 수업이 있었던 날이에요. 날짜를 누르면 그날 진도와 숙제가 열리고, 여러 날을 함께 열 수 있어요. 다시 누르면 닫혀요." : "색이 칠해진 날짜가 수업이 있었던 날이에요. 날짜를 누르면 그날 필기장이 나와요."));
   renderDay(mode);
 }
-const SRCH={q:"",all:false};
+/* 11-24 17:33 선생님: 월별로 보기 (년도·월 고르기) — 필기장·수업 복습·문제 풀기 공용 */
+window.__ymPick=function(box,dates,st,cb){var ym={};dates.forEach(function(d){var m=/^(\d{4})-(\d{2})/.exec(d||"");if(m){(ym[m[1]]=ym[m[1]]||{})[+m[2]]=1}});var ys=Object.keys(ym).sort();if(!ys.length)return null;
+ if(!st.y||!ym[st.y]){st.y=ys[ys.length-1];st.m=0}var ms=Object.keys(ym[st.y]).map(Number).sort(function(a,b){return a-b});if(!st.m||ms.indexOf(st.m)<0)st.m=ms[ms.length-1];
+ var w=document.createElement("div");w.className="ympk";var r1=document.createElement("div");r1.className="ymr";
+ ys.forEach(function(y){var b=document.createElement("button");b.type="button";b.className="chip"+(y===st.y?" on":"");b.setAttribute("aria-pressed",String(y===st.y));b.textContent=y+"년";b.onclick=function(){st.y=y;st.m=0;cb()};r1.appendChild(b)});
+ var r2=document.createElement("div");r2.className="ymr ymms";for(var m=1;m<=12;m++){(function(m){var b=document.createElement("button");b.type="button";var on=ms.indexOf(m)>=0;b.className="chip"+(m===st.m?" on":"");b.setAttribute("aria-pressed",String(m===st.m));b.textContent=m+"월";b.disabled=!on;if(on)b.onclick=function(){st.m=m;cb()};r2.appendChild(b)})(m)}
+ w.append(r1,r2);box.appendChild(w);return st.y+"-"+("0"+st.m).slice(-2)};
+const SRCH={q:"",all:false,v:null,ym:{}};
+function nbGrp(n){var f=window.__rvG;if(!f)return "기타";var g=f(n.topic||"",n.topic||"");return g!=="기타"?g:f(n.title||"",n.title||"")}
 function buildTools(){
   const t=$("nbtools"); t.textContent="";
   const sr=el("div","sr"); const inp=document.createElement("input");
@@ -1881,9 +1891,11 @@ function buildTools(){
   inp.addEventListener("input",()=>{ SRCH.q=inp.value; clr.hidden=!SRCH.q; renderDay("n"); });
   clr.addEventListener("click",()=>{ SRCH.q=""; inp.value=""; clr.hidden=true; renderDay("n"); inp.focus(); });
   sr.append(inp,clr);
-  const all=el("button","all"+(SRCH.all?" on":""),SRCH.all?"필기장 전체 보기 닫기":"필기장 전체 보기"); all.type="button";
-  all.addEventListener("click",()=>{ SRCH.all=!SRCH.all; all.className="all"+(SRCH.all?" on":""); all.textContent=SRCH.all?"필기장 전체 보기 닫기":"필기장 전체 보기"; renderDay("n"); });
-  t.append(sr,all);
+  /* 11-24 17:33 선생님: 전체 보기 버튼 1/3 크기 + 월별로 보기 + 문법 종류별 — 한 줄에 3칸 */
+  const row3=el("div","nb3");
+  [["all","필기장 전체 보기"],["month","월별로 보기"],["gram","문법 종류별"]].forEach(([v,tx])=>{const b=el("button","all"+(SRCH.v===v?" on":""),tx+(SRCH.v===v?" 닫기":"")); b.type="button";
+   b.addEventListener("click",()=>{ SRCH.v=(SRCH.v===v)?null:v; SRCH.all=(SRCH.v==="all"); buildTools(); renderDay("n"); }); row3.appendChild(b);});
+  t.append(sr,row3);
 }
 function renderDay(mode){
   const st=CAL[mode]; const box=$("daybox-"+mode); box.textContent="";
@@ -1891,6 +1903,21 @@ function renderDay(mode){
   if(mode==="n"){
     if(!NB.length){ box.appendChild(el("div","empty","아직 올라온 필기장이 없습니다.")); return; }
     const q=SRCH.q.trim().toLowerCase();
+    if(!q&&SRCH.v==="month"){
+      const key=window.__ymPick(box,NB.map(n=>n.date),SRCH.ym,()=>renderDay("n"));
+      const hits=[]; NB.forEach((n,i)=>{ if(key&&(n.date||"").slice(0,7)===key) hits.push(i); });
+      box.appendChild(el("div","dayh",(key?(+key.slice(0,4))+"년 "+(+key.slice(5))+"월 필기장 ":"필기장 ")+hits.length+"개"));
+      if(!hits.length){ box.appendChild(el("div","none","이 달에 올라온 필기장이 없습니다.")); return; }
+      const l=el("div","list"); hits.forEach(i=>l.appendChild(nbCard(NB[i],i))); box.appendChild(l); return;
+    }
+    if(!q&&SRCH.v==="gram"){
+      const O=window.__rvOrder||[], G={}, ks=[];
+      NB.forEach((n,i)=>{ const g=nbGrp(n); if(!G[g]){G[g]=[];ks.push(g);} G[g].push(i); });
+      ks.sort((a,b)=>{const x=O.indexOf(a),y=O.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+      box.appendChild(el("div","dayh","문법 종류별 필기장 "+NB.length+"개"));
+      ks.forEach(k=>{ box.appendChild(el("div","kh",k+" ("+G[k].length+")")); const l=el("div","list"); G[k].forEach(i=>l.appendChild(nbCard(NB[i],i))); box.appendChild(l); });
+      return;
+    }
     if(q||SRCH.all){
       const hits=[]; NB.forEach((n,i)=>{ if(!q||((n.title||"")+" "+(n.topic||"")).toLowerCase().includes(q)) hits.push(i); });
       box.appendChild(el("div","dayh",q?("\u201c"+SRCH.q.trim()+"\u201d 검색 결과 "+hits.length+"개"):("전체 필기장 "+hits.length+"개 · 최신순")));
@@ -2396,17 +2423,18 @@ function fire(u){fxStop();if(window.matchMedia&&matchMedia("(prefers-reduced-mot
 function burst(cx,cy){for(var i=0;i<46;i++){var a=Math.random()*6.283,s=2+Math.random()*5;P.push({x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:60+Math.random()*30,c:cols[i%cols.length],r:2+Math.random()*2})}}
 function step(){var el=Date.now()-t0;if(el>4200){fxStop();return}if(nb<7&&el>nb*450){burst(W*(.15+Math.random()*.7),H*(.15+Math.random()*.4));nb++}x.clearRect(0,0,W,H);P=P.filter(function(p){return p.l>0});P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.vx*=.985;p.l--;x.globalAlpha=Math.max(0,Math.min(1,p.l/60));x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()});x.globalAlpha=1;fxr=requestAnimationFrame(step)}step()}
 function lab(el,S){var ss=window.__rvSess?window.__rvSess(S.link.split("|")[0]):"";el.style.display="flex";el.style.alignItems="center";el.style.gap="8px";var t=document.createElement("span");t.textContent=fmtD(S.link)+" · "+S.title;t.style.cssText="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";el.appendChild(t);if(ss){var g=document.createElement("span");g.textContent=ss;g.style.cssText="flex:none;font-size:12px;font-weight:700;line-height:1.5;color:var(--accent);background:var(--soft);border-radius:999px;padding:0 8px;white-space:nowrap";el.appendChild(g)}}
-var qMode=1;
+var qMode=1,QYM={};
 function tabRender(){var box=document.getElementById("qtabbox");if(!box)return;box.textContent="";
  function row(S){var r=rec(S.id);var bt=document.createElement("button");bt.type="button";bt.className="qtrow"+(r?" done":"");var b=document.createElement("b");lab(b,S);var sm=document.createElement("small");smset(sm,S,r);bt.append(b,sm);bt.addEventListener("click",function(){openQz(S)});var w=document.createElement("div");w.className="qtw";w.appendChild(bt);histBlock(S).forEach(function(x){w.appendChild(x)});return w}
  var L=sorted();
- if(qMode===1){L.forEach(function(S){box.appendChild(row(S))})}
+ if(qMode===3){var key=window.__ymPick?window.__ymPick(box,L.map(function(S){return S.link.split("|")[0]}),QYM,tabRender):null;var LL=L.filter(function(S){return key&&S.link.slice(0,7)===key});var hh=document.createElement("div");hh.className="kh";hh.textContent=(key?(+key.slice(0,4))+"년 "+(+key.slice(5))+"월 ":"")+"문제 "+LL.length+"개";box.appendChild(hh);LL.forEach(function(S){box.appendChild(row(S))})}
+ else if(qMode===1){L.forEach(function(S){box.appendChild(row(S))})}
  else{var O=window.__rvOrder||[],ks=[],gf=window.__rvGroup||function(){return "기타"};
   L.forEach(function(S){var g=gf(S.link);if(ks.indexOf(g)<0)ks.push(g)});
   ks.sort(function(x,y){var a=O.indexOf(x),b=O.indexOf(y);return (a<0?99:a)-(b<0?99:b)});
   ks.forEach(function(k){var h=document.createElement("div");h.className="kh";h.textContent=k;box.appendChild(h);L.filter(function(S){return gf(S.link)===k}).forEach(function(S){box.appendChild(row(S))})})}
- document.getElementById("qm1").setAttribute("aria-pressed",String(qMode===1));document.getElementById("qm2").setAttribute("aria-pressed",String(qMode===2))}
-document.getElementById("qm1").addEventListener("click",function(){qMode=1;tabRender()});document.getElementById("qm2").addEventListener("click",function(){qMode=2;tabRender()});
+ document.getElementById("qm1").setAttribute("aria-pressed",String(qMode===1));document.getElementById("qm2").setAttribute("aria-pressed",String(qMode===2));var q3=document.getElementById("qm3");if(q3)q3.setAttribute("aria-pressed",String(qMode===3))}
+document.getElementById("qm1").addEventListener("click",function(){qMode=1;tabRender()});document.getElementById("qm2").addEventListener("click",function(){qMode=2;tabRender()});var q3b=document.getElementById("qm3");if(q3b)q3b.addEventListener("click",function(){qMode=3;tabRender()});
 window.__qzTabRender=tabRender;tabRender();
 renderList();
 window.__qzFor=function(r){var k=r.d+"|"+r.title;return SETS.some(function(s){return s.link===k})};window.__qzStart=function(r){var k=r.d+"|"+r.title;for(var i=0;i<SETS.length;i++)if(SETS[i].link===k){openQz(SETS[i]);return true}return false};
@@ -2467,17 +2495,18 @@ function rvG(k,kd){
  if(/본문/.test(k))return '교과서 본문';
  return '기타'}
 function rvGrp(r){var g=rvG(r.kind||'',r.kind||'');return g!=='기타'?g:rvG(r.title||'',r.title||'')}
-window.__rvGroup=function(link){for(var i=0;i<REVIEWS.length;i++)if(REVIEWS[i].d+"|"+REVIEWS[i].title===link)return rvGrp(REVIEWS[i]);return "기타"};window.__rvOrder=RV_ORDER;if(window.__qzTabRender)window.__qzTabRender();
-var rvMode=1;
+window.__rvG=rvG;window.__rvGroup=function(link){for(var i=0;i<REVIEWS.length;i++)if(REVIEWS[i].d+"|"+REVIEWS[i].title===link)return rvGrp(REVIEWS[i]);return "기타"};window.__rvOrder=RV_ORDER;if(window.__qzTabRender)window.__qzTabRender();
+var rvMode=1,RVYM={};
 var order=REVIEWS.slice();
 function rvRender(){var box=$('rvbox');box.innerHTML='';
  if(!REVIEWS.length){box.innerHTML='<div class="empty">아직 복습 영상이 없습니다.</div>';return}
- if(rvMode===1){order=REVIEWS.slice();REVIEWS.forEach(function(r){box.appendChild(rvCard(r))})}
+ if(rvMode===3){var key=window.__ymPick?window.__ymPick(box,REVIEWS.map(function(r){return r.d}),RVYM,rvRender):null;order=REVIEWS.filter(function(r){return key&&(r.d||"").slice(0,7)===key});var hh=document.createElement('div');hh.className='kh';hh.textContent=(key?(+key.slice(0,4))+'년 '+(+key.slice(5))+'월 ':'')+'복습 영상 '+order.length+'개';box.appendChild(hh);order.forEach(function(r){box.appendChild(rvCard(r))})}
+ else if(rvMode===1){order=REVIEWS.slice();REVIEWS.forEach(function(r){box.appendChild(rvCard(r))})}
  else{order=[];var kinds=[];REVIEWS.forEach(function(r){var g=rvGrp(r);if(kinds.indexOf(g)<0)kinds.push(g)});kinds.sort(function(x,y){return RV_ORDER.indexOf(x)-RV_ORDER.indexOf(y)});
   kinds.forEach(function(k){var h=document.createElement('div');h.className='kh';h.textContent=k;box.appendChild(h);
    REVIEWS.filter(function(r){return rvGrp(r)===k}).forEach(function(r){order.push(r);box.appendChild(rvCard(r))})})}
- $('rvm1').setAttribute('aria-pressed',String(rvMode===1));$('rvm2').setAttribute('aria-pressed',String(rvMode===2))}
-$('rvm1').onclick=function(){rvMode=1;rvRender()};$('rvm2').onclick=function(){rvMode=2;rvRender()};
+ $('rvm1').setAttribute('aria-pressed',String(rvMode===1));$('rvm2').setAttribute('aria-pressed',String(rvMode===2));$('rvm3').setAttribute('aria-pressed',String(rvMode===3))}
+$('rvm1').onclick=function(){rvMode=1;rvRender()};$('rvm2').onclick=function(){rvMode=2;rvRender()};$('rvm3').onclick=function(){rvMode=3;rvRender()};
 rvRender();
 var rates=[0.5,0.75,1,1.25,1.5,2],menu=$('rvMenu');
 rates.forEach(function(r){var b=document.createElement('button');b.type='button';b.textContent=(r===1?'보통 1x':r+'x');b.dataset.r=r;b.onclick=function(){v.playbackRate=r;[].forEach.call(menu.children,function(c){c.classList.toggle('cur',c===b)});$('rvS').textContent='속도 '+r+'x';menu.classList.remove('on')};if(r===1)b.className='cur';menu.appendChild(b)});
