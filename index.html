@@ -3936,7 +3936,7 @@ function attBody(slam){
   for(var d=1;d<=N;d++){var k=akey(y,m,d),on=!!ST.att[k],isT=k===tk,wd=(first+d-1)%7;
    h+='<span class="chad'+(isT?' td':'')+(wd===0?' su':wd===6?' sa':'')+'"><em>'+d+'</em>'+(on?'<u class="chst'+(slam===k?' slam':'')+'" style="--r:'+(((d*37)%23)-11)+'deg"><b>출석</b></u>':'')+'</span>'}
   h+='</div>';
-  h+='<button type="button" id="chaGo" class="chago'+(done?' done':'')+'"'+(done?' disabled':'')+'>'+(done?'✅ 오늘 출석 완료!':'🖐️ 출석하기  <small>+10⭐ · 게이지 +3%</small>')+'</button>';
+  h+='<button type="button" id="chaGo" class="chago'+(done?' done':'')+'"'+(done?' disabled':'')+'>'+(done?'✅ 오늘 출석 완료!':'🖐️ 출석하기  <small>+10⭐ · 게이지 +2%</small>')+'</button>';
   h+='<div class="chnote2">하루에 한 번, 눌러서 도장을 쾅! 찍어요.</div>'+attLine();
  }else{
   h+='<div class="chuhd">앱 전체 이용시간 (누적)</div><div class="chut" id="chaUT"></div><div class="chuhd">항목별 이용시간</div><div class="chuk" id="chaUK"></div><div class="chus" id="chaUS"></div>';
@@ -3955,7 +3955,7 @@ function rAtt(slam){var a=$('cha');if(!a)return;clearInterval(AIV);var b=a.query
   $('chaN').onclick=function(){AV.m++;if(AV.m>11){AV.m=0;AV.y++}rAtt()};
   $('chaGo').onclick=function(){if(aBusy||ST.att[dk()])return;aBusy=true;var now=new Date();AV={y:now.getFullYear(),m:now.getMonth()};var k=dk();ST.att[k]=1;sv();rAtt(k);
    setTimeout(function(){thud();b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')},300);
-   setTimeout(function(){gain(10,'📅 출석체크');try{LVH.add&&LVH.add(false?1:2,'출석')}catch(e){}try{attBonusCheck()}catch(e){}aBusy=false},360)}
+   setTimeout(function(){gain(10,'📅 출석체크');try{LVH.add&&LVH.add(2,'출석')}catch(e){}try{attBonusCheck()}catch(e){}aBusy=false},360)}
  }else{uTime();AIV=setInterval(uTime,250)}}
 function openAtt(){var a=$('cha');if(!a)return;try{attBonusCheck()}catch(e){}ATAB='c';var n=new Date();AV={y:n.getFullYear(),m:n.getMonth()};rAtt();a.classList.add('on');try{layerOpen('cha')}catch(e){}}
 function rawCloseAtt(){var a=$('cha');if(a)a.classList.remove('on');clearInterval(AIV)}
