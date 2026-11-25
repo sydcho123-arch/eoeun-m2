@@ -7824,7 +7824,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  var names={};B.units.forEach(function(u){if(!u.hero){var k=u.nm+' Lv.'+dLv(u);names[k]=(names[k]||0)+1}});
  var ov=document.createElement('div');ov.className='bstart';ov.innerHTML='<div class="bsb">BATTLE START!</div><div class="bsn">'+Object.keys(names).map(function(k){return k+' ×'+names[k]}).join(' · ')+'</div>';m.appendChild(ov);CH.sfx('bstart');
  setTimeout(function(){ov.classList.add('out');setTimeout(function(){ov.remove()},500);if(opt&&opt.enemyFirst){/* 11-23: 첫 턴은 적의 차례 */try{if(B.party)B.party.forEach(function(p){p.done=1})}catch(e){}msg('⚠️ 골렘들이 먼저 움직여요!','enemy',1400);setTimeout(endPlayerTurn,600)}else playerTurn()},1700)}
-window.__vgB={start:function(o){startBattle(o||{pos:[0,40],lead:'r1'})},st:function(){return BT},mons:MON,pic:mpic};
+window.__vgB={start:function(o){startBattle(o||{pos:[0,40],lead:'r1'})},st:function(){return BT},mons:MON,pic:mpic};window.__bst=function(){return BT};/* 11-25: 학생 페이지에서도 쓰는 전투 상태 읽기 (__vgB는 학생용에서 지워짐) */
 /* ---- 선생님 테스트: 퀘스트 진행 상황 ---- */
 (function(){try{var s=ST();if(false){var q=QS();q.vis=q.vis||{};for(var i=0;i<5;i++)q.vis[i]=1;s.t5h=1;X.sv()}}catch(e){}})();
 function questPanel(){var q=QS(),r=readyInfo(),HN=['하늘이네','마루네','보리네 식당','단비네','솔이네'],qq=q.q||0;
@@ -11842,7 +11842,7 @@ function gaiaVendIntro(){var me=esc(ST().nm||'나'),an='단비 아빠';try{an=ar
   {n:an,t:'…크라운을 먹는 돌 상자라니. 별일을 다 보는구나. 그래도 물약이 떨어질 걱정은 덜었다. …아껴 쓰라고 했던 말은 취소다.'},
   {n:'',t:'🌿 <b>가이아의 자판기</b> — 물건 사기 · 팔기 · 무기 손질(⭐'+GV_FIX+') · 장비 강화를 할 수 있어요. 장비(무기·방어구)는 팔지 않아요.<br><small>여기서 거래하는 동안에는 몬스터가 다가오지 않아요. 지하에서는 시간이 멈춰 있어서 잠을 잘 필요가 없어요.</small>'}],null,function(){try{X.sv()}catch(e){}})}
 /* 11-22 08:41 가이아의 숨결: 지하에서 걷는 동안 체력이 천천히 참 (최대 체력의 절반까지) · 스킬 게이지도 20%까지 */
-(function(){var lx=null,lz=null,told=0;setInterval(function(){try{if(!uTime())return;var B=window.__vgB&&window.__vgB.st();if(B&&B.units)return;var W=WORLD,f=document.getElementById('vgf');if(!W||!W.P||!f||!f.classList.contains('on'))return;
+(function(){var lx=null,lz=null,told=0;setInterval(function(){try{if(!uTime())return;var B=window.__bst&&window.__bst();if(B&&B.units)return;var W=WORLD,f=document.getElementById('vgf');if(!W||!W.P||!f||!f.classList.contains('on'))return;
  var mv=lx!=null&&Math.hypot(W.P.x-lx,W.P.z-lz)>.4;lx=W.P.x;lz=W.P.z;if(!mv)return;var got=0;
  ['hero','arch'].forEach(function(c){if(c==='arch'&&!(typeof hasArch==='function'&&hasArch()))return;inCtx(c,function(){var mx=CH.stats().hp,h=HPS().hp;if(h==null||h<=0)return;var cap=Math.floor(mx*.5);if(h<cap){HPS().hp=Math.min(cap,h+Math.max(2,Math.round(mx*.015)));got=1}var g=SG().sg||0;if(g<20){SG().sg=Math.min(20,g+1);got=1}})});
  if(got){X.sv();try{X.upd()}catch(_){}if(!told){told=1;try{X.toast('🌿 가이아의 숨결 — 지하에서 걷는 동안 체력이 최대 체력의 절반까지, 스킬 게이지가 20%까지 천천히 차요')}catch(_){}}}}catch(e){}},2000)})();
@@ -14175,7 +14175,7 @@ setInterval(function(){try{var q=QS();if(!q.apBack||!WORLD||WORLD.map!=='v'||win
  /* 11-22 08:41: 지하 일반 골렘 전체를 이 수준으로 (Lv.18 입장에 맞춤) · 보스전에서 같이 나오는 골렘은 체력 +10% · 공격 +3 더 */
  var NB={g13:[290,62],g14:[320,64],g15:[360,68],g16:[380,70],g17:[420,73],g18:[440,76],gc:[200,60]};/* 11-22 12:37 공격 +6 (+8에서 조정) */for(var nk in NB)S(nk,NB[nk][0],NB[nk][1],null);
  var BB={};for(var bk in NB)BB[bk]=[Math.round(NB[bk][0]*1.1),NB[bk][1]+3];window.__bb1121=BB;
- setInterval(function(){try{var B=window.__vgB&&window.__vgB.st();if(!B||!B.units||B.over)return;var bs=B.units.some(function(u){return u.boss&&(u.k==='gm19'||u.k==='gb20')});if(!bs)return;
+ setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over)return;var bs=B.units.some(function(u){return u.boss&&(u.k==='gm19'||u.k==='gb20')});if(!bs)return;
   B.units.forEach(function(u){if(u.hero||u.boss||u._bb||!BB[u.k])return;u._bb=1;var t=BB[u.k],r=u.max?u.hp/u.max:1;u.max=t[0];u.hp=Math.round(t[0]*r);u.atk=t[1];try{if(u.el){var b=u.el.querySelector('b');if(b)b.style.width=(r*100)+'%'}}catch(e){}})}catch(e){}},250);
 }catch(e){console.warn('boss1121',e)}})();
 
@@ -14209,7 +14209,7 @@ setInterval(function(){try{var q=QS();if(!q.apBack||!WORLD||WORLD.map!=='v'||win
 }catch(e){console.warn('eco1121',e)}})();
 /* 2026-11-22 00:47 보스전 회복 아이템 6개 제한 · 시작할 때 안내 */
 (function(){try{var st=document.createElement('style');st.textContent='.bpotlim{text-align:center;font-size:13px;margin:2px 0 6px;padding:4px 8px;border-radius:10px;background:#fff4d6;color:#7a4a00}.bpotlim.full{background:#ffe0dc;color:#b0281a}';document.head.appendChild(st);
- setInterval(function(){try{var B=window.__vgB&&window.__vgB.st();if(!B||!B.units||B.over||B._potNote)return;if(!B.units.some(function(q){return q.boss}))return;B._potNote=1;setTimeout(function(){X.toast('👑 보스전에서는 회복 아이템(반창꼬~물약)을 <b>6개까지만</b> 쓸 수 있어요. 아껴 쓰세요!',true)},2500)}catch(e){}},700)}catch(e){}})();
+ setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over||B._potNote)return;if(!B.units.some(function(q){return q.boss}))return;B._potNote=1;setTimeout(function(){X.toast('👑 보스전에서는 회복 아이템(반창꼬~물약)을 <b>6개까지만</b> 쓸 수 있어요. 아껴 쓰세요!',true)},2500)}catch(e){}},700)}catch(e){}})();
 
 /* ===== 2026-11-23 호롱불 랜턴·숲 지도 = 한 번 사면 자동 장착 (창고 칸 안 씀) ===== */
 (function(){try{
