@@ -5775,7 +5775,7 @@ var TALK={
  boy:['늑대 마물은 눈이 빨갛게 빛난대! 엄청 크대!','나 점프 엄청 잘해! 너도 해 봐!','경비병 아저씨들이 숲에 못 가게 해… 치사해!','보물상자 찾아봤어? 집마다 하나씩 있대!'],
  aunt:['숲에 늑대 마물이 나타났다는 소문 들었어? 시장 사람들이 다 그 얘기야.','오늘 시장에 사과가 싱싱해~','저기 잠꾸러기 상점 아저씨, 또 졸고 있겠지?','마을에 새로 온 친구구나? 반가워!'],
  uncle:['오늘 날씨 참 좋다~ 일하기 딱 좋은 날이야.','요즘 짐승들이 이상하게 사나워졌어. 순하던 토끼까지 사람한테 달려든다니까.','우물 옆 벤치가 쉬기에 최고지.','별을 많이 모으면 마을에서 할 수 있는 게 많아질 거야.'],
- youth:['며칠 전 사냥 갔던 아저씨들, 돌아와서 얼굴이 하얗게 질려 있더라. 늑대 마물이라도 봤나?','들개는 원래 겁이 많은 짐승이야. 그런데 요즘엔 무리 지어 사람을 노려. 숲이 병든 것 같아.','나도 경비병이 되고 싶어! 창 쓰는 연습 중이야.','숲 너머엔 더 큰 마을이 있대.','상점에서 나무 검 하나 사 둬. 언젠간 쓸 일이 있을걸?'],
+ youth:['며칠 전 사냥 갔던 아저씨들, 돌아와서 얼굴이 하얗게 질려 있더라. 늑대 마물이라도 봤나?','들개는 원래 겁이 많은 짐승이야. 그런데 요즘엔 무리 지어 사람을 노려. 숲이 병든 것 같아.','나도 경비병이 되고 싶어! 창 쓰는 연습 중이야.','숲 너머엔 더 큰 마을이 있대.','대장간에서 경비병의 곤봉 하나 사 둬. 언젠간 쓸 일이 있을걸?'],
  lady:['밤에 숲 쪽을 봤는데… 빨간 눈 두 개가 반짝였어. 혹시 늑대 마물…?','꽃밭 예쁘지? 내가 매일 물을 줘~','이 마을 이름이 왜 별빛 마을인지 알아? 밤에 보면 알 거야.','책 읽는 걸 좋아하니? 나는 영어 동화책이 좋아!'],
  farmer:['밭 울타리에 커다란 발톱 자국이 있었어… 보통 늑대가 아니야, 마물이라고!','멀쩡하던 개구리가 갑자기 눈이 벌게져서 덤비더라고. 숲 어디서 검은 기운 같은 걸 먹은 모양이야.','올해 밀 농사가 아주 잘 됐어!','숲에서 내려온 토끼가 밭을 다 파헤쳐 놨지 뭐야…','열심히 일하면 별도 쌓이고 밥도 맛있지!']};
 var NM={mom:'엄마',dad:'아빠',grandma:'할머니',grandpa:'할아버지',girl:'딸',boy:'아들',aunt:'아주머니',uncle:'아저씨',youth:'청년',lady:'아가씨',farmer:'농부'};
@@ -14087,7 +14087,7 @@ var APHOLD=30;/* 2026-11-22 00:16 선생님: 가진 행동력은 최대 30 · �
 function apGain(k,why){if(!(k>0))return;var a=APS();if(a.n>=APHOLD){try{X.toast('⚡ 행동력이 가득('+APHOLD+')이에요! 써야 다시 모을 수 있어요')}catch(e){}return}var got=Math.max(0,Math.min(k,APMAX-a.g,APHOLD-a.n));a.n+=got;a.g+=got;X.sv();apChip();
  try{if(got>0)X.toast('⚡ 행동력 +'+got+' · '+why+' (지금 '+a.n+' · 오늘 '+a.g+'/'+APMAX+')');else X.toast('⚡ 오늘 모을 수 있는 행동력('+APMAX+')을 다 모았어요! 내일 또 모아요')}catch(e){}}
 function apUse(k){var a=APS();if(a.n<k)return false;a.n-=k;X.sv();apChip();return true}
-function apNo(k,boss){CH.sfx('close');try{dlg([{n:'⚡ 행동력 부족',t:(boss?'보스와 싸우려면 행동력 <b>'+k+'칸</b>이 필요해요.':'행동력이 <b>0칸</b>이라 지금은 싸울 수 없어요.')+'<br>지금 행동력 <b>'+apN()+'/'+APMAX+'</b><br><br><small>📅 출석 +1 · 📖 필기장·앱 15분 +1 (하루 2) · 🎬 쇼츠 2편 +1 (하루 2)<br>✏️ 퀴즈 GOOD·BETTER·PERFECT 한 단계마다 +1 · 👑 UNBELIEVABLE +5</small><br><br>공부하고 오면 다시 모험할 수 있어요! 마을은 그대로 다닐 수 있어요.'}])}catch(e){X.toast('⚡ 행동력이 부족해요 ('+apN()+'/'+APMAX+')',true)}}
+function apNo(k,boss){CH.sfx('close');try{dlg([{n:'⚡ 행동력 부족',t:(boss?'보스와 싸우려면 행동력 <b>'+k+'칸</b>이 필요해요.':'행동력이 <b>0칸</b>이라 지금은 싸울 수 없어요.')+'<br>지금 행동력 <b>'+apN()+'/'+APHOLD+'</b><br><br><small>📅 출석 +1 · 📖 필기장·앱 15분 +1 (하루 2) · 🎬 쇼츠 2편 +1 (하루 2)<br>✏️ 퀴즈 GOOD·BETTER·PERFECT 한 단계마다 +1 · 👑 UNBELIEVABLE +5</small><br><br>공부하고 오면 다시 모험할 수 있어요! 마을은 그대로 다닐 수 있어요.'}])}catch(e){X.toast('⚡ 행동력이 부족해요 ('+apN()+'/'+APHOLD+')',true)}}
 /* 공부로 채우기 */
 (function(){var _add=LVH.add;LVH.add=function(p,why){_add(p,why);try{var a=APS();
   if(why==='출석')apGain(2,'출석');
@@ -14099,10 +14099,10 @@ function apNo(k,boss){CH.sfx('close');try{dlg([{n:'⚡ 행동력 부족',t:(boss
 /* 전투에 쓰기 */
 var _encAP=encounter;encounter=function(m){if(BT)return;if(apN()<1){try{FGRACE=performance.now()+5000}catch(e){}apKickStart();return}return _encAP(m)};
 var _startAP=startBattle;startBattle=function(opt){var k=opt&&opt.boss?APBOSS:1;if(!apUse(k)){BT=null;apNo(k,!!(opt&&opt.boss));try{FGRACE=performance.now()+5000}catch(e){}return}
- try{X.toast('⚡ 행동력 -'+k+' ('+apN()+'/'+APMAX+')')}catch(e){}return _startAP(opt)};
+ try{X.toast('⚡ 행동력 -'+k+' ('+apN()+'/'+APHOLD+')')}catch(e){}return _startAP(opt)};
 /* 보스전 행동력 부족 → "행동력을 모아 오세요" 후 마을로 돌려보내기 (2026-11-16) */
 function apBossOut(){CH.sfx('close');var go=function(){try{goZone({to:'village'})}catch(e){try{unlay('vgf',closeForest)}catch(_){}}};
- try{dlg([{n:'⚡ 행동력 부족',t:'보스와 싸우려면 행동력 <b>'+APBOSS+'칸</b>이 필요해요. 지금 행동력 <b>'+apN()+'/'+APMAX+'</b><br><br><b>행동력을 모아 오세요!</b> 마을로 돌아갈게요.<br><br><small>📅 출석 +1 · 📖 필기장·앱 15분 +1 (하루 2) · 🎬 쇼츠 2편 +1 (하루 2)<br>✏️ 퀴즈 GOOD·BETTER·PERFECT 한 단계마다 +1 · 👑 UNBELIEVABLE +5</small>'}],null,go)}catch(e){X.toast('⚡ 행동력을 모아 오세요! ('+apN()+'/'+APMAX+')',true);setTimeout(go,1500)}}
+ try{dlg([{n:'⚡ 행동력 부족',t:'보스와 싸우려면 행동력 <b>'+APBOSS+'칸</b>이 필요해요. 지금 행동력 <b>'+apN()+'/'+APHOLD+'</b><br><br><b>행동력을 모아 오세요!</b> 마을로 돌아갈게요.<br><br><small>📅 출석 +1 · 📖 필기장·앱 15분 +1 (하루 2) · 🎬 쇼츠 2편 +1 (하루 2)<br>✏️ 퀴즈 GOOD·BETTER·PERFECT 한 단계마다 +1 · 👑 UNBELIEVABLE +5</small>'}],null,go)}catch(e){X.toast('⚡ 행동력을 모아 오세요! ('+apN()+'/'+APHOLD+')',true);setTimeout(go,1500)}}
 var _bossAP=bossFight;bossFight=function(ambush){var q=QS();if(q.boss_qs15&&!q.boss_dw&&apN()<APBOSS){try{FGRACE=performance.now()+8000;if(CAMP){CAMP.woke=0;CAMP.noise=0}}catch(e){}apBossOut();return}return _bossAP(ambush)};
 var _queenAP=queenBattle;queenBattle=function(){if(!BT&&apN()<APBOSS){try{FGRACE=performance.now()+8000}catch(e){}apBossOut();return}return _queenAP.apply(this,arguments)};
 /* 화면 표시 */
