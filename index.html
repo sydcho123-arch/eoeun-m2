@@ -8601,7 +8601,7 @@ function buildF14(A){var T=A.T,r=A.rnd,Z=ZONES['1-4'],P=Z.path;A.noMon=calmCamp(
  traps(A);forestDrops(A);forestMons(A)}
 function campGate(){if(calmCamp()){CH.sfx('door');enterCamp(false);return}
  if(nightCamp()){X.ask('🌙 늑대들이 모두 잠들어 있습니다','몰래 들어가 보시겠습니까? 들킴 게이지가 가득 차면 늑대들이 깨어나 전투가 시작돼요. (잠든 늑대 근처에서는 천천히!)','몰래 들어가기','돌아가기',function(){enterCamp(true)})}
- else X.ask('☀️ 늑대들이 활동 중입니다','전투가 시작됩니다. 들어가시겠습니까? (다이어 울프 Lv.16 + 늑대 무리) ⭐ 권장: 내 레벨 Lv.15 이상 · 아저씨와 함께 · 회복 아이템 넉넉히','들어가기','돌아가기',function(){bossFight(false)})}
+ else X.ask('☀️ 늑대들이 활동 중입니다','전투가 시작됩니다. 들어가시겠습니까? (다이어 울프 Lv.16 + 늑대 무리) ⭐ 권장: Lv.15 이상 · 아저씨와 함께 · 회복 아이템 6개(보스전 최대)','들어가기','돌아가기',function(){bossFight(false)})}
 function enterCamp(sneak){if(!WORLD)return;WORLD.P.x=0;WORLD.P.z=-11.6;CAMP.inside=true;CAMP.noise=0;CAMP.sneak=sneak;stealthUI();if(sneak){CH.sfx('creep');think('쉿… 조용히, 아주 조용히 가야 해…',300)}}
 function stealthUI(){var m=$('vgf');if(!m)return;var e=m.querySelector('.zstl');if(!(CAMP&&CAMP.inside&&CAMP.sneak&&!calmCamp())){if(e)e.remove();return}if(!e){e=document.createElement('div');e.className='zstl';e.innerHTML='<b>🤫 들킴 게이지</b><i><s></s></i>';m.appendChild(e)}e.querySelector('s').style.width=Math.min(100,CAMP.noise).toFixed(0)+'%';e.classList.toggle('hot',CAMP.noise>65)}
 var LP=null;
@@ -8662,7 +8662,7 @@ function queenNest(A){var T=A.T;var nest=new T.Mesh(new T.CircleGeometry(7,24),n
  A.ANIM.push(function(t,dt){var p=(t/900)%1;q.userData.tick(dt||.016,{atk:p<.4?p/.4:null});ar.position.y=Math.abs(Math.sin(t/300))*.1});
  var sg=A.textSprite(T,'⚔️ 누군가 여왕거미와 싸우고 있다!','rgba(90,20,40,.92)','#fff',.8);sg.position.set(0,4.4,-9);A.sc.add(sg);
  A.trigger(0,-5,3.4,'🏹 아저씨를 도우러 가기',function(){queenEvent()},false)}
-function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. ⭐ 권장: 내 레벨 Lv.13 이상 · 회복 아이템 10개 이상','싸우러 가기','조금 더 준비',function(){qsReady(archName())});return}
+function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. ⭐ 권장: Lv.13 이상 · 회복 아이템 6개(보스전 최대) 이상이면 더 좋아요','싸우러 가기','조금 더 준비',function(){qsReady(archName())});return}
  CH.sfx('help');dlg([{n:'???',t:'크윽… 이 여왕거미 녀석, 사흘째 버티는 중인데…! 누, 누구냐?!'},{n:'',t:'(깃털 꽂힌 초록 사냥 모자를 쓴 날렵한 아저씨가 거미줄을 피하며 활을 쏘고 있다)'},{n:esc(ST().nm||'나'),t:'혹시… <b>단비 아빠</b> 아니세요?! 마을에서 다들 걱정하고 있어요!'},
   {n:'단비 아빠',t:'단비를 안다고?! 허허… 숲에서 늑대 떼에 쫓기다가 이 동굴로 피했는데, 입구는 가시로 막고… 그만 여왕거미 둥지에 갇혀 버렸지 뭐냐.'},
   {n:'단비 아빠',t:'혼자서는 도저히 못 이기겠더구나. 너, 꽤 강해 보이는데… 나랑 같이 싸워 주겠니?'},{n:'',t:'🏹 <b>궁수 아저씨가 동료가 되었어요!</b> (나와 같은 레벨)'}],null,function(){archJoin('단비 아빠')})}
@@ -10138,12 +10138,12 @@ setTimeout(function(){try{var s=ST();if(s.skr18)return;s.skr18=Date.now();if(L()
    반창꼬 40 · 마뎃카쏠 90 · 후시딩 150 · 약초 220 · 최하급 물약 300 · 하급 물약 400
    아이디는 그대로 potion~potion6 (예전 물약을 가진 학생은 같은 칸의 새 아이템으로 바뀜) */
 var POT6=[
- {id:'potion', nm:'반창꼬',     ic:'🩹',heal:90, p:5, d:'붙이면 체력 +90 · 작은 상처엔 반창꼬!'},
- {id:'potion2',nm:'마뎃카쏠',   ic:'🧴',heal:140, p:15,d:'바르면 체력 +140 · 새살이 솔솔 돋는 연고'},
- {id:'potion3',nm:'후시딩',     ic:'🧴',heal:200,p:25,d:'바르면 체력 +200 · 상처가 덧나지 않게 지켜 주는 연고'},
- {id:'potion4',nm:'약초',       ic:'🌿',heal:270,p:40,d:'씹으면 체력 +270 · 숲에서 자란 쌉싸름한 약초'},
- {id:'potion5',nm:'최하급 물약',ic:'🧪',heal:450,p:60,d:'마시면 체력 +450 · 마을 약방의 기본 물약'},
- {id:'potion6',nm:'하급 물약',  ic:'🧪',heal:600,p:90,d:'마시면 체력 +600 · 진하게 달인 회복 물약'}];
+ {id:'potion', nm:'반창꼬',     ic:'🩹',heal:90, p:10, d:'붙이면 체력 +90 · 작은 상처엔 반창꼬!'},
+ {id:'potion2',nm:'마뎃카쏠',   ic:'🧴',heal:140, p:25,d:'바르면 체력 +140 · 새살이 솔솔 돋는 연고'},
+ {id:'potion3',nm:'후시딩',     ic:'🧴',heal:200,p:40,d:'바르면 체력 +200 · 상처가 덧나지 않게 지켜 주는 연고'},
+ {id:'potion4',nm:'약초',       ic:'🌿',heal:270,p:70,d:'씹으면 체력 +270 · 숲에서 자란 쌉싸름한 약초'},
+ {id:'potion5',nm:'최하급 물약',ic:'🧪',heal:450,p:120,d:'마시면 체력 +450 · 마을 약방의 기본 물약'},
+ {id:'potion6',nm:'하급 물약',  ic:'🧪',heal:600,p:180,d:'마시면 체력 +600 · 진하게 달인 회복 물약'}];
 var POTIDS=POT6.map(function(x){return x.id});
 var POTIMG=(function(){
  function sv(b){return'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'+b+'</svg>')}
@@ -11404,7 +11404,7 @@ function bossStand(A,k,x,z,lab){var T=A.T,g=CH.mon3d(T,k);g.scale.setScalar(FS[k
  A.trigger(x,z+3.4,2.8,lab,function(){bossAsk(k)})}
 function rubble(A,x,z,col,ic){var T=A.T;for(var i=0;i<14;i++){var rk=A.add(new T.Mesh(new T.DodecahedronGeometry(.3+Math.random()*.6,0),A.std(col)),false);rk.position.set(x+(Math.random()-.5)*3.4,.25,z+(Math.random()-.5)*3.4);rk.rotation.set(Math.random()*3,Math.random()*3,0)}}
 function bossAsk(k){if(BT)return;var d=MON[k],q=QS();if(q['boss_'+k])return;
- var info=k==='gm19'?'아래로 내려가는 길을 막고 선 도끼창 골렘 장군(Lv.19)! 5턴마다 바위 골렘을 깨우고, 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.18 이상 · 회복 물약 넉넉히':'제단을 지키는 고대 골렘(Lv.20)! 마나로 마법을 쓰고, 4턴마다 떼어 낸 코어 파편은 붙으면 자폭해요. 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.19 이상 · 회복 물약 넉넉히';
+ var info=k==='gm19'?'아래로 내려가는 길을 막고 선 도끼창 골렘 장군(Lv.19)! 5턴마다 바위 골렘을 깨우고, 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.18 이상 · 회복 물약 6개(보스전 최대)':'제단을 지키는 고대 골렘(Lv.20)! 마나로 마법을 쓰고, 4턴마다 떼어 낸 코어 파편은 붙으면 자폭해요. 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.19 이상 · 회복 물약 6개(보스전 최대)';
  X.ask((k==='gm19'?'🪓 ':'💠 ')+d.nm+'와 싸울까요?',info,'⚔️ 싸우러 가기','🎒 조금 더 준비',function(){bossIntro(k)})}
 function NM(){return esc(ST().nm||'나')}function AN(){return esc(archName())}
 function bossIntro(k){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;
