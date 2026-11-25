@@ -8362,7 +8362,7 @@ function buyPanel(){var w=W(),s=ST(),sm=SMODE==='smith',hasId=!!QS().id;if(sm){i
  if(sm){h+='<div class="eqtabs bcls">'+[['hero','⚔️ 탱커 ('+esc(ST().nm||'나')+')']].concat(hasArch()?[['arch','🏹 궁수 ('+esc(archName())+')']]:[]).map(function(t){return'<button type="button" data-bc="'+t[0]+'" class="'+(BCLS===t[0]?'on':'')+'" style="font-size:15px;padding:9px 12px">'+t[1]+'</button>'}).join('')+'</div>';h+='<div class="eqtabs">'+bSlots(BCLS).map(function(sl){return'<button type="button" data-bt="'+sl+'" class="'+(BTAB===sl?'on':'')+'">'+BSLOT[sl]+'</button>'}).join('')+'</div>'}
  h+='<div class="vglist">';
 
- Object.keys(CH.ITEMDB).forEach(function(id){var d=CH.ITEMDB[id];if(d.mat||d.nosell||d.noshop||!d.p)return;if(BTAB==='etc'?(d.slot||d.arch):(d.slot!==BTAB||(BCLS==='arch'?!d.arch:!!d.arch)))return;
+ Object.keys(CH.ITEMDB).forEach(function(id){var d=CH.ITEMDB[id];if(d.mat||(d.nosell&&!d.shopok)||d.noshop||!d.p)return;if(BTAB==='etc'?(d.slot||d.arch):(d.slot!==BTAB||(BCLS==='arch'?!d.arch:!!d.arch)))return;
   h+='<div class="vgrow'+(hasId?'':' noid')+'"><span class="ic">'+CH.itemIcon(id,d.ic,46)+'</span><div><b>'+d.nm+'</b><small>'+(d.slot?'<em class="eqst">'+statTxt(d)+'</em> ':'')+d.d+(CH.itemCount(id)?' · 창고에 '+CH.itemCount(id)+'개':'')+'</small></div><button type="button" data-g="'+id+'">⭐'+PP(d)+'</button></div>'});
  h+='</div><div class="chnote2">'+(sm?'산 장비는 창고에 들어가요. 내 캐릭터를 누르고 <b>🛡️ 장비 맞추기</b>에서 입어요. 물약·도구는 <b>잠꾸러기 상점</b>에서 팔아요.':'산 물건은 창고에 들어가요. 무기·방어구는 <b>⚒️ 대장간</b>에서 팔아요.')+'</div>';
  var p=panel(sm?'⚔️ 무기·방어구 사기':'🛒 물건 구매하기',h),scrn=sm?$('vgk'):$('vgs');
@@ -14226,7 +14226,7 @@ setInterval(function(){try{var q=QS();if(!q.apBack||!WORLD||WORLD.map!=='v'||win
  CH.canAdd=function(id,n){if(AUTO[id])return true;return _can.apply(this,arguments)};
  CH.room=function(id){if(AUTO[id])return 1;return _room.apply(this,arguments)};
  if(_fx)CH.gainFx=function(o){try{if(o&&o.sub&&/창고/.test(o.sub)&&o.title&&(o.title.indexOf(CH.ITEMDB.lamp.nm)===0||(CH.ITEMDB.map&&o.title.indexOf(CH.ITEMDB.map.nm)===0)))o.sub='✨ 자동 장착! 창고 칸을 쓰지 않아요'}catch(e){}return _fx.apply(this,arguments)};
- ['lamp','map'].forEach(function(id){var d=CH.ITEMDB[id];if(d){d.noStack=1;d.nosell=1;d.d=(d.d||'').replace(/\s*\(창고에 있으면 자동으로 켜져요\)/,'').replace(/ · 한 번 사면 자동 장착.*$/,'')+' · 한 번 사면 자동 장착 (창고 칸 안 써요)'}});
+ ['lamp','map'].forEach(function(id){var d=CH.ITEMDB[id];if(d){d.noStack=1;d.nosell=1;d.shopok=1;d.d=(d.d||'').replace(/\s*\(창고에 있으면 자동으로 켜져요\)/,'').replace(/ · 한 번 사면 자동 장착.*$/,'')+' · 한 번 사면 자동 장착 (창고 칸 안 써요)'}});
  /* 이미 장착한 것은 다시 못 사게 */
  document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&e.target.closest('[data-g]');if(!b)return;var id=b.dataset.g;if(AUTO[id]&&own(id)){e.stopImmediatePropagation();e.preventDefault();try{CH.sfx('deny')}catch(_){}X.toast('✅ '+CH.ITEMDB[id].nm+'은(는) 이미 자동 장착되어 있어요')}},true);
  setInterval(function(){try{[].forEach.call(document.querySelectorAll('[data-g="lamp"],[data-g="map"]'),function(b){var id=b.dataset.g;if(!own(id)||b._own)return;b._own=1;b.textContent='✅ 장착중';b.style.opacity='.6';var r=b.closest('.vgrow');var sm=r&&r.querySelector('small');if(sm)sm.innerHTML=sm.innerHTML.replace(/ · 창고에 \d+개/,'')})}catch(e){}},400);
