@@ -9457,7 +9457,7 @@ renderEq=function(){var e=eqWin(),o=CH.stats(),eq=EQ(),w=W(),arch=(CTX==='arch'&
  h+='<div class="evst"><div class="evhp"><i style="width:'+hp.toFixed(0)+'%"></i><span>❤️ '+o.cur+' / '+o.hp+'</span></div><div class="evch"><span>⚔️ '+o.atk+(o.atkB?'<small>+'+o.atkB+'</small>':'')+'</span><span>🛡️ '+o.def+(o.defB?'<small>+'+o.defB+'</small>':'')+'</span><span>💨 '+o.agi+'%</span><span>🍀 '+o.luk+'%</span><span>🧠 '+(o.int||0)+'</span></div><button type="button" class="evbp" data-bp="1">💪 능력치 포인트 '+Math.max(0,bpTotal()-bpUsed())+'</button></div>';
  var L2=[];(w.items||[]).forEach(function(x){L2.push(x)});
  h+='<div class="evrt">📦 창고 <small>'+(w.n?(L2.length+' / '+w.n+'칸'):'창고 없음')+'</small></div><div class="evg">';
- for(var i=0;i<12;i++){var it=L2[i];if(i>=(w.n||0)){h+='<div class="evi lk">🔒</div>';continue}if(!it){h+='<div class="evi"></div>';continue}var d=CH.ITEMDB[it.id]||{};
+ for(var i=0,NC=Math.max(12,w.n||0);i<NC;i++){/* 11-26 18:11 창고가 12칸 넘으면 13번째부터 안 보이던 버그 → 창고 칸 수만큼 모두 */var it=L2[i];if(i>=(w.n||0)){h+='<div class="evi lk">🔒</div>';continue}if(!it){h+='<div class="evi"></div>';continue}var d=CH.ITEMDB[it.id]||{};
   h+='<div class="evi it'+(d.slot?' eqd':'')+(CH.gearCls?CH.gearCls(it.id):'')+(d.arch?' ar':'')+(SEL&&!SEL.slot&&SEL.id===it.id?' sel':'')+'" data-id="'+it.id+'">'+CH.itemIcon(it.id,it.ic,40)+((it.n||1)>1?'<i>×'+it.n+'</i>':'')+(d.slot&&CH.enhLv&&CH.enhLv(it.id)?'<em>+'+CH.enhLv(it.id)+'</em>':'')+'</div>'}
  h+='</div><div class="evbar">'+evBar()+'</div></div>';
  e.innerHTML=h;JUST=null;var old=document.querySelector('.eqpop');if(old)old.remove();
