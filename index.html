@@ -9082,7 +9082,7 @@ skillTree=function(){var m=$('vgsk');if(!m){m=document.createElement('div');m.id
 
 /* 11-26 11:12 선생님: 초6 B반 송퇴촞 — 스킬 초기화 + 스킬 개방·강화에 쓴 별 돌려주기 (한 번만 · 스킬 포인트는 자동으로 돌아옴) */
 (function(){var tries=0,iv=setInterval(function(){tries++;if(tries>40){clearInterval(iv);return}try{var st=X&&X.st&&X.st();if(!st)return;clearInterval(iv);if(st.fx1126r)return;var cl='';try{cl=typeof CLASS_LABEL!=='undefined'?CLASS_LABEL:''}catch(_){}
- if(String(st.nm||'').replace(/\s/g,'')!=='송퇴촞'||!/초\s*6\s*B/.test(cl))return;
+ if(String(st.nm||'').replace(/\s/g,'')!=='솧툌춋'||!/초\s*6\s*B/.test(cl))return;/* 11-26 15:46: 이름 글자를 랭킹 기록 그대로 바로잡음 */
  var back=0;['hero','arch'].forEach(function(c){if(c==='arch'&&!(typeof hasArch==='function'&&hasArch()))return;inCtx(c,function(){var s=SKS();if(!s)return;var ids=Object.keys(s).filter(function(id){return tLv(id)>0&&TT()[id]}),n=0;ids.forEach(function(id){var L=tLv(id);if(TT()[id].ult)back+=450;else{n++;back+=n<=3?75:n<=6?150:225}for(var i=1;i<L;i++)back+=tUpStar(i)});for(var k in s)delete s[k]})});
  st.fx1126r=1;X.sv();setTimeout(function(){try{if(back)X.gain(back,'🌳 스킬 초기화 (선생님이 돌려줌)');X.toast('🌳 선생님이 스킬을 초기화해 주셨어요! 스킬 포인트와 별 ⭐'+back+'개를 돌려받았어요',true)}catch(e){}},3000)}catch(e){}},3000)})();
 /* 「거인의 육체」 최대 체력 % */
@@ -10448,7 +10448,7 @@ function openManual(){var old=document.querySelector('.mnbook');if(old)old.remov
    ② 마을·숲 화면에서 ⚡ 칩은 숨기고, 캐릭터 메뉴(내 이름 누르면 나오는 창)의 레벨·이름 옆에 ⚡ 버튼
    ③ 퀘스트 칸은 📜만 보이고 눌러야 내용 · 휴대폰에서는 점프 위 +/- 줌 버튼 없앰(손가락으로 줌) ===== */
 var SHIRT='<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path d="M11 5 L6 8 L3 14 L7 16 L9 13 V27 H23 V13 L25 16 L29 14 L26 8 L21 5 Q16 9 11 5Z" fill="#7ab8ff" stroke="#3a2412" stroke-width="1.8" stroke-linejoin="round"/><path d="M11 5 Q16 9 21 5" fill="none" stroke="#3a2412" stroke-width="1.8"/><circle cx="16" cy="15" r="1.3" fill="#fff"/><circle cx="16" cy="20" r="1.3" fill="#fff"/></svg>';
-apInfo=function(){var a=APS();panel('⚡ 행동력','<div class="apbig">⚡ '+apN()+'</div><div class="apsub">오늘 모은 행동력 <b>'+a.g+' / '+APMAX+'</b></div><div class="aprule">'+'<b>⚡ 행동력이란?</b><br>Lv.10부터 공부할수록 쌓이는 「모험할 힘」이에요. <b>하루에 20까지</b> 모을 수 있고, 안 쓴 행동력은 다음 날에도 남아요. 단, 가질 수 있는 건 <b>최대 30</b>까지라 다 차면 써야 다시 모여요.<br><br>'+'<b>📚 채우는 법</b><br>📅 출석 <b>+2</b><br>📖 필기장 보기·앱 이용 15분마다 <b>+1</b> <small>(하루 3번)</small><br>🎬 복습 쇼츠 2편마다 <b>+1</b> <small>(하루 4번)</small><br>✏️ 퀴즈 GOOD <b>+3</b> → BETTER <b>+1</b> → PERFECT <b>+1</b><br>👑 UNBELIEVABLE <b>+5</b> 더<br><small>오늘: 필기장·앱 '+a.tm+'/3 · 쇼츠 '+a.sh+'/4</small><br><br>'+'<b>🏘️ 마을·숲에서 쓰는 곳</b><br>🌲 숲·동굴에서 몬스터와 전투 1번 <b>-1</b><br>👑 보스전(여왕거미·다이어 울프) <b>-5</b> <small>(져서 다시 도전해도 -5)</small><br>🏠 마을 구경·대화·상점·대장간·집·창고는 <b>0</b><br>⛔ 행동력이 0이면 <b>숲에 들어갈 수 없어요</b><br>⏳ 숲에서 0이 되면 <b>2분 뒤 마을로</b> 돌아가요 → 💾 저장해 두고, ⚡를 모은 뒤 📂 불러오기로 그 자리에서 다시 시작!</div>')}
+apInfo=function(){var a=APS();panel('⚡ 행동력','<div class="apbig">⚡ '+apN()+'</div><div class="apsub">오늘 모은 행동력 <b>'+a.g+' / '+APMAX+'</b></div><div class="aprule">'+'<b>⚡ 행동력이란?</b><br>Lv.10부터 공부할수록 쌓이는 「모험할 힘」이에요. <b>하루에 30까지</b> 모을 수 있고, 안 쓴 행동력은 다음 날에도 남아요. 단, 가질 수 있는 건 <b>최대 30</b>까지라 다 차면 써야 다시 모여요.<br><br>'+'<b>📚 채우는 법</b><br>📅 출석 <b>+2</b><br>📖 필기장 보기·앱 이용 15분마다 <b>+1</b> <small>(하루 3번)</small><br>🎬 복습 쇼츠 2편마다 <b>+1</b> <small>(하루 4번)</small><br>✏️ 퀴즈 GOOD <b>+3</b> → BETTER <b>+1</b> → PERFECT <b>+1</b><br>👑 UNBELIEVABLE <b>+5</b> 더<br><small>오늘: 필기장·앱 '+a.tm+'/3 · 쇼츠 '+a.sh+'/4</small><br><br>'+'<b>🏘️ 마을·숲에서 쓰는 곳</b><br>🌲 숲·동굴에서 몬스터와 전투 1번 <b>-1</b><br>👑 보스전(여왕거미·다이어 울프) <b>-5</b> <small>(져서 다시 도전해도 -5)</small><br>🏠 마을 구경·대화·상점·대장간·집·창고는 <b>0</b><br>⛔ 행동력이 0이면 <b>숲에 들어갈 수 없어요</b><br>⏳ 숲에서 0이 되면 <b>2분 뒤 마을로</b> 돌아가요 → 💾 저장해 두고, ⚡를 모은 뒤 📂 불러오기로 그 자리에서 다시 시작!</div>')}
 function apBtnHTML(){return'⚡<b>'+apN()+'</b>'}
 function topLay(){try{var st=$('chStage');if(!st)return;var top=st.querySelector('.chtop'),ed=st.querySelector('.chedit'),cal=top&&top.querySelector('.chcal'),pill=top&&top.querySelector('.chpill'),sto=st.querySelector('.chstore'),pen=st.querySelector('.chbbb');
  var on=L().lv>=10;st.classList.toggle('lv10top',on);if(!on||!top||!ed||!cal||!pill)return;
@@ -14213,8 +14213,8 @@ var _panelBB=panel;panel=function(t,b){var p=_panelBB(t,b);try{p.classList.remov
    최대 20칸, 남은 칸은 다음 날로 계속 이월
    채우기: 출석 +1 · 필기장/앱 15분마다 +1(하루 최대 2) · 쇼츠 2편마다 +1(하루 최대 2)
           퀴즈 GOOD +1 → BETTER +1 → PERFECT +1 (올라간 단계만큼) · UNBELIEVABLE +5 */
-var APMAX=20,APBOSS=6;/* 2026-11-18 16시: APMAX는 「하루에 모을 수 있는 양」 — 가진 행동력은 끝없이 쌓임 */
-function APS(){var s=ST();if(!s.ap)s.ap={n:10,d:'',tm:0,sh:0,sc:0};var a=s.ap;var t=blToday();if(a.d!==t){a.d=t;a.tm=0;a.sh=0;a.sc=0;a.g=0}if(a.g==null)a.g=0;return a}
+var APMAX=30,APBOSS=6;/* 11-26 선생님: 하루에 모을 수 있는 것도 30 *//* 2026-11-18 16시: APMAX는 「하루에 모을 수 있는 양」 — 가진 행동력은 끝없이 쌓임 */
+function APS(){var s=ST();if(!s.ap)s.ap={n:10,d:'',tm:0,sh:0,sc:0};var a=s.ap;var t=blToday();if(a.d!==t){a.d=t;a.tm=0;a.sh=0;a.sc=0;a.g=0}if(a.g==null)a.g=0;if(a.n>APHOLD)a.n=APHOLD;/* 11-26 선생님: 가진 행동력은 최대 30 — 예전에 넘게 쌓인 것도 30으로 */return a}
 function apN(){return APS().n}
 function apChip(){[].forEach.call(document.querySelectorAll('.apchip'),function(c){var n=apN();c.innerHTML='⚡ <b>'+n+'</b>';c.classList.toggle('low',n<1);c.classList.toggle('full',false)})}
 var APHOLD=30;/* 2026-11-22 00:16 선생님: 가진 행동력은 최대 30 · 써야 다시 모임 */
@@ -14245,7 +14245,7 @@ function apInfo(){panel('⚡ 행동력','<div class="apbig">⚡ '+apN()+' <small
 try{window.__vgT.ap=function(n){APS().n=n;X.sv();apChip()}}catch(e){}
 
 /* ===== 2026-11-18 16시: 행동력 0이면 숲에 못 들어감 · 숲에서 떨어지면 2분 뒤 마을로 (저장 → 모은 뒤 불러오기로 이어서) ===== */
-function apEmptyMsg(){return'⚡ 행동력이 <b>0</b>이에요.<br><br><small>📅 출석 +2 · 📖 필기장·앱 15분 +1 (하루 3번) · 🎬 쇼츠 2편 +1 (하루 4번)<br>✏️ 퀴즈 GOOD +3 → BETTER +1 → PERFECT +1 · 👑 UNBELIEVABLE +5 더<br>하루에 최대 20까지 모을 수 있고, 가질 수 있는 행동력은 최대 30이에요 (다 차면 써야 다시 모여요).</small>'}
+function apEmptyMsg(){return'⚡ 행동력이 <b>0</b>이에요.<br><br><small>📅 출석 +2 · 📖 필기장·앱 15분 +1 (하루 3번) · 🎬 쇼츠 2편 +1 (하루 4번)<br>✏️ 퀴즈 GOOD +3 → BETTER +1 → PERFECT +1 · 👑 UNBELIEVABLE +5 더<br>하루에 최대 30까지 모을 수 있고, 가질 수 있는 행동력은 최대 30이에요 (다 차면 써야 다시 모여요).</small>'}
 var _openForestAP=openForest;openForest=function(sp,zone){try{if(zone!=='pz'&&!window.__uGo&&(!WORLD||WORLD.map!=='f')&&apN()<1){CH.sfx('deny');dlg([{n:'⚡ 행동력 부족',t:'행동력이 없어서 숲에 들어갈 수 없어요. 공부로 ⚡를 모아 오세요!<br><br>'+apEmptyMsg()}]);return}}catch(e){}return _openForestAP.apply(this,arguments)};
 var APK={t:0,iv:0};
 function apKickStart(){if(APK.t)return;try{if(!WORLD||WORLD.map!=='f'||BT)return}catch(e){return}APK.t=Date.now();CH.sfx('close');
