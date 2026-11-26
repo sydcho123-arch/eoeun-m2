@@ -1518,6 +1518,17 @@ img.crn{width:1.08em;height:1.08em;vertical-align:-.2em;display:inline-block;mar
 /* 11-26 위쪽 줄: 제목이 길면 글씨를 줄여 크라운 칸이 화면 밖으로 밀리지 않게 */.vgtop b{flex:1 1 auto;min-width:0;text-align:center;font-size:clamp(12px,4.3vw,19px)!important;white-space:normal;word-break:keep-all;line-height:1.15;overflow:hidden}.vgtop .vgtr{flex:none;display:flex;align-items:center;gap:6px}.mngrid .mnfs{background:#e4ecfd!important}
 .vgtr .vgqt i.emo{position:static!important;font-size:22px!important;width:1.18em!important;height:1.18em!important}/* 11-26 퀘스트 칸 📜 그림이 .vgqt i(11px·구석) 규칙에 눌려 안 보였음 */
 .mngrid .mnql.dim{opacity:.5;filter:grayscale(.6)}/* 11-26 집으로 귀환 막힘 */
+/* 11-26 12:25 선생님: 캐릭터 메뉴 창을 작게 — 글씨·그림은 안 잘리게, 이름이 길어도 줄바꿈으로 안 튀어나가게 */
+.vgmenu{min-width:0!important;width:min(272px,calc(100vw - 20px))!important;max-width:min(272px,calc(100vw - 20px))!important;padding:7px!important;gap:5px!important;box-sizing:border-box}
+.vgmenu .mnst{padding:6px 8px!important;gap:3px!important;min-width:0}
+.vgmenu .mnst>b{font-size:13.5px!important;min-width:0;overflow-wrap:anywhere;word-break:break-all}
+.vgmenu .mnst .hpb{font-size:11.5px!important}
+.vgmenu .mnrow{font-size:12px!important;gap:4px;flex-wrap:wrap}
+.vgmenu .mnab{gap:4px!important}.vgmenu .mnab button{font-size:11px!important;padding:4px 2px!important;min-width:0}.vgmenu .mnab button b{font-size:11px!important}
+.vgmenu .mngrid{gap:5px!important}
+.vgmenu .mngrid button{font-size:17px!important;padding:6px 3px!important;min-width:0;line-height:1.1}
+.vgmenu .mngrid button b{font-size:11.5px!important;line-height:1.25;word-break:keep-all;overflow-wrap:anywhere;text-align:center}
+.vgmenu .mngrid button i.emo,.vgmenu .mngrid button img{width:22px!important;height:22px!important}
 </style>
 <style id="rv-style">
 .rv-clip{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 18px;padding:10px 12px;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--body);text-align:left;cursor:pointer}
@@ -9482,9 +9493,7 @@ function evBar(){if(!SEL)return'<div class="evhint">👆 창고의 장비를 고
   var key=JSON.stringify(CH.heroCh());
   if(EV.key!==key){if(EV.sc){EV.sc.traverse(function(){});disp(EV.sc)}var sc=new T.Scene();sc.add(new T.HemisphereLight(0xcfe0ff,0x6a4a3a,.9));var k=new T.DirectionalLight(0xffe2c0,1.25);k.position.set(3,5,6);sc.add(k);var f=new T.DirectionalLight(0xa8c0ff,.45);f.position.set(-5,3,-4);sc.add(f);
    var hero=CH.hero3d(T,CH.heroCh());try{hero.userData.animate(.016,0,false)}catch(_){}
-   /* 11-26 선생님: 모든 캐릭터 크기는 탱커 기준 */try{var hh=function(o){o.updateMatrixWorld(true);var bx=new T.Box3().setFromObject(o);return bx.max.y-bx.min.y};var tk=JSON.stringify(inCtx('hero',function(){return CH.heroCh()}));
-    if(EV.tkK!==tk){var tm=inCtx('hero',function(){return CH.hero3d(T,CH.heroCh())});try{tm.userData.animate(.016,0,false)}catch(_){}EV.tkH=hh(tm);EV.tkK=tk;disp(tm)}
-    var mh=hh(hero);if(EV.tkH&&mh>0&&Math.abs(mh-EV.tkH)/EV.tkH>.02)hero.scale.multiplyScalar(EV.tkH/mh)}catch(_){}
+   /* 11-26 선생님: 모든 캐릭터 크기는 탱커 기준 — 키(hg) 비율로 맞춤 (모자·활·무기 길이는 빼고) */try{var HG=[.9,1,1.08],hgOf=function(c){var p=(c&&c.p)||{};return HG[p.hg!=null?p.hg:1]||1};var tkc=inCtx('hero',function(){return CH.heroCh()}),cc=CH.heroCh();var r=hgOf(tkc)/hgOf(cc);if(Math.abs(r-1)>.01)hero.scale.multiplyScalar(r)}catch(_){}
    sc.add(hero);EV.sc=sc;EV.key=key}
   var qv=document.querySelector('.eqwin.ev2 [data-qv]');if(qv)qv.onclick=function(e){e.stopPropagation();try{CH.sfx('deny')}catch(_){}X.toast('🏹 화살통은 나중에 나와요!')};
   var img=fig.querySelector('img');if(img)img.replaceWith(EV.cv);else if(EV.cv.parentNode!==fig)fig.insertBefore(EV.cv,fig.firstChild);
