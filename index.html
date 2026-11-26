@@ -3222,8 +3222,8 @@ CH.hdef=function(g){var p={};CH.HP.forEach(function(x){p[x.k]=typeof x.d==='func
 /* 화면 선명도 예산: 큰 모니터·레티나에서 픽셀 수가 너무 많아 끊기는 것 방지 + 느리면 자동으로 낮춤 */
 window.__prBudget=window.__prBudget||1.3e6;
 window.__prFor=function(w,h){var d=window.devicePixelRatio||1,p=Math.min(d,1.5),B=window.__prBudget;if(w*h*p*p>B)p=Math.sqrt(B/(w*h));return Math.max(.55,Math.min(p,d))};
-window.__prTune=function(o,dt){var f=o.__pf||(o.__pf={n:0,s:0,k:0});if(dt<=0)return false;f.n++;f.s+=dt;if(f.n<60)return false;var av=f.s/f.n;f.n=0;f.s=0;f.k++;
- if(f.k<2)return false;if(av>.021&&window.__prBudget>3.5e5){window.__prBudget*=.72;return true}if(av<.0125&&window.__prBudget<1.3e6&&f.k%5===0){window.__prBudget=Math.min(1.3e6,window.__prBudget*1.15);return true}return false};
+window.__prTune=function(o,dt){var f=o.__pf||(o.__pf={n:0,s:0,k:0});if(dt<=0)return false;f.n++;f.s+=dt;if(f.n<40)return false;/* 11-26: 끊기면 더 빨리 알아차리고 낮춤 */var av=f.s/f.n;f.n=0;f.s=0;f.k++;
+ if(f.k<1)return false;if(av>.021&&window.__prBudget>3.5e5){window.__prBudget*=.72;return true}if(av<.0125&&window.__prBudget<1.3e6&&f.k%5===0){window.__prBudget=Math.min(1.3e6,window.__prBudget*1.15);return true}return false};
 
 /* ===== Lv.5 신상 옷 · 악세사리 · 그리기 (2026-11-14) ===== */
 (function(){
@@ -5462,9 +5462,9 @@ CH.hero3dShot=function(T,ch,w,h,view,extra){
  ren.render(sc,cam);var u=ren.domElement.toDataURL('image/png');sc.traverse(function(o){if(o.geometry)o.geometry.dispose();if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(function(m){if(m.map)m.map.dispose();m.dispose()})}});return u};
 })();
 
-/* 마을·숲·집 카메라 줌 배율 (작을수록 크게): 0.5~1.7, 기기에 저장 */
-window.__wzf=(function(){try{var v=+localStorage.getItem('vgWZF');return v>=.5&&v<=1.7?v:1}catch(e){return 1}})();
-window.__wZoomTo=function(v){window.__wzf=Math.max(.5,Math.min(1.7,v));try{localStorage.setItem('vgWZF',window.__wzf.toFixed(3))}catch(e){}};
+/* 마을·숲·집 카메라 줌 배율 (작을수록 크게): 0.5~2.6, 기기에 저장 (11-26 선생님: 더 넓게 볼 수 있게 1.7→2.6) */
+window.__wzf=(function(){try{var v=+localStorage.getItem('vgWZF');return v>=.5&&v<=2.6?v:1}catch(e){return 1}})();
+window.__wZoomTo=function(v){window.__wzf=Math.max(.5,Math.min(2.6,v));try{localStorage.setItem('vgWZF',window.__wzf.toFixed(3))}catch(e){}};
 window.__wZoom=function(d){window.__wZoomTo((window.__wzf||1)*(d>0?.85:1.18))};
 
 /* ===== 위에서 내려다보는 걷기 맵 (별빛 마을 · 숲) ===== */
@@ -5640,6 +5640,7 @@ W3.start=function(T,m,cfg){
   /* 버튼이 사라지는 건 0.5초 늦게 (지나가며 누르려던 순간 사라지지 않게) · 글자는 바뀔 때만 다시 그림 */
   if(nt){actHide=0;if(nt!==curT){curT=nt;if(act._lb!==nt.label){act._lb=nt.label;act.textContent='';act.innerHTML=nt.label}act.hidden=false}}
   else if(curT){if(!actHide)actHide=t+500;else if(t>actHide){curT=null;actHide=0;act.hidden=true}}
+  /* 11-26 끊김 개선: 그림자는 두 프레임에 한 번(축제 군중은 원래대로 세 프레임에 한 번) */if(st.zone!=='pz'){st.sf=(st.sf||0)+1;ren.shadowMap.autoUpdate=false;if(st.sf%2===0)ren.shadowMap.needsUpdate=true}
   ren.render(sc,cam);if(!st.f1){st.f1=1;console.log('W3 first frame ms',performance.now()-_t0)}})(last);
  st.P=P;st.API=API;st.cam=cam;st.cv=cv;st.hero=hero;st.T=T;st.sc=sc;st.swapHero=function(){var nh=CH.hero3d(T,CH.walkCh?CH.walkCh():CH.heroCh?CH.heroCh():X().st().ch);try{var nt=textSprite(T,(CH.walkNm&&CH.walkNm())||X().st().nm||'나','rgba(30,30,40,.7)','#fff',.8);nt.position.copy(tag.position);sc.remove(tag);tag=nt;sc.add(tag)}catch(e){}nh.scale.setScalar(1.15);nh.traverse(function(o){if(o.isMesh)o.castShadow=true});nh.rotation.y=hero.rotation.y;nh.position.copy(hero.position);sc.remove(hero);hero=nh;sc.add(hero);st.hero=hero};return st};
 function X(){return window.__CHX}
@@ -7005,9 +7006,9 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  m.innerHTML='<canvas class="bcv"></canvas><div class="bhp"></div><div class="bfx"></div>'+
   '<div class="btop"><div class="bturn">TURN <b>1</b><i class="bem"></i></div><div class="bwho"></div><div class="bmap" hidden>⚔️ '+MAPNM[kind]+'</div></div>'+(L().lv>=10?'<button type="button" class="bauto">🤖 자동 <b>OFF</b></button>':'')+
   '<div class="border"></div><div class="bme"></div><div class="bcard" hidden></div><div class="bmsg"></div>'+
-  '<div class="bbar"><button type="button" data-b="potion" class="bhid">🎒<small>아이템</small></button><button type="button" data-b="skill" class="bsk">✨<small>스킬</small></button><button type="button" data-b="turn" class="bhid">↻<small>방향</small></button><button type="button" data-b="flee" class="bhid">'+(opt.boss?'🏳️<small>포기</small>':'🏃<small>도망 ⭐20</small>')+'</button><button type="button" data-b="end" class="bend">⏭<small>턴 끝</small></button></div>'+
+  '<div class="bbar"><button type="button" data-b="potion" class="bhid">🎒<small>아이템</small></button><button type="button" data-b="skill" class="bsk">✨<small>스킬</small></button><button type="button" data-b="turn" class="bhid">↻<small>방향</small></button>'+(opt.noFlee?'':'<button type="button" data-b="flee" class="bhid">'+(opt.boss?'🏳️<small>포기</small>':'🏃<small>도망 ⭐20</small>')+'</button>')+'<button type="button" data-b="end" class="bend">⏭<small>턴 끝</small></button></div>'+
   '<button type="button" class="bundo" hidden>↶ 이동 취소</button><div class="bzoom"><button type="button" data-z="1">＋</button><button type="button" data-z="-1">－</button></div>';
- lay('vgb',function(){if(BT&&!BT.over){try{layerOpen('vgb')}catch(e){}X.toast('⚔️ 전투 중에는 나갈 수 없어요. 🏃 도망을 눌러 보세요')}});
+ lay('vgb',function(){if(BT&&!BT.over){try{layerOpen('vgb')}catch(e){}X.toast(opt.noFlee?'⚔️ 이 싸움에서는 물러설 곳이 없어요':'⚔️ 전투 중에는 나갈 수 없어요. 🏃 도망을 눌러 보세요')}});
  var cv=m.querySelector('.bcv'),ren=new T.WebGLRenderer({canvas:cv,antialias:true});ren.setPixelRatio(1);ren.shadowMap.enabled=true;ren.shadowMap.type=T.PCFShadowMap;if(T.sRGBEncoding)ren.outputEncoding=T.sRGBEncoding;
  var sc=new T.Scene();sc.background=new T.Color(MP.bg);
  var bHemi=new T.HemisphereLight(MP.amb[0],MP.amb[1],MP.amb[2]);sc.add(bHemi);var sun=new T.DirectionalLight(MP.sun[0],MP.sun[1]);sun.position.set(-8,16,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);var S2=N*.8;sun.shadow.camera.left=-S2;sun.shadow.camera.right=S2;sun.shadow.camera.top=S2;sun.shadow.camera.bottom=-S2;sun.shadow.camera.far=60;sun.shadow.bias=-.0015;sc.add(sun);sc.add(sun.target);
@@ -7685,6 +7686,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
   if(B.phase!=='player'||B.over){CH.sfx('deny');return}
   if(k==='end'){CH.sfx('select');endPlayerTurn()}
   else if(k==='turn'){var F=[[0,1],[1,0],[0,-1],[-1,0]],i=F.findIndex(function(f){return f[0]===H.f[0]&&f[1]===H.f[1]});H.f=F[(i+1)%4];place(H);CH.sfx('tick');msg('↻ 방향을 바꿨어요 (뒤를 보이면 더 아파요!)','',1100)}
+  else if(k==='flee'&&opt.noFlee){msg('⚔️ 이 싸움에서는 물러설 곳이 없어요!','',1400)}
   else if(k==='flee'){if(B.units.some(function(q){return q.boss&&!q.dead})){/* 2026-11-21 23:56 보스전: 도망 대신 포기 → 바로 쓰러짐(GAME OVER) */X.ask('🏳️ 보스전을 포기할까요?','보스전에서는 도망칠 수 없어요. 포기하면 바로 쓰러져서 GAME OVER가 돼요. 쓴 행동력은 돌려받지 못해요.','포기하기','계속 싸우기',function(){if(B.over)return;B.acted=true;B.phase='busy';clearHL();try{(B.party||[H]).forEach(function(p){p.hp=0;try{upBar(p)}catch(_){}})}catch(_){}H.hp=0;msg('🏳️ 포기했다…','enemy',1200);setTimeout(function(){defeat()},900)});return}if(ST().pt<20){CH.sfx('deny');msg('⭐ 도망치려면 별 20개가 필요해요','',1300);return}X.ask('도망칠까요?','⭐ 20개를 내면 바로 숲으로 도망쳐요. (지금 ⭐'+ST().pt+'개)','도망치기','계속 싸우기',function(){if(B.over)return;X.spend(20,'🏃 전투 도망');B.acted=true;B.phase='busy';clearHL();CH.sfx('flee');msg('🏃 도망쳤다!','me',1200);setTimeout(function(){endBattle('flee')},1100)})}
   else if(k==='skill'){skillMenu()}
   else if(k==='potion'){if(B.phase!=='player'){CH.sfx('deny');return}var ps=['potion','potion2','potion3','potion4','potion5','potion6','protein'].filter(function(id){return CH.itemCount(id)>0});
@@ -7702,7 +7704,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function potAlly(){try{if(!B.party)return null;return B.party.filter(function(p){return p!==H&&p.hp>0&&!p.dead&&Math.max(Math.abs(p.x-H.x),Math.abs(p.z-H.z))<=1&&canMelee(H,p)})[0]||null}catch(e){return null}}
  m.querySelector('.bundo').onclick=function(e){e.stopPropagation();if(!B.undo||B.acted||B.phase!=='player')return;var U2=B.undo;B.undo=null;CH.sfx('swish');B.phase='busy';clearHL();var ax=H.wx,az=H.wz,ay=H.wy;H.x=U2.x;H.z=U2.z;H.f=U2.f;var bx=wx(H.x),bz=wz(H.z),by=top(H.x,H.z);
   tween(.25,function(p){H.wx=ax+(bx-ax)*p;H.wz=az+(bz-az)*p;H.wy=ay+(by-ay)*p+Math.sin(p*Math.PI)*.3;place(H)},function(){H.wy=by;place(H);B.moved=false;B.phase='player';focus(H);refreshHL();msg('↶ 이동을 취소했어요','',900)})};
- window.__bZoom=function(d){if(!BT||BT!==B)return;B.zoom=Math.max(3.6,Math.min(26,B.zoom*(d>0?.8:1.25)));frustum()};m.querySelector('.bzoom').onclick=function(e){var b=e.target.closest('[data-z]');if(!b)return;e.stopPropagation();B.zoom=Math.max(3.6,Math.min(26,B.zoom*(+b.dataset.z>0?.8:1.25)));frustum()};
+ window.__bZoom=function(d){if(!BT||BT!==B)return;B.zoom=Math.max(3.6,Math.min(36,B.zoom*(d>0?.8:1.25)));frustum()};m.querySelector('.bzoom').onclick=function(e){var b=e.target.closest('[data-z]');if(!b)return;e.stopPropagation();B.zoom=Math.max(3.6,Math.min(36,B.zoom*(+b.dataset.z>0?.8:1.25)));frustum()};
  /* ===== 2026-11-19 전투 화면 정리: 턴 라벨 → 장소 이름 · 적 목록 상세 · 아래 체력바 → 캐릭터 메뉴 · 지도 미니맵 ===== */
  (function(){var bt=m.querySelector('.bturn'),bm=m.querySelector('.bmap');/* 11-26 선생님: 전체화면이면 TURN 누를 때 「전체화면 끄기」도 같이 */var fx=document.createElement('button');fx.type='button';fx.className='bfsx';fx.hidden=true;fx.textContent='✕ 전체화면 끄기';if(bm)bm.parentNode.insertBefore(fx,bm.nextSibling);if(bt&&bm)bt.onclick=function(e){e.stopPropagation();bm.hidden=!bm.hidden;fx.hidden=bm.hidden;fx.textContent=(window.__fsOn&&window.__fsOn())?'✕ 전체화면 끄기':'⛶ 전체화면';CH.sfx('tick');clearTimeout(bm.tm);if(!bm.hidden)bm.tm=setTimeout(function(){bm.hidden=true;fx.hidden=true},3000)};
   /* 11-25 22:04 선생님: 왼쪽 몹 사진 줄(순서표)도 접었다 폈다 · 접으면 작은 버튼만 */(function(){var bo0=m.querySelector('.border');if(!bo0)return;var tg=document.createElement('button');tg.className='borderT';m.appendChild(tg);var off=false;try{off=!!QS().borderOff}catch(_){}
@@ -7734,14 +7736,14 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  cv.addEventListener('pointerdown',function(e){ptrs[e.pointerId]=[e.clientX,e.clientY];try{cv.setPointerCapture(e.pointerId)}catch(_){}
   var ks=Object.keys(ptrs);if(ks.length===2){var a=ptrs[ks[0]],b=ptrs[ks[1]];pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),z:B.zoom};drag=null}else{drag={x:e.clientX,y:e.clientY,mx:0,t:B.tgt.clone()}}});
  cv.addEventListener('pointermove',function(e){if(!ptrs[e.pointerId])return;ptrs[e.pointerId]=[e.clientX,e.clientY];var ks=Object.keys(ptrs);
-  if(pinch&&ks.length>=2){var a=ptrs[ks[0]],b=ptrs[ks[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);B.zoom=Math.max(3.6,Math.min(26,pinch.z*pinch.d/Math.max(20,d)));frustum();return}
+  if(pinch&&ks.length>=2){var a=ptrs[ks[0]],b=ptrs[ks[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);B.zoom=Math.max(3.6,Math.min(36,pinch.z*pinch.d/Math.max(20,d)));frustum();return}
   if(drag){var dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.mx=Math.max(drag.mx,Math.hypot(dx,dy));if(drag.mx>8){var k=B.zoom/(m.clientWidth||1),R=new T.Vector3(1,0,-1).normalize(),F=new T.Vector3(-1,0,-1).normalize();
    B.tgt.copy(drag.t).addScaledVector(R,-dx*k).addScaledVector(F,dy*k/.537);var lim=N/2+1;B.tgt.x=Math.max(-lim,Math.min(lim,B.tgt.x));B.tgt.z=Math.max(-lim,Math.min(lim,B.tgt.z));B.want.copy(B.tgt);B.userPan=performance.now()}}});
  function up(e){var was=drag&&drag.mx<=8&&!pinch;delete ptrs[e.pointerId];if(Object.keys(ptrs).length<2)pinch=null;if(was&&e.type==='pointerup')tap(e.clientX,e.clientY);drag=null}
  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
- cv.addEventListener('wheel',function(e){e.preventDefault();B.zoom=Math.max(3.6,Math.min(26,B.zoom*(e.deltaY>0?1.1:.9)));frustum()},{passive:false});
+ cv.addEventListener('wheel',function(e){e.preventDefault();B.zoom=Math.max(3.6,Math.min(36,B.zoom*(e.deltaY>0?1.1:.9)));frustum()},{passive:false});
  function heroMenuB(){var old=m.querySelector('.bhm');if(old){old.remove();return}var p0=proj(H.wx,H.wy+.9*(H.S||1),H.wz),e=document.createElement('div');e.className='bhm';e.style.left=p0[0]+'px';e.style.top=p0[1]+'px';
-  e.innerHTML='<button type="button" data-hm="potion">🎒<small>아이템</small></button><button type="button" data-hm="turn">↻<small>방향</small></button>'+(B.units.some(function(q){return q.boss&&!q.dead})?'<button type="button" data-hm="flee">🏳️<small>포기</small></button>':'<button type="button" data-hm="flee">🏃<small>도망 ⭐20</small></button>');m.appendChild(e);CH.sfx('pop');
+  e.innerHTML='<button type="button" data-hm="potion">🎒<small>아이템</small></button><button type="button" data-hm="turn">↻<small>방향</small></button>'+(opt.noFlee?'':B.units.some(function(q){return q.boss&&!q.dead})?'<button type="button" data-hm="flee">🏳️<small>포기</small></button>':'<button type="button" data-hm="flee">🏃<small>도망 ⭐20</small></button>');m.appendChild(e);CH.sfx('pop');
   [].forEach.call(e.querySelectorAll('[data-hm]'),function(b){b.onclick=function(ev){ev.stopPropagation();e.remove();var t=m.querySelector('.bbar [data-b="'+b.dataset.hm+'"]');if(t)t.click()}});setTimeout(function(){if(e.parentNode)e.remove()},5000)}
  /* ===== 데스크톱 전투 키보드 (2026-11-18 선생님 결정)
     방향키: 이동할 칸 / 공격할 적 / 스킬 대상 / 메뉴 고르기 · Enter: 확정 (공격할 적이 없으면 턴 끝)
@@ -7864,6 +7866,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
   waterTex.offset.x=(now/9000)%1;waterTex.offset.y=(now/14000)%1;if(B.gem){B.gem.rotation.y+=dt*1.5;B.gem.position.y=top(Math.floor(N/2),Math.floor(N/2))+.85+Math.sin(now/400)*.08}
   arrow.material.opacity=.55+Math.sin(now/200)*.3;if((B.fc=(B.fc||0)+1)%3===0)fadeUpd();
   B.units.forEach(function(u){if(u.dead||!u.el)return;var p=proj(u.wx,u.wy+(u.hero?1.45:1.35*(u.S||1)),u.wz);u.el.style.transform='translate('+(p[0]|0)+'px,'+(p[1]|0)+'px)'});
+  /* 11-26 끊김 개선: 그림자는 두 프레임에 한 번만 다시 그림 */ren.shadowMap.autoUpdate=false;if(B.fc%2===0)ren.shadowMap.needsUpdate=true;
   bNight(now);ren.render(sc,cam)}
  B.raf=requestAnimationFrame(loop);B.api={dispose:function(){cleanup();m.classList.remove('on');m.innerHTML='';BT=null;try{layerClose('vgb')}catch(e){}},doSkill:doSkill,canUse:canUse,auto:function(v){B.auto=v;autoBtn();autoStep()},tap:tap,atk:heroAttack,inAtk:function(u){return inAtk(u)},flr:flr,H:function(){return H},end:endPlayerTurn,place:place,wx:wx,wz:wz,top:top,foes:foes,upBar:upBar};
  /* 몬스터 등장 연출: 박쥐는 날아 내려오고, 거미는 줄 타고 내려오고, 네발 짐승은 달려 나오고, 나머지는 땅에서 폴짝 */
@@ -8762,16 +8765,11 @@ CH.ITEMDB.qsword={ic:'🗡️',nm:'여왕 사냥꾼의 검',slot:'wp',atk:13,nos
 CH.ITEMDB.qarmor={ic:'🧥',nm:'거미비단 사냥복',slot:'bd',def:4,hp:80,agi:1,nosell:1,p:0,d:'여왕거미 비단으로 엮은 가볍고 질긴 사냥복 · 상점 갑옷보다 튼튼해요'};
 CH.ITEMDB.potion5={ic:'🧪',nm:'상급 물약',p:200,heal:250,use:'drink',d:'마시면 체력 +250',img:CH.ITEMDB.potion4&&CH.ITEMDB.potion4.img};
 function queenAfterNest(A){var T=A.T,q=QS();
- /* 11/20: 마을로 가는 비밀 통로는 무거운 뚜껑으로 덮어 둠 (나중에 석상 이야기 때 열려서 골렘전으로 내려감). 마을로 돌아가는 건 여왕거미를 쓰러뜨린 직후 물어봄 */
- var open=!!q.statueFound;var sg=A.textSprite(T,open?'🕳️ 열린 통로 (아래로)':'🧱 무거운 돌 뚜껑','rgba(30,30,40,.92)','#e8ecff',.8);sg.position.set(0,2.9,-19);A.sc.add(sg);
- if(open){var hole=new T.Mesh(new T.CircleGeometry(1.4,20),new T.MeshBasicMaterial({color:0x000000}));hole.rotation.x=-Math.PI/2;hole.position.set(0,.06,-19);A.sc.add(hole)}
- else{var lid=new T.Mesh(new T.CylinderGeometry(1.55,1.65,.32,22),A.std(0x6a6258));lid.position.set(0,.16,-19);A.sc.add(lid);var rg=new T.Mesh(new T.TorusGeometry(.32,.07,8,16),A.std(0x3a3632));rg.rotation.x=-Math.PI/2;rg.position.set(.5,.36,-19);A.sc.add(rg);
-  [[-.8,-.5],[.7,.6],[-.3,.9]].forEach(function(c){var cr=new T.Mesh(new T.BoxGeometry(.6,.02,.05),new T.MeshBasicMaterial({color:0x2a2622}));cr.position.set(c[0],.33,-19+c[1]);cr.rotation.y=c[0]*2;A.sc.add(cr)})}
- A.trigger(0,-19,2.4,open?'🕳️ 통로 아래로 내려가기':'🧱 뚜껑 살펴보기',function(){if(open){X.toast('🚧 이 아래는 다음 이야기에서 열려요');return}CH.sfx('deny');think('끄응…! 고리를 잡고 당겨 봐도 꿈쩍도 안 한다. 아저씨가 파 둔 통로라던데… 지금은 막혀 있나 봐.')},false);
+ /* 11-26 선생님: 무거운 돌 뚜껑은 없던 일로 — 여왕거미 자리에는 아무것도 두지 않음 (나중에 가이아의 돌계단만 열림) */
  if(!q.qsRw){try{FGRACE=performance.now()+25000}catch(e){}setTimeout(queenReward,1600)}}
 function queenReward(){var q=QS();if(q.qsRw||!q.boss_qs15)return;var nm=archName();
  dlg([{n:esc(nm),t:'해냈다…! 정말 해냈어! 너 아니었으면 난 여기서 영영 못 나갔을 거다.'},{n:esc(nm),t:'여왕거미 둥지 깊은 곳에서 이걸 찾았단다. <b>🗡️ 여왕 사냥꾼의 검</b>은 네가 쓰렴. 난 이 <b>🧥 거미비단 사냥복</b>을 입으마.'},
-  {n:esc(nm),t:'이 뒤쪽에 내가 몰래 파 둔 <b>비밀 통로</b>가 있었는데… 저것 봐, 여왕거미가 날뛰는 바람에 돌 뚜껑이 내려앉아 꽉 막혀 버렸어.'},{n:esc(nm),t:'걱정 마. 늑대들 눈을 피해 돌아가는 길은 내가 훤히 알아. 마을에 가면 촌장님께도 인사드려야겠구나!'}],null,function(){
+  {n:esc(nm),t:'걱정 마. 늑대들 눈을 피해 돌아가는 길은 내가 훤히 알아. 마을에 가면 촌장님께도 인사드려야겠구나!'}],null,function(){
   if(q.qsRw)return;q.qsRw=Date.now();var given=[];
   if(CH.canAdd('qsword',1)){CH.addItem('qsword',1);given.push('🗡️ 여왕 사냥꾼의 검')}else{q.qswordP=1}
   var a=ARC();if(a){a.eq=a.eq||{};if(a.eq.bd&&CH.canAdd(a.eq.bd,1))CH.addItem(a.eq.bd,1);a.eq.bd='qarmor';a.hp=null}X.sv();CH.sfx('chest');
@@ -9903,7 +9901,7 @@ try{window.__vgP.forge=function(){forgePanel()};window.__vgP.fq=function(){fqPan
 
 /* 개연성: 단비 아빠가 군락에서 사라진 뒤 촌장님이 만든 규칙 — 「마을에 집이 있는 주민만 군락 통행증」 */
 var PATROL=[{n:'🛡️ 숲 순찰대원',t:'멈춰! 이 너머는 <b>늑대 군락</b>이다.'},{n:'🛡️ 숲 순찰대원',t:'단비 아빠가 군락에서 돌아오지 않은 뒤로 촌장님이 규칙을 만드셨어. <b>마을에 집이 있는 주민만</b> 군락에 들어갈 수 있다.'},{n:'🛡️ 숲 순찰대원',t:'다쳐서 돌아오면 쉴 <b>내 침대</b>가 있어야 하고, 혹시 돌아오지 않으면 수색대를 보낼 <b>주소</b>가 있어야 하니까. 그날 우리는 그 사람을 어디서부터 찾아야 할지도 몰랐거든…'},{n:'🛡️ 숲 순찰대원',t:'집을 다 지으면 촌장님이 <b>「군락 통행증」</b>을 써 주실 거야. 재료는 이 숲(1-1~1-3)에서 다 구할 수 있지! (📒 모험 수첩 참고)'}];
-var _trapsF=traps;traps=function(A){_trapsF(A);try{if(FZ!=='1-3')return;var T=A.T,ex=(ZONES['1-3'].exits||[]).filter(function(e){return e.to==='1-4'})[0];if(!ex)return;var gx=ex.x,gz=ex.z+(ex.z<0?3.2:-3.2);
+var _trapsF=traps;traps=function(A){_trapsF(A);try{if(FZ!=='1-3')return;if(QS().ruin)return;/* 11-26 선생님: 전쟁 뒤 폐허 이후에는 숲 순찰대원도 없음 */var T=A.T,ex=(ZONES['1-3'].exits||[]).filter(function(e){return e.to==='1-4'})[0];if(!ex)return;var gx=ex.x,gz=ex.z+(ex.z<0?3.2:-3.2);
  if(needHome()){[-2.2,2.2].forEach(function(o){var po=A.add(new T.Mesh(new T.CylinderGeometry(.14,.16,1.6,8),A.std(0x6a4426)));po.position.set(gx+o,.8,gz)});[.5,1.1].forEach(function(y){var bar=A.add(new T.Mesh(new T.BoxGeometry(4.8,.18,.12),A.std(y>1?0xc8463a:0xf4f0e4)));bar.position.set(gx,y,gz)});
   var sg=A.textSprite(T,'⛔ 군락 통행증 확인','rgba(120,30,30,.92)','#fff0e0',.6);sg.position.set(gx,2.2,gz);A.sc.add(sg)}
  var gd=rch('guard',A.rnd);gd.p.tp=0;A.npc(gd,gx+3.2,gz+.4,{wander:0,rot:Math.PI,name:'숲 순찰대원',talk:function(){if(needHome())dlg(PATROL);else dlg([{n:'🛡️ 숲 순찰대원',t:pick(['통행증 확인했다. 군락은 낮엔 늑대가 다 깨어 있어. 밤에 조용히 지나가!','집이 있으니 다쳐도 돌아가 쉴 곳이 있겠군. 조심해서 가라!'])}])}})}catch(e){console.error(e)}};
@@ -11307,17 +11305,17 @@ function gGeo(T,k){if(GCACHE[k])return GCACHE[k];var D=GOLEMD[k],out={};
 /* ===== 11-24 선생님: 골렘 사진 참고 — 돌/쇠 질감(삼면 투영 노이즈·금·이끼·요철) + 빛 번짐 ===== */
 var GSK={g13:[3.2,.8,0,0],g14:[2.6,.9,.15,0],g15:[3,.8,.55,0],g16:[3.4,.7,.1,0],g17:[2.8,.8,.45,0],g18:[2.2,.25,0,2],gm19:[3,.9,.1,0],gb20:[2.6,.8,.5,0],gc:[3,.6,0,2],gw:[3.2,.8,0,0]};
 for(var gi2=1;gi2<=10;gi2++)GSK['gg'+gi2]=[2.4,.55,.08,1];
-var GSHD='\nvarying vec3 gLP;varying vec3 gLN;varying vec3 gVX;varying vec3 gVY;varying vec3 gVZ;\n';
+var GSHD='\nvarying vec3 gLP;varying vec3 gLN;varying vec3 gVX;varying vec3 gVY;varying vec3 gVZ;varying float gSc;\n';
 var GNZ='\nuniform vec4 gPar;\nfloat gH(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}\nfloat gN(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);return mix(mix(mix(gH(i),gH(i+vec3(1,0,0)),f.x),mix(gH(i+vec3(0,1,0)),gH(i+vec3(1,1,0)),f.x),f.y),mix(mix(gH(i+vec3(0,0,1)),gH(i+vec3(1,0,1)),f.x),mix(gH(i+vec3(0,1,1)),gH(i+vec3(1,1,1)),f.x),f.y),f.z);}\nfloat gF(vec3 p){return gN(p)*.5+gN(p*2.03)*.25+gN(p*4.1)*.125+gN(p*8.3)*.0625;}\nfloat gV(vec3 p){vec3 i=floor(p),f=fract(p);float d1=8.,d2=8.;for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++)for(int c=-1;c<=1;c++){vec3 g=vec3(float(a),float(b),float(c));vec3 o=vec3(gH(i+g),gH(i+g+11.3),gH(i+g+27.1));float d=length(g+o-f);if(d<d1){d2=d1;d1=d;}else if(d<d2)d2=d;}return d2-d1;}\nfloat gPn(vec3 p,vec3 n){vec3 a=abs(n);vec2 uv=a.x>a.y&&a.x>a.z?p.yz:(a.y>a.z?p.xz:p.xy);uv*=vec2(1.8,2.6);vec2 f=abs(fract(uv)-.5);float g=1.-smoothstep(.465,.485,max(f.x,f.y));vec2 f2=abs(fract(uv*2.+.25)-.5);float m=(1.-smoothstep(.40,.46,max(f2.x,f2.y)))*step(.5,gH(vec3(floor(uv*2.),1.)));return g*(.75+.25*m);}\nfloat gS(vec3 p){vec3 q=p*gPar.x;float h=gF(q*1.3);float cr=gPar.w==0.?smoothstep(.0,.04,gV(q*.9+h*.6)):(gPar.w==1.?gPn(p,gLN):1.);return h*.6+cr*.4;}\n';
 function gSkinMat(T,k,base){var s=GSK[k]||[3,.7,0,0],m=new T.MeshStandardMaterial(base);
  if(s[3]===1){m.metalness=.55;m.roughness=.55}else if(s[3]===2){m.roughness=.28;m.metalness=.1}
  m.onBeforeCompile=function(sh){sh.uniforms.gPar={value:new T.Vector4(s[0],s[1],s[2],s[3])};
-  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>'+GSHD).replace('#include <begin_vertex>','#include <begin_vertex>\ngLP=position;gLN=normal;gVX=normalize(normalMatrix*vec3(1.,0.,0.));gVY=normalize(normalMatrix*vec3(0.,1.,0.));gVZ=normalize(normalMatrix*vec3(0.,0.,1.));');
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>'+GSHD).replace('#include <begin_vertex>','#include <begin_vertex>\ngLP=position;gLN=normal;gVX=normalize(normalMatrix*vec3(1.,0.,0.));gVY=normalize(normalMatrix*vec3(0.,1.,0.));gVZ=normalize(normalMatrix*vec3(0.,0.,1.));gSc=length((modelViewMatrix*vec4(1.,0.,0.,0.)).xyz);');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>'+GSHD+GNZ)
-  .replace('#include <color_fragment>','#include <color_fragment>\nvec3 gp=gLP;float gh=gF(gp*gPar.x*1.3);float gcr=gV(gp*gPar.x*.9+gh*.6);float gcrack=(1.-smoothstep(.0,.028,gcr))*(gPar.w==0.?1.:0.);\nfloat gtone=mix(.78,1.14,gh);diffuseColor.rgb*=gtone;diffuseColor.rgb*=1.-gcrack*gPar.y*.6;\nfloat gmo=smoothstep(.35,.8,normalize(gLN).y)*smoothstep(.45,.7,gF(gp*2.1+5.))*gPar.z;diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.22,.36,.12)*(.7+gh*.6),gmo);\nif(gPar.w==1.){float rs=smoothstep(.55,.85,gF(gp*3.7+9.));diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.42,.22,.1),rs*.4);float sc=pow(gN(vec3(gp.x*40.,gp.y*3.,gp.z*40.)),8.);diffuseColor.rgb+=sc*.12;float pn=gPn(gp,gLN);diffuseColor.rgb*=.7+.3*pn;}\nif(gPar.w==2.){diffuseColor.rgb+=vec3(.18,.24,.3)*pow(gN(gp*22.),6.);}')
-  .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n{float e=.012;vec3 q=gLP;float h0=gS(q);vec3 gg=vec3(gS(q+vec3(e,0,0))-h0,gS(q+vec3(0,e,0))-h0,gS(q+vec3(0,0,e))-h0)/e;vec3 gv=gVX*gg.x+gVY*gg.y+gVZ*gg.z;normal=normalize(normal-gv*.018*(gPar.w==2.?.4:1.));}')
+  .replace('#include <color_fragment>','#include <color_fragment>\n/* 11-26 끊김 개선: 같은 무늬를 덜 계산(모양은 그대로) */vec3 gp=gLP;float gh=gF(gp*gPar.x*1.3);float gcrS=1.;float gcrack=0.;\nif(gPar.w==0.){float gcr=gV(gp*gPar.x*.9+gh*.6);gcrack=1.-smoothstep(.0,.028,gcr);gcrS=smoothstep(.0,.04,gcr);}\nfloat gtone=mix(.78,1.14,gh);diffuseColor.rgb*=gtone;diffuseColor.rgb*=1.-gcrack*gPar.y*.6;\nif(gPar.z>0.){float gmo=smoothstep(.35,.8,normalize(gLN).y)*smoothstep(.45,.7,gF(gp*2.1+5.))*gPar.z;diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.22,.36,.12)*(.7+gh*.6),gmo);}\nif(gPar.w==1.){float rs=smoothstep(.55,.85,gF(gp*3.7+9.));diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.42,.22,.1),rs*.4);float sc=pow(gN(vec3(gp.x*40.,gp.y*3.,gp.z*40.)),8.);diffuseColor.rgb+=sc*.12;float pn=gPn(gp,gLN);gcrS=pn;diffuseColor.rgb*=.7+.3*pn;}\nif(gPar.w==2.){diffuseColor.rgb+=vec3(.18,.24,.3)*pow(gN(gp*22.),6.);}\nfloat gHt=gh*.6+gcrS*.4;')
+  .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n{vec3 sx=dFdx(-vViewPosition),sy=dFdy(-vViewPosition);vec3 r1=cross(sy,normal),r2=cross(normal,sx);float det=dot(sx,r1);vec3 gr=sign(det)*(dFdx(gHt)*r1+dFdy(gHt)*r2);normal=normalize(abs(det)*normal-gr*.018*gSc*(gPar.w==2.?.4:1.));}')
   .replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n{float fr=pow(1.-abs(dot(normal,normalize(vViewPosition))),3.);totalEmissiveRadiance+=diffuseColor.rgb*fr*.35;}')};
- m.customProgramCacheKey=function(){return 'gsk'};return m}
+ m.customProgramCacheKey=function(){return 'gsk2'};return m}
 function gHalo(T,geo,col){var m=new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,vertexColors:true,uniforms:{op:{value:1},tint:{value:new T.Color(col||0xffffff)}},
  vertexShader:'varying vec3 vC;varying float vF;void main(){vC=color;vec3 n=normalize(normal);vec4 mv=modelViewMatrix*vec4(position+n*.045,1.);vec3 vn=normalize(normalMatrix*n);vF=pow(1.-abs(dot(vn,normalize(-mv.xyz))),1.5);gl_Position=projectionMatrix*mv;}',
  fragmentShader:'uniform float op;uniform vec3 tint;varying vec3 vC;varying float vF;void main(){gl_FragColor=vec4(vC*tint*1.4,(.25+vF*.55)*op);}'});return m}
@@ -11332,7 +11330,14 @@ function mon3dGolem(T,k,own){var G=gGeo(T,GMAP[k]||k),root=new T.Group(),lift=ne
  /* 눈에 보이는 무게감: 걸을 때마다 쿵 */
  /* 11-24 선생님: 고대 골렘 가슴 속 사람 — 하늘색으로 반짝반짝 */var SPK=[];if(k==='gb20'){var sg=new T.OctahedronGeometry(.018,0);for(var si=0;si<12;si++){var sm=new T.Mesh(sg,new T.MeshBasicMaterial({color:si%3?0xbff6ff:0xffffff,transparent:true,blending:T.AdditiveBlending,depthWrite:false}));var sa=si/12*Math.PI*2,sr=.06+(si%4)*.04;sm.position.set(Math.cos(sa)*sr,.58+Math.sin(sa)*sr*1.3,.43);sm.userData.ph=si*1.7;P.torso.add(sm);SPK.push(sm)}
   var core=new T.Mesh(new T.CircleGeometry(.2,24),new T.MeshBasicMaterial({color:0x7fe6ff,transparent:true,opacity:.35,blending:T.AdditiveBlending,depthWrite:false}));core.position.set(0,.58,.415);P.torso.add(core);SPK.core=core}
- U.skin=skin;U.glow=glowM;U.yaw=0;U.want=0;U.t=Math.random()*5;U.gol=1;
+ U.P=P;U.lift=lift;/* 11-26 선생님: 들어 올릴 때 사람처럼 팔꿈치가 꺾이도록 — 팔 한 덩어리를 위팔·아래팔로 나눔(이 골렘에만, 원본 모양은 그대로) */
+ U.mkElbow=function(){if(U.fa)return U.fa;var fa={};['armL','armR'].forEach(function(n){var arm=P[n],ms=arm.children.filter(function(m){return m.isMesh}),bb=new T.Box3();ms.forEach(function(m){if(!m.geometry.boundingBox)m.geometry.computeBoundingBox();bb.union(m.geometry.boundingBox)});
+  var ey=bb.max.y+(bb.min.y-bb.max.y)*.5,cx=(bb.min.x+bb.max.x)/2,cz=(bb.min.z+bb.max.z)/2,f=new T.Group();f.position.set(cx,ey,cz);arm.add(f);
+  ms.forEach(function(m){var g=m.geometry.index?m.geometry.toNonIndexed():m.geometry,at=g.attributes,pos=at.position,keys=Object.keys(at),up={},lo={};keys.forEach(function(k){up[k]=[];lo[k]=[]});
+   for(var t=0;t<pos.count;t+=3){var cy=(pos.getY(t)+pos.getY(t+1)+pos.getY(t+2))/3,D=cy<ey?lo:up;keys.forEach(function(k){var A=at[k],sz=A.itemSize;for(var v=0;v<3;v++)for(var c=0;c<sz;c++){var val=A.array[(t+v)*sz+c];if(D===lo&&k==='position')val-=c===0?cx:c===1?ey:c===2?cz:0;D[k].push(val)}})}
+   var mk=function(D){var G=new T.BufferGeometry();keys.forEach(function(k){G.setAttribute(k,new T.Float32BufferAttribute(D[k],at[k].itemSize))});G.computeBoundingBox();return G};
+   m.geometry=mk(up);var m2=new T.Mesh(mk(lo),m.material);m2.castShadow=m.castShadow;m2.renderOrder=m.renderOrder;f.add(m2)});
+  var fb=new T.Box3();f.children.forEach(function(m){fb.union(m.geometry.boundingBox)});f.userData.hand=new T.Vector3((fb.min.x+fb.max.x)/2,fb.min.y*.72,fb.max.z);fa[n]=f});U.fa=fa;return fa};U.skin=skin;U.glow=glowM;U.yaw=0;U.want=0;U.t=Math.random()*5;U.gol=1;
  var boss=k==='gm19'||k==='gb20',sp0=k==='gm19'?1:0;
  U.tick=function(dt,o){o=o||{};U.t+=dt;var t=U.t;
   var dy=U.want-U.yaw;while(dy>Math.PI)dy-=Math.PI*2;while(dy<-Math.PI)dy+=Math.PI*2;U.yaw+=dy*Math.min(1,dt*(o.fastTurn?12:6));root.rotation.y=U.yaw;
@@ -11353,6 +11358,13 @@ function mon3dGolem(T,k,own){var G=gGeo(T,GMAP[k]||k),root=new T.Group(),lift=ne
   else body.scale.set(1,1,1);
   /* 거신: 꺼진 상태(wake 0) → 빛이 들어오며 깨어남(wake 1) · 가이아의 포옹 자세 */
   if(U.wake!=null){var wk=Math.max(0,Math.min(1,U.wake));glowM.opacity*=wk;haloM.uniforms.op.value*=wk;var cv=.32+.68*wk;skin.color.setRGB(cv,cv,cv*(1+.15*(1-wk)));if(wk<.05){P.head.rotation.y=0;P.torso.rotation.x=.25;P.head.rotation.x=.35}}
+  /* 11-26 선생님: 가이아 — 주먹으로 누르지 않고, 손바닥을 땅에 대어 두 사람을 떠올린 뒤 가슴 앞까지 천천히 들어 올림 */
+  if(U.pose==='carry'){var rk=U.hugK==null?1:U.hugK,lk=U.liftK||0,sm=function(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};rk=sm(rk);lk=sm(lk);
+   var ax=-.62*rk-.5*lk,az=.32*rk+.5*lk,eb=.28*rk+.78*lk;P.armL.rotation.x=ax;P.armR.rotation.x=ax;if(U.fa){U.fa.armL.rotation.x=-eb;U.fa.armR.rotation.x=-eb}P.armL.rotation.z=.06-az;P.armR.rotation.z=-.06+az;
+   P.torso.rotation.x=.78*rk-.62*lk;lift.position.y=-.62*rk+.5*lk;P.head.rotation.x=.38*rk-.05*lk;P.head.rotation.y=0;P.legL.rotation.x=-.5*rk+.42*lk;P.legR.rotation.x=-.5*rk+.42*lk;
+   /* 11-26 선생님: 발이 바닥에 묻히지 않게 — 다리를 굽힌 만큼만 몸을 내림(발바닥이 늘 땅 위) */
+   if(!U._lg){var lb=new T.Box3();P.legL.children.forEach(function(m){if(m.geometry){if(!m.geometry.boundingBox)m.geometry.computeBoundingBox();lb.union(m.geometry.boundingBox)}});U._lg=lb}
+   var la=P.legL.rotation.x,c=Math.cos(la),sn=Math.sin(la),L0=U._lg.min.y,f1=L0*c-U._lg.min.z*sn,f2=L0*c-U._lg.max.z*sn;lift.position.y=L0-Math.min(f1,f2)}
   if(U.pose==='hug'){var hp=U.hugK==null?1:U.hugK;P.armL.rotation.x=-1.35*hp;P.armR.rotation.x=-1.35*hp;P.armL.rotation.z=.06-.35*hp;P.armR.rotation.z=-.06+.35*hp;P.torso.rotation.x=.55*hp;lift.position.y=-.55*hp;P.head.rotation.x=.3*hp}};
  U.tick(.016,{});return root}
 var GK={g13:1,g14:1,g15:1,g16:1,g17:1,g18:1,gm19:1,gb20:1,gc:1};for(var gi=1;gi<=10;gi++)GK['gg'+gi]=1;
@@ -11740,11 +11752,11 @@ function u5Awake(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 
 function afterWake(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;QS().u5awake=1;X.sv();var L=[{n:'',t:'(열 개의 거신이 한꺼번에 고개를 든다. 그 빛이… 전부 우리를 향하고 있다)'},ar?{n:an,t:'…전부 깨어났어! 이건 싸워서 어떻게 될 상대가 아니야!'}:null,{n:me,t:'뒤로… 뒤로 가요! 계단으로…!'},
   {n:'',t:'(쿠구구구궁—!! 내려온 빛의 계단이 산산이 무너져 내린다)',onShow:function(){shakeW(1.4);try{CH.sfx('boom')}catch(e){}}},ar?{n:an,t:'도망칠 길이 없어!! 이렇게 된 이상— 버틸 수 있는 만큼 버틴다! 내 뒤는 걱정 마라!'}:{n:me,t:'계단이…! …이제 정말, 맞서 싸우는 수밖에 없어.'}].filter(Boolean);
  window.__fmus='titan';dlg(L,null,function(){window.__storyOn=0;try{WORLD.camOv=null;WORLD.camShow=0}catch(e){}window.__fmus=null;giantFight()})}
-function giantFight(){if(BT)return;var pos=[0,7.5];BT={pending:1};var f=document.createElement('div');f.className='benc boss';f.innerHTML='<i></i><b>!</b>';document.body.appendChild(f);try{CH.sfx('roar')}catch(e){}
+function giantFight(){if(BT)return;try{var q0=QS();if(!q0.u5fight){q0.u5fight=Date.now();X.sv()}}catch(_){}/* 11-26 선생님: 강제 종료해도 다시 들어오면 이 전투로 */var pos=[0,7.5];BT={pending:1};var f=document.createElement('div');f.className='benc boss';f.innerHTML='<i></i><b>!</b>';document.body.appendChild(f);try{CH.sfx('roar')}catch(e){}
  var pool=['gg3','gg4','gg1','gg7','gg9','gg2','gg5','gg6','gg8','gg10'];
  setTimeout(function(){stopWorld();var sc=$('vgf');if(sc)sc.classList.remove('on');var t0=Date.now(),iv=setInterval(function(){var b=$('vgb');if((b&&b.classList.contains('on')&&BT&&BT.raf)||Date.now()-t0>8000){clearInterval(iv);setTimeout(function(){f.classList.add('out');setTimeout(function(){f.remove()},400)},250)}},100);
   
-  try{startBattle({pos:pos,kind:'arena',boss:1,allAgro:1,bgm:'titan',pool:pool,place:function(c,RS,H){var ok=c.filter(function(q){return RS[q[0]+','+q[1]]&&Math.abs(q[0]-H.x)+Math.abs(q[1]-H.z)>=4}),h=function(q){var v=Math.sin(q[0]*12.9898+q[1]*78.233)*43758.5453;return v-Math.floor(v)};ok.sort(function(a,b){return h(a)-h(b)});var out=[];
+  try{startBattle({pos:pos,kind:'arena',boss:1,allAgro:1,noFlee:1/* 11-26 선생님: 거신전은 포기·도망 없음 */,bgm:'titan',pool:pool,place:function(c,RS,H){var ok=c.filter(function(q){return RS[q[0]+','+q[1]]&&Math.abs(q[0]-H.x)+Math.abs(q[1]-H.z)>=4}),h=function(q){var v=Math.sin(q[0]*12.9898+q[1]*78.233)*43758.5453;return v-Math.floor(v)};ok.sort(function(a,b){return h(a)-h(b)});var out=[];
    [4,3,2].forEach(function(sep){ok.forEach(function(q){if(out.length>=pool.length||out.indexOf(q)>=0)return;if(out.every(function(o){return Math.max(Math.abs(o[0]-q[0]),Math.abs(o[1]-q[1]))>=sep}))out.push(q)})});return out},faint:gaiaScene})}catch(e){console.error(e)}},1200)}
 /* ---------- 쓰러진 뒤: 가이아 (끊기지 않는 목소리) ---------- */
 function gaiaScene(){var q=QS();q.u5done=1;q.hp=null;try{inCtx('arch',function(){ARC().hp=null})}catch(e){}X.sv();window.__u5mode='gaia';window.__fmus='gaia';
@@ -11758,7 +11770,16 @@ function gaiaTalk(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께
   if(ar){var a2=CH.hero3d(T,archerChar());try{archGear(T,a2)}catch(_){}a2.scale.setScalar(1.15);a2.rotation.set(-Math.PI/2,0,-.4);a2.position.set(1.1,.28,5.6);A.sc.add(a2);lay.push(a2)}}catch(e){console.error(e)}
  var aura=glow(A,0xbfffc0,.1,.0);aura.position.set(0,.8,5.3);var auL=new T.PointLight(0xd8ffb0,0,14,1.3);auL.position.set(0,2,5.3);A.sc.add(auL);
  W.P.x=0;W.P.z=7.2;W.camShow=0;W.camOv={p:[11,8,22],l:[0,4,2],f:56};
- function hug(){var t0=performance.now();try{CH.sfx('heal')}catch(e){}(function go(){var p=Math.min(1,(performance.now()-t0)/3200),e=p*p*(3-2*p);if(gaia){gaia.g.userData.pose='hug';gaia.g.userData.hugK=e}aura.scale.set(12*e+.1,12*e+.1,1);aura.material.opacity=.55*e;auL.intensity=2.4*e;if(p<1)requestAnimationFrame(go)})();try{W.camOv={p:[8,7.5,17],l:[0,3,2],f:54}}catch(e){}}
+ function hug(){var t0=performance.now();try{CH.sfx('heal')}catch(e){}/* 11-26 선생님: 주먹으로 누르는 것처럼 보이지 않게 — 손바닥을 두 사람 밑으로 넣어 떠올린 뒤, 가슴 앞까지 천천히 들어 올려 손에 얹고 감(순간이동 없이) */
+  var gu=gaia&&gaia.g.userData,P=gu&&gu.P,V=T.Vector3,pts=null,sm=function(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+  var FA=null;try{FA=gu&&gu.mkElbow&&gu.mkElbow()}catch(e){console.error(e)}
+  var g0=lay.map(function(h){return h.position.clone()}),c0={p:[11,8,22],l:[0,4,2]},c1={p:[9.5,9.5,19],l:[0,5.2,3]},cl=function(a,b,k){return a.map(function(v,i){return v+(b[i]-v)*k})};
+  (function go(){if(!U5||!W||W.zone!=='u5')return;var t=(performance.now()-t0)/1000,rk=Math.min(1,t/2.8),lk=Math.max(0,Math.min(1,(t-3.1)/3.6)),e=sm(rk);
+   if(gu){gu.pose='carry';gu.hugK=rk;gu.liftK=lk}aura.scale.set(12*e+.1,12*e+.1,1);aura.material.opacity=.55*e;auL.intensity=2.4*e;
+   if(FA&&lay.length){gaia.g.updateMatrixWorld(true);var hL=FA.armL.localToWorld(FA.armL.userData.hand.clone()),hR=FA.armR.localToWorld(FA.armR.userData.hand.clone()),H=hL.clone().add(hR).multiplyScalar(.5),w=sm((rk-.62)/.38);
+    lay.forEach(function(h,i){var hd=i?hR:hL,tg=H.clone().lerp(hd,.6);tg.y+=.32;h.position.copy(g0[i]).lerp(tg,w)});aura.position.set(H.x*w,.8+(H.y-.8)*w,5.3+(H.z-5.3)*w);auL.position.copy(aura.position).y+=1.2}
+   try{var ck=sm(lk);W.camOv={p:cl(c0.p,c1.p,ck),l:cl(c0.l,c1.l,ck),f:56-2*ck}}catch(_){}
+   requestAnimationFrame(go)})()}
  var G='대지의 신 가이아';
  var L=[{n:'',t:'(…쿵. …쿵. 아주 멀리서, 땅이 천천히 숨을 쉬는 소리가 들린다)'},{n:'',t:'(차갑던 돌바닥이… 이상하게 따뜻하다)'},
   {n:'',t:'(가장 큰 거신이 천천히 무릎을 꿇는다. 가슴의 푸른빛이 초록과 금빛으로 부드럽게 물들어 간다)'},
@@ -11766,7 +11787,7 @@ function gaiaTalk(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께
   {n:G,t:'「이번에는 끊기지 않고 말할 수 있겠구나. 이렇게 깊은 곳은… 온통 내 땅이니까.」'},
   {n:G,t:'「나는 대지의 신, 가이아. 네 가슴속에서 뛰고 있는 그 작은 조각이 바로 나의 일부란다. 그래서 네가 어디에 있든, 나는 늘 너를 느낄 수 있었어.」'},
   {n:G,t:'「…찾았다. 드디어 찾았구나. 꿈속에서 몇 번이나 「어디 있느냐」 불렀는데… 너는 늘 내 손이 닿지 않는 저 위에 있었지.」'},
-  {n:'',t:'(커다란 돌 손이 쓰러진 두 사람을 조심스럽게, 아주 조심스럽게 감싸 안는다)',onShow:hug},
+  {n:'',t:'(커다란 돌 손바닥이 쓰러진 두 사람 밑으로 조심스럽게 파고든다. 그리고… 아주 천천히, 가슴 앞까지 들어 올린다)',onShow:hug},
   {n:G,t:'「…많이 아팠지. 방패를 들고 맨 앞에 서는 아이는 언제나 제일 먼저, 제일 많이 다치는 법이란다. 그래도 너는 한 번도 뒤로 물러서지 않았어.」'},
   {n:G,t:'「너를 이 세상에 내보낼 때, 내 조각들 가운데 가장 따뜻한 것을 골라 쥐여 주었단다. 그래서일까… 다른 건 몰라도, 너만큼은 도무지 다치게 둘 수가 없구나.」'},
   {n:G,t:'「네가 만진 그 석상은… 본디 골렘 전사들이 이 땅으로 건너올 자리를 찍어 둔 표식이란다. 나는 그 표식으로, 너를 불렀어.」'},{n:G,t:'「…그것도 그 이의 뜻이었단다. 잔치의 밤에, 너희 둘이 그 자리에 없도록 치워 두라고. 그 말만은… 따랐어. 너를 불 속에 세워 두고 싶지 않았으니까.」'},
@@ -11794,6 +11815,7 @@ function arrive(A){var q=QS();if(!WORLD||WORLD.API!==A)return;
  if(FZ==='u1'&&!q.u1seen){u1Scene();return}
  if(FZ==='u4'&&!q.u4seen){q.u4seen=1;X.sv();shakeW(1);try{CH.sfx('boom')}catch(e){}think('쿠구궁…! 들어온 통로가 무너졌다… 길이 막혔다. 뒤로는 절대 못 나가.',500)}
  if(FZ==='u4'&&q.boss_gb20&&!q.u4orb)setTimeout(!q.u4rf?rfScene:(q.u4cairn&&!q.u4grave)?rfGrave:orbScene,q.u4cairn&&!q.u4grave?2600:600);
+ if(FZ==='u5'&&window.__u5mode!=='gaia'&&!q.u5done&&q.u5fight){setTimeout(function(){if(WORLD&&WORLD.API===A&&!BT){think('…거신들이 다시 몰려온다! 물러설 곳은 없어.',300);setTimeout(giantFight,1400)}},700);return}
  if(FZ==='u5'&&window.__u5mode!=='gaia'&&!q.u5done){if(q.u5awake){U5.G.forEach(function(o){o.g.userData.wake=1});A.trigger(0,5,3,'⚔️ 거신들에게 맞서기',function(){giantFight()});think('깨어난 거신들이 우리를 내려다보고 있다… 도망칠 길은 없어.',400)}else setTimeout(u5Awake,700)}}
 
 /* ---------- (2026-11-21 순서 정리) 동굴 1-3 여왕거미가 있던 자리: 가이아가 내어 준 돌계단 ----------
@@ -11834,6 +11856,7 @@ function lookout(A){var T=A.T,q=QS();
  var sg=A.textSprite(T,'🕳️ 낭떠러지 · 경비대 출입 통제','rgba(40,30,30,.92)','#ffe8d0',.8);sg.position.set(LX,3,LZ-1.4);A.sc.add(sg);
  A.trigger(LX,LZ+.6,2.4,'🕳️ 낭떠러지 내려다보기',cliffTalk,false)}
 function cliffTalk(){var q=QS(),me=NM(),an=AN();
+ if(q.ruin){think('…지금 이러고 있을 때가 아니야. 단비를 찾아야 해.');return}/* 11-26 선생님: 폐허 이후 */
  if(!q.stRumor){think('땅이 칼로 벤 것처럼 길게 갈라져 있다. 바닥이 보이지 않아… 가까이 가지 말자.');return}
  if(hasArch()&&q.danJoin&&!q.danHome){think('단비를 먼저 집에 데려다줘야 해. 이런 데 데려올 수는 없어.');return}
  if(q.uCliff){think(q.u5done?'낭떠러지 아래는 조용하다.':'여기서는 내려갈 수 없어. 동굴 안쪽, 여왕거미 둥지로 가 보자.');return}
@@ -13458,8 +13481,8 @@ function whiteTalk(){var rv=RV(),me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 �
   {n:'',t:'(손을 뻗어 집으려는 순간— 천은 아침 햇살에 서리가 녹듯 스르르 사라져 버렸다)',onShow:function(){try{CH.sfx('magic')}catch(e){}try{window.__rvWhite()}catch(e){}}},
   ar?{n:an,t:'…방금 그거, 뭐였지?'}:null,{n:me,t:'(모르겠다. 하지만… 이 불은 그냥 전쟁이 아니야. 누군가 처음부터 이렇게 되길 바랐어)'}].filter(Boolean),null,function(){rv.white=1;X.sv();window.__storyOn=0})}
 /* 7) 쓰러진 왕궁 군사: 스나이퍼 */
-function sniperTalk(n){var rv=RV(),me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;if(rv.snp){var m=topOn(),L=['…그놈을 쫓겠다고? 그만둬. 보이지도 않는 데서 쏜다니까.','왕궁 쪽 하늘이 밤새 붉었어. 폐하와 왕비 전하는… 모르겠다. 모르겠어.','그 흰옷의 대신… 온 지 반년도 안 된 사람이었어. 그런데 어느새 폐하 바로 곁에 서 있었지.'];n._k=((n._k==null?-1:n._k)+1)%L.length;if(m)say(m,'<small>쓰러진 왕궁 군사</small><br>'+L[n._k],'keep');return}window.__storyOn=1;
- dlg([{n:'쓰러진 왕궁 군사',t:'(벽에 기대 앉아, 피 묻은 붕대로 어깨를 누르고 있다) …왕궁에서… 여기까지 기어 왔어. 남쪽 마을 사람들한테… 알려야 해서.'},
+function sniperTalk(n){var rv=RV(),me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;if(rv.snp){var m=topOn(),L=['…그놈을 쫓겠다고? 그만둬. 보이지도 않는 데서 쏜다니까.','왕궁 쪽 하늘이 밤새 붉었어. 폐하와 왕비 전하는… 모르겠다. 모르겠어.','그 흰옷의 대신… 온 지 일 년도 안 된 사람이었어. 그런데 어느새 폐하 곁에 바짝 붙어 있었지. …그러다 전쟁이 터지자, 감쪽같이 사라졌어.'];n._k=((n._k==null?-1:n._k)+1)%L.length;if(m)say(m,'<small>쓰러진 왕궁 군사</small><br>'+L[n._k],'keep');return}window.__storyOn=1;
+ dlg([{n:'쓰러진 왕궁 군사',t:'(벽에 기대 앉아, 피 묻은 붕대로 어깨를 누르고 있다) …왕궁이… 다 타 버렸어. 정신없이 도망치다 보니… 여기까지 와 있더군. 더는… 못 걷겠어.'},
   {n:'쓰러진 왕궁 군사',t:'남쪽 성문을 부수고 들어온 건 불의 제국 군대였어. 하지만 진짜 무서운 건… 그놈이었다.'},{n:'쓰러진 왕궁 군사',t:'보이지도 않는 먼 데서… 총을 쐈어. 불을 두른 총알이 날아와서, 한 발에 한 사람씩.'},
   {n:'쓰러진 왕궁 군사',t:'대장님도, 근위대장님도… 한 발이었어. 엄청나게 강했다. 자비도 없었어. 우는 아이 앞에서도 총구를 내리지 않았다고…'},
   ar?{n:an,t:'……불을 두른 총.'}:null,(ar&&RV().bullet)?{n:an,t:'(아저씨가 품에서 단비네 문설주에서 뽑은 총알을 꺼낸다) …이거냐. 그놈 총알이, 이거냐?'}:null,(ar&&RV().bullet)?{n:'쓰러진 왕궁 군사',t:'(총알을 보자마자 얼굴이 하얗게 질린다) …그, 그래. 그 불꽃 무늬. 그놈 거야. 대장님 가슴에 박힌 것도… 똑같았어.'}:null,ar?{n:an,t:'(아저씨의 주먹이 하얗게 떨린다)'}:null,ar?{n:an,t:'그놈이다…. 고향에서… 내 가장 오랜 친구를 빼앗아 간 놈.'}:null,
