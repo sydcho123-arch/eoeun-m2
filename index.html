@@ -7482,7 +7482,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function dashTile(u){var bx=u.x-u.f[0],bz=u.z-u.f[1];if(passable(bx,bz)&&!unitAt(bx,bz))return[bx,bz];var best=null;[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var x=u.x+d[0],z=u.z+d[1];if(!best&&passable(x,z)&&(!unitAt(x,z)||unitAt(x,z)===H))best=[x,z]});return best}
  function areaFoes(s){return foes().filter(function(u){var d=man(H,u);if(s.shape==='adj')return d===1&&canMelee(H,u);if(s.shape==='cross2')return(u.x===H.x||u.z===H.z)&&d<=2;if(s.shape==='r2')return d<=2;if(s.shape==='r3')return d<=3;return true})}
  function skillTargets(s){if(s.k==='arrow'||s.k==='rain')return foes().filter(function(u){var d=man(H,u);return d>=(s.min||1)&&d<=s.r+hiRng(H)&&canRanged(H,u,s.magic)});if(s.k==='volley')return null;if(s.k==='hit'||s.k==='push')return foes().filter(function(u){return adj(H,u)&&canMelee(H,u)});if(s.k==='range')return foes().filter(function(u){return man(H,u)<=s.r});if(s.k==='dash')return foes().filter(function(u){return man(H,u)<=s.r&&dashTile(u)});return null}
- function canUse(id){var s=SK[id];if(!s||!s.k)return'x';if(s.sh&&!hasShield())return'🛡️ 방패를 들어야 쓸 수 있어요';if(B.cd[id]>0)return B.cd[id]+'턴 뒤에 쓸 수 있어요';if((B.g||0)<s.g)return'게이지 '+s.g+' 필요';
+ function canUse(id){var s=SK[id];if(!s||!s.k)return'x';if(B.cd[id]>0)return B.cd[id]+'턴 뒤에 쓸 수 있어요';if((B.g||0)<s.g)return'게이지 '+s.g+' 필요';
   if(s.k==='taunt'&&!foes().some(function(q){return man(H,q)<=s.r}))return s.r+'칸 안에 도발할 적이 없어요';if(s.k==='guard'){if(!(B.party&&party().some(function(p){return p!==H&&p.hp>0})))return'지킬 동료가 없어요';if(B.guard&&B.guard.t>0)return'이미 맹세 중이에요'}if(s.k==='fortress'&&!vFoes().length)return'화면 범위 안에 적이 없어요';
   var t=skillTargets(s);if(t&&!t.length)return(s.k==='hit'||s.k==='push')?'바로 옆에 적이 없어요':s.min>1?s.min+'~'+s.r+'칸 사이에 적이 없어요 (궁수 스킬은 2칸 이상 떨어져야 해요)':s.r+'칸 안에 적이 없어요';if(s.k==='aoe'&&!areaFoes(s).length)return'범위 안에 적이 없어요';if(s.k==='heal'&&H.hp>=H.max)return'체력이 가득해요';if((s.k==='all'||s.k==='debuff')&&!vFoes().length)return'화면 범위 안에 적이 없어요';if(s.k==='volley'&&!vFoes().some(function(q){return man(H,q)>=(s.min||1)}))return(s.min||2)+'칸 이상 떨어진 적이 없어요';return''}
  function rngTiles(s){var out=[],x,z;if(s.k==='taunt'||s.k==='fortress'){var rr=s.k==='taunt'?s.r:2;for(z=H.z-rr;z<=H.z+rr;z++)for(x=H.x-rr;x<=H.x+rr;x++){var d0=Math.abs(x-H.x)+Math.abs(z-H.z);if(d0&&d0<=rr&&passable(x,z))out.push([x,z])}return out}if(s.k==='hit'||s.k==='push'){[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){if(passable(H.x+d[0],H.z+d[1]))out.push([H.x+d[0],H.z+d[1]])});return out}
@@ -8930,20 +8930,20 @@ function pv(a,L){return Array.isArray(a)?a[Math.min(a.length,L)-1]:a}
 /* ---------- ⚔️ 탱커 (주인공) ---------- */
 var HT={
  R:{nm:'수호자의 기본기',ic:'🛡️',max:4,p:{hp:[20,35,50,70],def:[1,1.5,2,3]},d:function(L){return '탱커의 기본. 체력 +'+pv([20,35,50,70],L)+', 방어력 +'+pv([1,1.5,2,3],L)}},
- A:{nm:'방패 배쉬',ic:'💥',max:4,sh:1,k:'hit',mul:[1.1,1.2,1.3,1.5],stun:[.7,.8,.9,1],stunT:[2,2,2,3],g:[25,25,25,30],cd:3,
+ A:{nm:'방패 배쉬',ic:'💥',max:4,k:'hit',mul:[1.1,1.2,1.3,1.5],stun:[.7,.8,.9,1],stunT:[2,2,2,3],g:[25,25,25,30],cd:3,
   d:function(L){return '바로 옆 적을 방패로 후려친다 ('+pv(this.mul,L)+'배) · '+Math.round(pv(this.stun,L)*100)+'% 확률로 '+pv(this.stunT,L)+'턴 기절 (보스는 기절 면역)'}},
  B:{nm:'도발',ic:'😤',max:3,k:'taunt',r:[3,4,5],turns:[3,3,4],/* 11-22 도발 1턴씩 더 */tdef:[0,0,0],g:20,cd:3,/* 11/20: 한 단계 올릴 때마다 범위 +1칸, 3단계(마지막)에서 1턴 더 · 최대 3단계 */
   d:function(L){return '주변 '+pv(this.r,L)+'칸 안의 적이 '+pv(this.turns,L)+'턴 동안 나만 공격한다 (자는 적도 깨어남)'+(L<3?' · 3단계에서 1턴 더':'')}},
- A1:{nm:'방패 단련',ic:'🔰',max:4,sh:1,p:{def:[1.5,2.5,3.5,5]},d:function(L){return '방어력 +'+pv([1.5,2.5,3.5,5],L)}},
- A2:{nm:'방패 돌진',ic:'🐂',max:4,sh:1,k:'push',mul:[1,1.2,1.45,1.7],push:[3,4,5,6],wallT:[0,0,1,2],aoe:[0,0,0,.8],g:30,cd:3,
+ A1:{nm:'방패 단련',ic:'🔰',max:4,p:{def:[1.5,2.5,3.5,5]},d:function(L){return '방어력 +'+pv([1.5,2.5,3.5,5],L)}},
+ A2:{nm:'방패 돌진',ic:'🐂',max:4,k:'push',mul:[1,1.2,1.45,1.7],push:[3,4,5,6],wallT:[0,0,1,2],aoe:[0,0,0,.8],g:30,cd:3,
   d:function(L){var w=pv(this.push,L)>=99;return '바로 옆 적을 '+(w?'벽 끝까지':pv(this.push,L)+'칸 뒤로')+' 밀어 버린다 ('+pv(this.mul,L)+'배)'+(pv(this.wallT,L)?' · 부딪히면 '+pv(this.wallT,L)+'턴 기절':'')+(pv(this.aoe,L)?' · 떨어진 곳 주변 1칸 적도 '+pv(this.aoe,L)+'배':'')+' · 보스는 2칸만 밀리고 기절 안 함'}},
  B1:{nm:'단단한 체력',ic:'❤️',max:4,p:{hp:[30,50,75,100]},d:function(L){return '체력 +'+pv([30,50,75,100],L)}},
  B2:{nm:'텟카이',ic:'🗿',max:4,k:'buff',def:[1.5,1.7,1.9,2.2],turns:[2,2,3,3],g:25,cd:4,
   d:function(L){return '몸을 강철처럼 단단하게! '+pv(this.turns,L)+'턴 동안 방어력 ×'+pv(this.def,L)}},
  A1E:{nm:'불굴',ic:'🔥',max:4,end:1,p:{endure:1,endH:[0,10,20,30]},
   d:function(L){var h=pv([0,10,20,30],L);return '【끝 갈래】 쓰러질 만큼 맞아도 전투마다 한 번, 체력 1로 버틴다'+(h?' · 버티는 순간 체력 '+h+'% 회복':'')}},
- A2P:{nm:'묵직한 방패',ic:'🧱',max:4,sh:1,p:{atk:[2,3,4,6],def:[.5,1,1.5,2]},d:function(L){return '공격력 +'+pv([2,3,4,6],L)+', 방어력 +'+pv([.5,1,1.5,2],L)}},
- B1P:{nm:'가시 방패',ic:'🌵',max:4,sh:1,p:{rfl:[10,15,20,30]},d:function(L){var r=pv([10,15,20,30],L);return '받은 데미지의 '+r+'%를 때린 적에게 되돌린다 (보스는 절반 '+(r/2)+'%)'}},
+ A2P:{nm:'묵직한 방패',ic:'🧱',max:4,p:{atk:[2,3,4,6],def:[.5,1,1.5,2]},d:function(L){return '공격력 +'+pv([2,3,4,6],L)+', 방어력 +'+pv([.5,1,1.5,2],L)}},
+ B1P:{nm:'가시 방패',ic:'🌵',max:4,p:{rfl:[10,15,20,30]},d:function(L){var r=pv([10,15,20,30],L);return '받은 데미지의 '+r+'%를 때린 적에게 되돌린다 (보스는 절반 '+(r/2)+'%)'}},
  B2P:{nm:'강철 피부',ic:'⚙️',max:4,p:{dr:[3,5,7,10]},d:function(L){return '받는 모든 데미지 -'+pv([3,5,7,10],L)+'%'}},
  M1:{nm:'수호의 맹세',ic:'🤝',max:4,k:'guard',pct:[40,55,70,85],turns:[3,3,3,4],g:30,cd:4,
   d:function(L){return pv(this.turns,L)+'턴 동안 동료가 받는 데미지의 '+pv(this.pct,L)+'%를 내가 대신 받는다'}},
@@ -8981,12 +8981,10 @@ function tLv(id){var v=SKS()[id];return(typeof v==='number'&&v>=1&&v<=4)?v:0}
 function tRes(id,L,raw){var b=TT()[id];if(!b)return undefined;L=L||tLv(id)||1;var o={id:id,t:TTIER[TROW[id]],row:TROW[id],par:TPAR[id],need:id==='U'?'all':'any',lv:L};
  for(var k in b){if(k==='d'||k==='p')continue;o[k]=pv(b[k],L)}
  if(b.p){o.p={};for(var q in b.p)o.p[q]=pv(b.p[q],L)}
- o.d=b.d.call(b,L);if(b.sh)o.d+=' · 🛡️ 방패를 들고 있어야 발동'+(hasShield()?'':' (지금 방패 없음!)');
+ o.d=b.d.call(b,L);
  if(!raw&&o.k&&(o.k==='arrow'||o.k==='rain')){var rg=tRaw().rng||0;if(rg)o.r=(o.r||0)+rg}
  return o}
-/* 11-26 선생님: 이름에 「방패」가 붙은 스킬은 방패를 들고 있을 때만 발동 */
-function hasShield(){try{var e=(typeof CTX!=='undefined'&&CTX==='arch')?null:EQ();return !!(e&&e.sh)}catch(_){return true}}
-function tRaw(){var o={hp:0,atk:0,def:0,agi:0,luk:0,mv:0,gg:0,pot:0,thorn:0,ctr:0,psn:0,rfl:0,dr:0,hpP:0,endure:0,endH:0,exe:0,rng:0,hrun:0,dmgP:0};Object.keys(SKS()).forEach(function(id){var L=tLv(id);if(!L)return;var r=tRes(id,L,true);if(r&&r.sh&&!hasShield())return;if(r&&r.p)for(var k in r.p)o[k]=(o[k]||0)+r.p[k]});return o}
+function tRaw(){var o={hp:0,atk:0,def:0,agi:0,luk:0,mv:0,gg:0,pot:0,thorn:0,ctr:0,psn:0,rfl:0,dr:0,hpP:0,endure:0,endH:0,exe:0,rng:0,hrun:0,dmgP:0};Object.keys(SKS()).forEach(function(id){var L=tLv(id);if(!L)return;var r=tRes(id,L,true);if(r&&r.p)for(var k in r.p)o[k]=(o[k]||0)+r.p[k]});return o}
 SK=new Proxy({},{get:function(t,p){if(typeof p!=='string')return undefined;return tRes(p)},has:function(t,p){return p in TT()},ownKeys:function(){return Object.keys(TT())},getOwnPropertyDescriptor:function(t,p){return p in TT()?{value:tRes(p),enumerable:true,configurable:true,writable:true}:undefined}});
 skHas=function(id){return tLv(id)>0};
 function tOpenCost(id){var r=TROW[id];return r===1?1:r===6?8:r}
@@ -14330,7 +14328,7 @@ try{(function(){var d=document,b=d.createElement('button');b.type='button';b.id=
  function range(b){var k=b.k;if(!k)return'';if(k==='hit'||k==='push')return'바로 옆 1칸 (앞·뒤·양옆)';if(k==='taunt')return'내 주변 '+seq(b.r,'칸');if(k==='buff')return'나 자신';if(k==='guard')return'동료 1명';if(k==='volley')return(b.min||2)+'칸 이상 떨어진 화면 안 모든 적';if(b.r!=null)return(b.min||1)+'~'+seq(b.r,'칸')+(b.rad!=null?' · 맞는 곳 주변 '+seq(b.rad,'칸')+'(네모)':'');return''}
  function effs(b){var o=[];if(b.stun!=null)o.push('💫 기절 '+seq(pct(b.stun),'%')+' 확률'+(b.stunT!=null?' · '+seq(b.stunT,'턴'):'')+' (보스는 기절 안 함)');if(b.wallT!=null&&(!arr(b.wallT)||b.wallT.some(Boolean)))o.push('💫 벽에 부딪히면 기절 '+seq(b.wallT,'턴'));if(b.push!=null)o.push('↔️ 밀치기 '+seq(b.push,'칸'));if(b.k==='taunt')o.push('😤 도발: 적이 나만 공격 '+seq(b.turns,'턴'));if(b.psn!=null)o.push('☠️ 독: 3턴 동안 매 턴 최대 체력의 '+seq(b.psn,'%')+' (보스는 1/3)');if(b.k==='buff'&&b.def!=null)o.push('🛡️ 방어력 ×'+seq(b.def)+' · '+seq(b.turns,'턴'));if(b.k==='buff'&&b.agi!=null)o.push('💨 회피 +'+seq(b.agi,'%')+' · '+seq(b.turns,'턴'));if(b.k==='guard')o.push('🤝 동료가 받는 데미지 '+seq(b.pct,'%')+'를 대신 받음 · '+seq(b.turns,'턴'));if(b.hits)o.push('🔁 '+b.hits+'번 때림');return o}
  function one(id,b,cur){var t=typ(b),L=cur||0,max=b.max||1,rows='';for(var i=1;i<=max;i++){var tx='';try{tx=b.d.call(b,i)}catch(e){}rows+='<div class="cxrow'+(i===L?' on':'')+'"><b>Lv.'+i+'</b><span>'+tx+'</span></div>'}
-  var ch=[];if(b.sh)ch.push('<span>🛡️ 방패를 들고 있어야 발동</span>');var r=range(b);if(r)ch.push('<span>📏 범위: '+r+'</span>');if(b.mul!=null)ch.push('<span>💥 위력: 공격력 ×'+seq(b.mul)+'</span>');if(b.g!=null)ch.push('<span>✨ 게이지 '+seq(b.g)+' 필요</span>');if(b.cd)ch.push('<span>⏳ 쿨타임 '+b.cd+'턴</span>');effs(b).forEach(function(e){ch.push('<span>'+e+'</span>')});
+  var ch=[];var r=range(b);if(r)ch.push('<span>📏 범위: '+r+'</span>');if(b.mul!=null)ch.push('<span>💥 위력: 공격력 ×'+seq(b.mul)+'</span>');if(b.g!=null)ch.push('<span>✨ 게이지 '+seq(b.g)+' 필요</span>');if(b.cd)ch.push('<span>⏳ 쿨타임 '+b.cd+'턴</span>');effs(b).forEach(function(e){ch.push('<span>'+e+'</span>')});
   var oc=0;try{oc=tOpenCost(id)}catch(e){}
   return'<div class="cxsk cx'+t[3]+(cur?'':' off')+'"><div class="cxh"><span class="cxi">'+b.ic+'</span><div><b>'+b.nm+'</b><small>'+t[0]+' '+t[1]+(cur?' · <em>배움 Lv.'+cur+(max>1?'/'+max:'')+'</em>':' · 아직 안 배움')+'</small></div></div>'
    +(ch.length?'<div class="cxch">'+ch.join('')+'</div>':'')+'<div class="cxrows">'+rows+'</div><small class="cxcost">🌳 배우기 스킬 포인트 '+oc+'개'+(max>1?' · 강화 Lv.2·3·4 = 1·2·3개':' · 강화 없음')+'</small></div>'}
