@@ -1517,6 +1517,7 @@ img.crn{width:1.08em;height:1.08em;vertical-align:-.2em;display:inline-block;mar
 
 /* 11-26 위쪽 줄: 제목이 길면 글씨를 줄여 크라운 칸이 화면 밖으로 밀리지 않게 */.vgtop b{flex:1 1 auto;min-width:0;text-align:center;font-size:clamp(12px,4.3vw,19px)!important;white-space:normal;word-break:keep-all;line-height:1.15;overflow:hidden}.vgtop .vgtr{flex:none;display:flex;align-items:center;gap:6px}.mngrid .mnfs{background:#e4ecfd!important}
 .vgtr .vgqt i.emo{position:static!important;font-size:22px!important;width:1.18em!important;height:1.18em!important}/* 11-26 퀘스트 칸 📜 그림이 .vgqt i(11px·구석) 규칙에 눌려 안 보였음 */
+.mngrid .mnql.dim{opacity:.5;filter:grayscale(.6)}/* 11-26 집으로 귀환 막힘 */
 </style>
 <style id="rv-style">
 .rv-clip{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 18px;padding:10px 12px;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--body);text-align:left;cursor:pointer}
@@ -8676,6 +8677,20 @@ function safeSpot(Z,sp){if(!Z||!Z.pit||!sp)return sp;var P={x:sp[0],z:sp[1]};if(
  return best||Z.spawn||[0,0]}
 var _openForestZ=openForest;openForest=function(sp,zone){if(FALL){FALL=0;if(FALLSPD){CH.spd=FALLSPD;FALLSPD=null}}try{var Z=ZONES[zone||FZ];sp=safeSpot(Z,sp)}catch(e){}return _openForestZ(sp,zone)};
 
+/* 11-26 11:36 선생님: 숲·지하 화면 — 🗺️지도 버튼·⏸️시간 칸을 크라운 바로 아래(세로)로 / 가로 화면에서는 위쪽 줄 퀘스트 📜 왼쪽으로, 지도는 그 아래 조금 작게 — 서로·점프 버튼을 가리지 않게 */
+(function(){function sp(el,k,v){if(el)el.style.setProperty(k,v,'important')}
+ function lay(){try{var m=document.getElementById('vgf');if(!m||!m.classList.contains('on'))return;var tr=m.querySelector('.vgtop .vgtr'),qt=tr&&tr.querySelector('.vgqt'),mb=m.querySelector('.zmapb'),ck=m.querySelector('.vgclk'),mp=m.querySelector('.zmap');if(!tr)return;
+  var R=m.getBoundingClientRect(),T=tr.getBoundingClientRect(),W=R.width,land=window.innerWidth>window.innerHeight,bw=mb&&mb.offsetWidth?mb.offsetWidth:42,top,mr,rowB;
+  if(land&&qt){var Q=qt.getBoundingClientRect();top=Q.top-R.top+(Q.height-bw)/2;mr=R.right-Q.left+8;rowB=T.bottom-R.top+6}
+  else{top=T.bottom-R.top+6;mr=8;rowB=top+bw+6}
+  if(qt)sp(tr,'padding-left',land?(bw*2+20)+'px':'0px');/* 가로: 버튼 자리만큼 제목을 비켜 줌 */
+  if(mb){sp(mb,'top',top+'px');sp(mb,'right',mr+'px')}
+  var mw=mp?mp.offsetWidth:0;
+  if(ck){var ch=ck.offsetHeight||30;if(land&&!ck.classList.contains('mini')){sp(ck,'top',rowB+'px');sp(ck,'right',(8+(mw?mw+6:0))+'px')}/* 가로에서 펼친 시간 칸은 위쪽 줄 아래로 — 제목·지도를 안 가리게 */else{sp(ck,'top',(top+(bw-ch)/2)+'px');sp(ck,'right',(mr+(mb?bw+6:0))+'px')}}
+  if(mp){sp(mp,'top',rowB+'px');sp(mp,'right','8px');sp(mp,'width',land?'min(30vw,130px)':'min(40vw,160px)')}
+ }catch(e){}}
+ setInterval(lay,400);window.addEventListener('resize',function(){setTimeout(lay,60)});document.addEventListener('fullscreenchange',function(){setTimeout(lay,150)})})();
+
 /* ===== 거대한 동굴 1-1 · 1-2 · 1-3 ===== */
 function cavePath(){return[{type:'dirt',w:2.4,pts:[[0,21],[0,12],[-6,4],[4,-4],[-2,-12],[0,-21]]},{type:'dirt',w:1.8,pts:[[-6,4],[-14,8]]},{type:'dirt',w:1.8,pts:[[4,-4],[13,-8]]}]}
 ZONES.c1={nm:'거대한 동굴 1-1',size:44,cave:1,pool:['rt10','rt10','rt10','bt11','bt11'],path:cavePath(),ponds:[[10,10,2.2]],spawn:[0,17],
@@ -9349,8 +9364,14 @@ function questLog(){var q=QS(),L1=[];function st(done,t,hint){L1.push([done,t,hi
  h+='<div class="qlh">💬 마을 이야기</div>'+sides.map(function(x){return'<div class="qlr'+(x[0]?' ok':'')+'"><i>'+(x[0]?'✅':'⬜')+'</i><div><b>'+x[1]+'</b>'+(x[0]?'':'<small>'+x[2]+'</small>')+'</div></div>'}).join('')+'</div>';
  try{if(CH.vqQL)h=h.replace(/<\/div>$/,CH.vqQL()+'</div>')}catch(e){}var p=panel('📒 모험 수첩',h);[].forEach.call(p.querySelectorAll('[data-ql]'),function(b){b.onclick=function(e){e.stopPropagation();if(b.dataset.ql==='q'){questLog();return}[].forEach.call(p.querySelectorAll('[data-ql]'),function(x){x.classList.toggle('on',x===b)});p.querySelector('.qlbody').innerHTML=dexHTML()}})}
 /* 메뉴에 수첩 · 귀환 버튼 */
-var _menuHTMLS=menuHTML;menuHTML=function(){var h=_menuHTMLS();try{var q=QS(),ex='<button type="button" data-mn="ql" class="mnql">📒<b>모험 수첩</b></button>';if(q.home&&WORLD&&WORLD.map==='f')ex+='<button type="button" data-mn="hk" class="mnql">🏡<b>집으로 귀환'+((q.hkD||0)>=dayN()?' (내일)':'')+'</b></button>';h=h.replace('<div class="mngrid">','<div class="mngrid">'+ex)}catch(e){}return h};
-var HOMEWARP=0;var _partyMenuS=partyMenu;partyMenu=function(a){if(a==='ql'){questLog();return}if(a==='hk'){var q=QS();if((q.hkD||0)>=dayN()){CH.sfx('deny');X.toast('🏡 귀환은 하루에 한 번만 쓸 수 있어요');return}X.ask('🏡 집으로 돌아갈까요?','귀환 열쇠로 우리 집 문 앞까지 한 번에 돌아가요. (하루 1번)','돌아가기','취소',function(){q.hkD=dayN();X.sv();HOMEWARP=1;CH.sfx('swish');try{FZ='1-1'}catch(e){}closeForest()});return}_partyMenuS(a)};
+var _menuHTMLS=menuHTML;menuHTML=function(){var h=_menuHTMLS();try{var q=QS(),ex='<button type="button" data-mn="ql" class="mnql">📒<b>모험 수첩</b></button>';if(q.home&&WORLD&&WORLD.map==='f'){var lk=hkLock();ex+='<button type="button" data-mn="hk" class="mnql'+(lk?' dim':'')+'">🏡<b>집으로 귀환'+(lk?' (지금은 못 가요)':(q.hkD||0)>=dayN()?' (내일)':'')+'</b></button>'}h=h.replace('<div class="mngrid">','<div class="mngrid">'+ex)}catch(e){}return h};
+/* 11-26 12:04 선생님: 「집으로 귀환」은 하루 1번 · 이야기상 집으로 가면 안 되는 때(지하·골렘전·축제 기간·불탄 마을·이야기 장면·전투 중)에는 절대 안 됨 → 그때 나가기는 칠판으로만 */
+function hkLock(){try{var q=QS();if(window.__storyOn)return'지금은 이야기가 진행 중이라 귀환할 수 없어요';try{var bt=window.__bst&&window.__bst();if(bt&&!bt.over)return'전투 중에는 귀환할 수 없어요'}catch(_){}
+ if((typeof FZ==='string'&&FZ[0]==='u')||(q.uIn&&!q.u5done))return'지하에서는 집으로 돌아갈 수 없어요 · 나가기는 칠판으로만 돼요';
+ var fl=(typeof fstLock==='function')?fstLock:window.__fstLock;if(fl&&fl())return'축제 기간에는 집으로 갈 수 없어요 · 나가기는 칠판으로만 돼요';
+ if(q.ruin)return'별빛 마을이 불타 버려서 돌아갈 집이 없어요';return''}catch(e){return''}}
+window.__hkLock=hkLock;
+var HOMEWARP=0;var _partyMenuS=partyMenu;partyMenu=function(a){if(a==='ql'){questLog();return}if(a==='hk'){var q=QS();if(!q.home){CH.sfx('deny');X.toast('🏡 집을 지어야 귀환할 수 있어요',true);return}var lk=hkLock();if(lk){CH.sfx('deny');X.toast('🏡 '+lk,true);return}if((q.hkD||0)>=dayN()){CH.sfx('deny');X.toast('🏡 귀환은 하루에 한 번만 쓸 수 있어요');return}X.ask('🏡 집으로 돌아갈까요?','귀환 열쇠로 우리 집 문 앞까지 한 번에 돌아가요. (하루 1번)','돌아가기','취소',function(){q.hkD=dayN();X.sv();HOMEWARP=1;CH.sfx('swish');try{FZ='1-1'}catch(e){}closeForest()});return}_partyMenuS(a)};
 var _openVillageS=openVillage;openVillage=function(fb,sp){if(HOMEWARP){HOMEWARP=0;var d=doorOf(HOMEI);sp=[d[0]+.6,d[1]]}return _openVillageS(fb,sp)};
 /* ===== 집 확장: 가구 · 재료 상자 · 요리 · 손님 · 공부 장식 ===== */
 var FURN={bed:['🛏️ 푹신한 큰 침대','집에서 자면 게이지 +50% (원래 +35%)',[['log',10],['wfur',3]],200],pot:['🌿 두 번째 약초 화분','화분에서 하루에 물약 2개',[['log',4],['stone',4]],150]};
@@ -9422,7 +9443,7 @@ renderEq=function(){var e=eqWin(),o=CH.stats(),eq=EQ(),w=W(),arch=(CTX==='arch'&
  if(hasArch())h+='<div class="evt"><button type="button" data-ctx="hero" class="'+(arch?'':'on')+'">⚔️ '+esc(ST().nm||'나')+'</button><button type="button" data-ctx="arch" class="'+(arch?'on':'')+'">🏹 '+esc(archName())+'</button></div>';
  var sl=function(k){var s=SLOTS.filter(function(x){return x[0]===k})[0],id=eq[k],sel=SEL&&SEL.slot===k;return'<div class="evs'+(id?' on'+(CH.gearCls?CH.gearCls(id):''):'')+(sel?' sel':'')+(JUST===k?' just':'')+(SEL&&!SEL.slot&&(CH.ITEMDB[SEL.id]||{}).slot===k?' tgt':'')+'" data-slot="'+k+'">'+(id?CH.itemIcon(id,'',40)+(CH.enhLv&&CH.enhLv(id)?'<em>+'+CH.enhLv(id)+'</em>':'')+(k==='wp'&&CH.durOf?(NODUR[id]?'<small>✨ 무한</small>':'<small class="'+(CH.durOf(id)<=15?'low':'')+'">🔧'+CH.durOf(id)+'</small>'):''):'<span>'+s[1]+'</span>')+'</div>'};
  var u=eqShot();
- h+='<div class="evc'+(arch?'':' t4')+'"><div class="evcol">'+sl('hd')+sl('bd')+sl('gl')+(arch?'':sl('bt'))+'</div><div class="evfig">'+(u?'<img src="'+u+'" alt="">':'')+'<div class="evnm">'+who+'</div></div><div class="evcol">'+sl('wp')+(arch?sl('bt'):sl('sh'))+sl('ac')+'</div></div>';
+ h+='<div class="evc t4"><div class="evcol">'+sl('hd')+sl('bd')+sl('gl')+sl('bt')+'</div><div class="evfig">'+(u?'<img src="'+u+'" alt="">':'')+'<div class="evnm">'+who+'</div></div><div class="evcol">'+sl('wp')+(arch?'<div class="evs evqv" data-qv="1"><span>화살통</span></div>':sl('sh'))+sl('ac')+'</div></div>';/* 11-26 선생님: 칸 배치·크기는 탱커 기준(왼쪽 4·오른쪽 3) · 궁수의 방패 칸은 「화살통」(나중에 나옴) */
  var hp=Math.max(0,Math.min(100,o.cur/o.hp*100));
  h+='<div class="evst"><div class="evhp"><i style="width:'+hp.toFixed(0)+'%"></i><span>❤️ '+o.cur+' / '+o.hp+'</span></div><div class="evch"><span>⚔️ '+o.atk+(o.atkB?'<small>+'+o.atkB+'</small>':'')+'</span><span>🛡️ '+o.def+(o.defB?'<small>+'+o.defB+'</small>':'')+'</span><span>💨 '+o.agi+'%</span><span>🍀 '+o.luk+'%</span><span>🧠 '+(o.int||0)+'</span></div><button type="button" class="evbp" data-bp="1">💪 능력치 포인트 '+Math.max(0,bpTotal()-bpUsed())+'</button></div>';
  var L2=[];(w.items||[]).forEach(function(x){L2.push(x)});
@@ -9445,6 +9466,32 @@ function evBar(){if(!SEL)return'<div class="evhint">👆 창고의 장비를 고
  var info=d.slot?statTxt(d)+(cd&&!SEL.slot?' <span class="evcmp">지금: '+cd.nm+'</span>':''):(d.d||'');
  var bt=SEL.slot?'<button type="button" data-act="off" class="off">↩️ 벗기</button>':d.slot?'<button type="button" data-act="on">✨ '+(cur?'바꿔 입기':'착용하기')+'</button>':d.use==='gauge'?'<button type="button" data-act="drink">🥤 마시기</button>':d.use==='drink'?'<button type="button" data-act="drink">🧪 마시기 +'+(d.heal||40)+'</button>':'';
  return'<div class="evsi">'+CH.itemIcon(SEL.id,d.ic,38)+'<div><b>'+(d.nm||'')+(SEL.slot?' <small>착용 중</small>':'')+'</b><small>'+info+'</small>'+(d.slot&&!SEL.slot?evDiff(SEL.id,d.slot):'')+'</div></div><div class="evbt">'+bt+'<button type="button" data-act="x" class="cx">닫기</button></div>'}
+
+/* 11-26 11:52 선생님: 장비 창 캐릭터를 손가락으로 끌어 돌려 보기 — 좌우로 끌면 빙글, 위아래로 끌면 위에서 내려다보기(대각선) · 탱커·궁수 각자 착용한 모습 */
+(function(){var EV=null;
+ function disp(o){o.traverse(function(q){if(q.geometry)q.geometry.dispose();if(q.material){(Array.isArray(q.material)?q.material:[q.material]).forEach(function(m){if(m.map)m.map.dispose();m.dispose()})}})}
+ function draw(){if(!EV||!EV.sc)return;var c=EV.cam,d=6,y=EV.yaw,p=EV.pit,ty=.92;c.position.set(Math.sin(y)*Math.cos(p)*d,ty+Math.sin(p)*d,Math.cos(y)*Math.cos(p)*d);c.lookAt(0,ty,0);EV.ren.render(EV.sc,c)}
+ function size(){var cv=EV.cv,w=cv.clientWidth||140,h=cv.clientHeight||204;if(EV.w!==w||EV.h!==h){EV.w=w;EV.h=h;EV.ren.setSize(w,h,false);EV.cam.aspect=w/h;EV.cam.updateProjectionMatrix()}}
+ function bind(cv){var on=false,lx=0,ly=0,moved=0;
+  cv.addEventListener('pointerdown',function(e){on=true;moved=0;lx=e.clientX;ly=e.clientY;try{cv.setPointerCapture(e.pointerId)}catch(_){}e.stopPropagation()});
+  cv.addEventListener('pointermove',function(e){if(!on)return;var dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);EV.yaw-=dx*.013;EV.pit=Math.max(-.05,Math.min(1.25,EV.pit+dy*.009));draw();e.preventDefault();e.stopPropagation()});
+  ['pointerup','pointercancel'].forEach(function(t){cv.addEventListener(t,function(e){on=false;e.stopPropagation()})});
+  cv.addEventListener('click',function(e){e.stopPropagation()})}
+ function ev3d(){var fig=document.querySelector('.eqwin.ev2 .evfig');if(!fig||!window.THREE||!CH.hero3d)return;var T=THREE;
+  if(!EV){EV={ren:new T.WebGLRenderer({antialias:true,alpha:true}),yaw:-.45,pit:.42};EV.ren.setPixelRatio(Math.min(2,window.devicePixelRatio||1));if(T.sRGBEncoding)EV.ren.outputEncoding=T.sRGBEncoding;EV.ren.setClearColor(0,0);EV.cv=EV.ren.domElement;EV.cv.className='ev3d';EV.cam=new T.PerspectiveCamera(26,1,.1,50);bind(EV.cv)}
+  var key=JSON.stringify(CH.heroCh());
+  if(EV.key!==key){if(EV.sc){EV.sc.traverse(function(){});disp(EV.sc)}var sc=new T.Scene();sc.add(new T.HemisphereLight(0xcfe0ff,0x6a4a3a,.9));var k=new T.DirectionalLight(0xffe2c0,1.25);k.position.set(3,5,6);sc.add(k);var f=new T.DirectionalLight(0xa8c0ff,.45);f.position.set(-5,3,-4);sc.add(f);
+   var hero=CH.hero3d(T,CH.heroCh());try{hero.userData.animate(.016,0,false)}catch(_){}
+   /* 11-26 선생님: 모든 캐릭터 크기는 탱커 기준 */try{var hh=function(o){o.updateMatrixWorld(true);var bx=new T.Box3().setFromObject(o);return bx.max.y-bx.min.y};var tk=JSON.stringify(inCtx('hero',function(){return CH.heroCh()}));
+    if(EV.tkK!==tk){var tm=inCtx('hero',function(){return CH.hero3d(T,CH.heroCh())});try{tm.userData.animate(.016,0,false)}catch(_){}EV.tkH=hh(tm);EV.tkK=tk;disp(tm)}
+    var mh=hh(hero);if(EV.tkH&&mh>0&&Math.abs(mh-EV.tkH)/EV.tkH>.02)hero.scale.multiplyScalar(EV.tkH/mh)}catch(_){}
+   sc.add(hero);EV.sc=sc;EV.key=key}
+  var qv=document.querySelector('.eqwin.ev2 [data-qv]');if(qv)qv.onclick=function(e){e.stopPropagation();try{CH.sfx('deny')}catch(_){}X.toast('🏹 화살통은 나중에 나와요!')};
+  var img=fig.querySelector('img');if(img)img.replaceWith(EV.cv);else if(EV.cv.parentNode!==fig)fig.insertBefore(EV.cv,fig.firstChild);
+  if(!fig.querySelector('.ev3dh')){var hi=document.createElement('small');hi.className='ev3dh';hi.textContent='👆 끌어서 돌려 보기';fig.appendChild(hi)}
+  size();draw();setTimeout(function(){try{size();draw()}catch(_){}},60)}
+ var _re=renderEq;renderEq=function(){_re.apply(this,arguments);try{ev3d()}catch(e){console.error('ev3d',e)}};
+ var st=document.createElement('style');st.textContent='.evfig canvas.ev3d{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.evfig .ev3dh{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10.5px;font-weight:800;color:#cfd8ff;opacity:.75;pointer-events:none}';document.head.appendChild(st)})();
 
 /* ===== 1장 마무리: 다이어 울프 결전 서사 · 엔딩 축제 · 루비의 망치 · 아저씨 한마디 · 첫 전투 안내 · 재료 제작 · 따라오는 동료 ===== */
 function c1svg(b){return'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'+b+'</svg>')}
@@ -10554,7 +10601,7 @@ var _menuHTMLu2=menuHTML;menuHTML=function(){var h=_menuHTMLu2();try{
  var sb=CH.sndBtn?CH.sndBtn():'';if(h.indexOf('class="mnap"')>=0)h=h.replace('</button></b>','</button>'+sb+'</b>');else h=h.replace(/(<div class="mnst"><b>[^<]*)<\/b>/,'$1 '+sb+'</b>');
  var i=h.lastIndexOf('</div>');h=h.slice(0,i)+'<button type="button" class="mnexit">🚪<b>나가기</b></button>'+((document.fullscreenElement||document.webkitFullscreenElement)?'<button type="button" class="mnfs">✕<b>전체화면 끄기</b></button>':'<button type="button" class="mnfs">⛶<b>전체화면</b></button>')+h.slice(i)/* 11-26 선생님: 전체화면 끄는 버튼은 나가기 옆 */}catch(e){}return h};
 document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&e.target.closest('.mnexit');if(!b)return;e.stopPropagation();e.preventDefault();
- var m=b.closest('.vgscr'),mn=b.closest('.vgmenu');if(mn)mn.hidden=true;var bk=m&&m.querySelector('.vgback');if(!bk)return;try{if(window.__fstLock&&window.__fstLock()&&window.__getFZ&&window.__getFZ()==='pz'){CH.sfx('tap');bk.click();return}}catch(_){}var where=(bk.textContent||'').replace(/[‹\s]/g,'');
+ var m=b.closest('.vgscr'),mn=b.closest('.vgmenu');if(mn)mn.hidden=true;var bk=m&&m.querySelector('.vgback');if(!bk)return;try{if(window.__fstLock&&window.__fstLock()&&window.__getFZ&&window.__getFZ()==='pz'){CH.sfx('tap');bk.click();return}}catch(_){}try{if(m&&m.id==='vgf'&&window.__hkLock&&window.__hkLock()&&!/전투|이야기/.test(window.__hkLock())){CH.sfx('tap');bk.click();return}}catch(_){}/* 11-26: 지하·축제·불탄 마을에서는 「마을로」 안내 없이 바로 칠판 나가기 확인 */var where=(bk.textContent||'').replace(/[‹\s]/g,'');
  CH.sfx('tap');X.ask('정말 나가시겠습니까?',where==='마을로'?'숲에서 나가 마을로 돌아가요.':where==='밖으로'?'건물 밖으로 나가요.':where==='1-1로'?'숲 1-1로 돌아가요.':'마을에서 나가 칠판으로 돌아가요. 지금 있던 곳은 저장해 둘게요.','나가기','취소',function(){bk.click()})},true);
 /* 시계 */
 var CLKX=0;clockTick=function(){['vgv','vgh','vgs','vgk','vgf'].forEach(function(id){var m=$(id);if(!m||!m.classList.contains('on'))return;var c=m.querySelector('.vgclk');
