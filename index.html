@@ -7083,7 +7083,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  cand.sort(function(a,b){return(b[0]+b[1])-(a[0]+a[1])});var hs=cand[Math.min(cand.length-1,Math.floor(N*.6))];
  for(var i=0;i<cand.length;i++){var c=cand[i];if(c[0]+c[1]<N*2-6&&c[0]>N/2-2&&c[1]>N/2-2){hs=c;break}}
  H.x=hs[0];H.z=hs[1];if(PA){var pc=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[2,0],[-2,0]].map(function(d){return[H.x+d[0],H.z+d[1]]}).filter(function(c){return passable(c[0],c[1])&&!(c[0]===H.x&&c[1]===H.z)})[0];if(pc){PA.x=pc[0];PA.z=pc[1]}else{PA.x=H.x;PA.z=H.z}}var RS=reachSet(H.x,H.z);
- var cnt=HORDE?20+Math.floor(Math.random()*5):(function(){var two=false;try{two=!!(typeof hasArch==='function'&&hasArch())}catch(e){}return two?4+Math.floor(Math.random()*4):3+Math.floor(Math.random()*3)})(),pool=opt.pool?opt.pool.slice():[opt.lead||'r1'];if(!opt.pool)while(pool.length<cnt)pool.push(FPOOL[Math.floor(Math.random()*FPOOL.length)]);B.horde=HORDE;/* 11-23 선생님: 지하 1-1은 한 전투에 이끼 룬 골렘 2마리 */if(!opt.pool&&!opt.boss&&FZ==='u1'){var c15=pool.filter(function(x){return x==='g15'}).length;for(var gi=pool.length-1;gi>=0&&c15<2;gi--)if(pool[gi]!=='g15'){pool[gi]='g15';c15++}for(var gj=pool.length-1;gj>=0&&c15>2;gj--)if(pool[gj]==='g15'){pool[gj]='g13';c15--}}
+ var cnt=HORDE?20+Math.floor(Math.random()*5):(function(){var two=false;try{two=!!(typeof hasArch==='function'&&hasArch())}catch(e){}return two?4+Math.floor(Math.random()*4):3+Math.floor(Math.random()*3)})(),pool=opt.pool?opt.pool.slice():[opt.lead||'r1'];if(!opt.pool)while(pool.length<cnt)pool.push(FPOOL[Math.floor(Math.random()*FPOOL.length)]);B.horde=HORDE;/* 11-23 선생님: 지하 1-1은 한 전투에 이끼 룬 골렘 2마리 */if(!opt.pool&&!opt.boss&&FZ==='u1'){var c15=pool.filter(function(x){return x==='g15'}).length;for(var gi=pool.length-1;gi>=0&&c15<2;gi--)if(pool[gi]!=='g15'){pool[gi]='g15';c15++}for(var gj=pool.length-1;gj>=0&&c15>2;gj--)if(pool[gj]==='g15'){pool[gj]='g13';c15--}}/* 11-27 선생님: 1-2는 자수정 골렘, 1-3은 얼음 골렘이 한 전투에 꼭 2마리 (골렘의 시련 재료 · 칸마다 최소 5번 전투) */if(!opt.pool&&!opt.boss&&(FZ==='u2'||FZ==='u3')){var fk=FZ==='u2'?'g16':'g18',rk=FZ==='u2'?'g14':'g17',cf=pool.filter(function(x){return x===fk}).length;for(var fi=pool.length-1;fi>=0&&cf<2;fi--)if(pool[fi]!==fk){pool[fi]=fk;cf++}for(var fj=pool.length-1;fj>=0&&cf>2;fj--)if(pool[fj]===fk){pool[fj]=rk;cf--}}
  var mc=cand.filter(function(c){return RS[c[0]+','+c[1]]&&(c[0]+c[1])<N-1&&Math.abs(c[0]-H.x)+Math.abs(c[1]-H.z)>=6});if(opt.place)mc=opt.place(cand.filter(function(c){try{return !(typeof PA!=='undefined'&&PA&&c[0]===PA.x&&c[1]===PA.z)&&!(c[0]===H.x&&c[1]===H.z)}catch(e){return true}}),RS,H);else if(pool.length>mc.length)mc=cand.filter(function(c){return RS[c[0]+','+c[1]]&&Math.abs(c[0]-H.x)+Math.abs(c[1]-H.z)>=3});
  if(!opt.place&&mc.length<pool.length)mc=cand.filter(function(c){return RS[c[0]+','+c[1]]&&Math.abs(c[0]-H.x)+Math.abs(c[1]-H.z)>=3});
  if(!opt.place)for(var i=mc.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=mc[i];mc[i]=mc[j];mc[j]=tmp}
@@ -7102,8 +7102,8 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
    if(u.boss&&!B.ph2&&u.hp>0&&u.hp<=u.max*.5&&!B.over){B.ph2=1;window.__bmus='boss2';u.atk0=u.atk;u.atk=Math.round(u.atk0*1.2);u.eva=(u.eva||0)+5;u.luk=(u.luk||0)+5;u.mv=(u.mv||3)+1;u.sgr=Math.round((u.sgr||20)*1.4);setTimeout(function(){if(!u.dead)num(u,'🔥 분노! 공격력 +20% · 회피·치명 ↑ · 이동 +1','crit')},900);try{CH.sfx('roar')}catch(_){}screenFlash('r');B.shake=.5;setTimeout(function(){if(!B.over)msg('🔥 '+u.nm+'이(가) 분노했다! 공격력 +20%, 회피·치명타가 올랐다! (체력 20% 아래면 광폭화)','enemy',2200)},300);try{u.g.traverse(function(o){if(o.isMesh&&o.material&&o.material.emissive){o.material=o.material.clone();o.material.emissive.setHex(0x551008);o.material.emissiveIntensity=.6}})}catch(_){}if(B.bossEl)B.bossEl.classList.add('rage')}if(u.boss&&B.bossEl){B.bossEl.querySelector('i b').style.width=(p*100)+'%';B.bossEl.querySelector('em').textContent=Math.max(0,u.hp)+' / '+u.max;var bg2=B.bossEl.querySelector('.bbg b');if(bg2)bg2.style.width=Math.min(100,u.sg||0)+'%'}}u.el.querySelector('em').textContent=Math.max(0,u.hp)+'/'+u.max;u.el.classList.toggle('low',p<.3)}
  /* 보스 패시브: 부하 소환 (2026-11-16)
     여왕거미: 깨어난 뒤 7턴마다 새끼거미(Lv.6~7) 2마리 (2026-11-18 10시, 이전 3마리·그전 4턴·4마리) · 여왕 방어 22 · 늑대왕(다이어 울프): 우리를 알아챈 뒤 3턴마다 늑대(Lv.11~12) 3마리 */
- var BSP={qs15:{every:7,n:2,cap:12,ks:['sb8','sb9'],agro:1,wake:'🕷️ 여왕거미가 깨어났어요! 이제 <b>7턴마다</b> 새끼거미를 낳아요!',col:0xb07aff,ic:'🥚',nm:'새끼 부화',sfx:'hiss',say:function(c){return '🥚 여왕거미 패시브 <b>새끼 부화</b>! 새끼거미 '+c+'마리가 태어났어요!'}},
-  dw:{every:6,n:2,cap:6,ks:['wl13','wl14'],agro:1,wake:'🐺 늑대왕이 우리를 알아챘어요! 이제 <b>6턴마다</b> 늑대를 불러요!',col:0xffb04a,ic:'🐺',nm:'늑대 부르기',sfx:'howl',say:function(c){return '🐺 늑대왕 패시브 <b>늑대 부르기</b>! 울음소리에 늑대 '+c+'마리가 달려왔어요!'}},
+ var BSP={qs15:{every:7,n:3,cap:12,ks:['sb8','sb9'],agro:1,wake:'🕷️ 여왕거미가 깨어났어요! 이제 <b>7턴마다</b> 새끼거미를 낳아요!',col:0xb07aff,ic:'🥚',nm:'새끼 부화',sfx:'hiss',say:function(c){return '🥚 여왕거미 패시브 <b>새끼 부화</b>! 새끼거미 '+c+'마리가 태어났어요!'}},
+  dw:{every:6,n:3,cap:6,ks:['wl13','wl14'],agro:1,wake:'🐺 늑대왕이 우리를 알아챘어요! 이제 <b>6턴마다</b> 늑대를 불러요!',col:0xffb04a,ic:'🐺',nm:'늑대 부르기',sfx:'howl',say:function(c){return '🐺 늑대왕 패시브 <b>늑대 부르기</b>! 울음소리에 늑대 '+c+'마리가 달려왔어요!'}},
   gm19:{also:{every:8,n:2,cap:4,ks:['gw'],hpAt:.6,col:0xc9b48a,ic:'🧱',nm:'돌 깨우기',sfx:'boom',first:'🧱 체력이 60% 아래로! 이제 <b>8턴마다</b> 작은 블록 골렘 2마리를 깨워요!',say:function(c){return '🧱 땅이 울리며 <b>작은 블록 골렘</b> '+c+'마리가 깨어났어요!'}},every:5,n:1,cap:2,ks:['g13','g14'],agro:1,wake:'🪓 골렘 장군이 깨어났어요! <b>5턴마다</b> 바위 골렘을 일으켜요! (체력 60% 아래부터는 <b>8턴마다</b> 작은 블록 골렘 2마리도)',col:0xd8b07a,ic:'🧱',nm:'바위 깨우기',sfx:'boom',say:function(c){return '🧱 골렘 장군 패시브 <b>바위 깨우기</b>! 바닥의 바위가 골렘 '+c+'마리로 일어났어요!'}},
   gb20:{also2:{every:9,n:2,cap:4,ks:['g16','g17','g18'],rnd:1,agro:1,col:0x9ad0ff,ic:'⚙️',nm:'골렘 소환',sfx:'boom',say:function(c){return '⚙️ 고대 골렘 패시브 <b>골렘 소환</b>! 바닥에서 골렘 '+c+'마리가 솟아올랐어요!'}},also:{every:8,n:2,cap:4,ks:['gw'],hpAt:.6,col:0xc9b48a,ic:'🧱',nm:'돌 깨우기',sfx:'boom',first:'🧱 체력이 60% 아래로! 이제 <b>8턴마다</b> 작은 블록 골렘 2마리를 깨워요!',say:function(c){return '🧱 땅이 울리며 <b>작은 블록 골렘</b> '+c+'마리가 깨어났어요!'}},every:4,n:2,cap:3,ks:['gc'],agro:1,wake:'💠 고대 골렘이 깨어났어요! <b>4턴마다</b> 코어 파편을 떼어 내요! (파편은 다가와서 <b>자폭</b>해요) · 체력이 60% 아래가 되면 <b>8턴마다</b> 작은 블록 골렘 2마리도 깨워요!',col:0x86ffd8,ic:'💠',nm:'코어 분리',sfx:'boom',say:function(c){return '💠 고대 골렘 패시브 <b>코어 분리</b>! 마력 파편 '+c+'개가 떨어져 나왔어요! 붙으면 자폭해요!'}}};
  function bossSpawn(){var tot=0;B.units.forEach(function(q){var P0=BSP[q.k];if(!P0)return;[P0].concat(P0.also?[P0.also]:[]).concat(P0.also2?[P0.also2]:[]).forEach(function(P){if(q.dead||B.over)return;if(P.hpAt){if(q.hp/q.max>P.hpAt)return;if(q._hpT==null){q._hpT=B.turn;if(P.first)msg(P.first,'enemy',2200)}if((B.turn-q._hpT)%P.every!==0)return}else{var t0=P.agro?q.agroT:1;if(t0==null||B.turn<=t0||(B.turn-t0)%P.every!==0)return}
@@ -7439,7 +7439,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
     else if(k.k==='quake')n='quake';if(n&&F[n]){F[n](u,k);return n}}catch(e){console.error(e)}return null},F:F}})();
  window.__gfx=GFX;
  /* 보스 회복: 고정량 · 전투당 2번까지 (2026-11-17) */
- var BHEAL={qs15:150,dw:250,gm19:260,gb20:320};
+ var BHEAL={qs15:225,dw:375,gm19:390,gb20:480};/* 11-27 선생님: 회복량 +50% (150·250·260·320 → 225·375·390·480) · 2번까지는 그대로 */
  function pickSk(u,melee){var L=(Array.isArray(u.d.sk)?u.d.sk:[]).filter(function(k){if(k.g>(u.sg||0)||(u.cdm[k.id]>0))return false;var d=dist(u,H);if(k.mp&&(u.mp||0)<k.mp)return false;if(k.ph&&!B.ph2)return false;
    if(k.k==='buff'){var bn=k.f||'bfD';return !(u[bn]&&u[bn].t>0)&&(!k.at||u.hp/u.max<k.at)&&(k.to!=='ally'||foes().length>1)}if(k.k==='fuse')return foes().some(function(f){return f!==u&&!f.boss&&dist(f,u)<=(k.r||4)});if(k.k==='boom')return d<=(k.r||1);if(k.k==='quake')return d<=k.r;
    if(k.k==='heal')return u.hp/u.max<(k.at||.55)&&!(u.boss&&(u.healN||0)>=2);if(k.k==='howl')return foes().length>1&&!(u.howl&&u.howl.t>0);
@@ -8483,7 +8483,7 @@ function openForest(sp,zone){if(zone)zoneSet(zone);else zoneSet(FZ);var Z=ZONES[
  setTimeout(function(){var q=QS();q.zv=q.zv||{};if(!q.zv[FZ]){q.zv[FZ]=Date.now();X.sv();zoneBanner(Z.nm)}},700)}
 function zoneBanner(t){var o=document.createElement('div');o.className='zban';o.innerHTML='<small>새로운 지역</small><b>'+esc(t)+'</b>';document.body.appendChild(o);CH.sfx('enter');setTimeout(function(){o.classList.add('out')},2200);setTimeout(function(){o.remove()},2900)}
 function closeForest(){clearDrops();stopWorld();var m=$('vgf');if(m)m.classList.remove('on');if(FZ!=='1-1'){var Z=ZONES[FZ],back=Z.exits[0];openForest(back.sp,back.to)}else openVillage(false,[33.4,-32.8])}
-function goZone(e){if(CAMP&&CAMP.woke&&FZ==='1-4'&&e&&e.to!=='village'){return}/* 11/20: 여왕거미 둥지(동굴 1-3)는 Lv.13부터 */if(e&&e.to==='c3'&&!QS().boss_qs15){var lv=1;try{lv=window.__chLv.info().lv}catch(_){}if(lv<13){CH.sfx('deny');var tn=Date.now();if(!window.__c3T||tn-window.__c3T>3000){window.__c3T=tn;think('안쪽에서 무시무시한 기운이 흘러나온다… 지금 내 실력으로는 위험해. (여왕거미 둥지는 Lv.13부터 들어갈 수 있어요 · 지금 Lv.'+lv+')')}try{var W=WORLD;if(W&&W.P)W.P.z=Math.max(W.P.z,-17.4)}catch(_){}return}}if(e.to==='village'){unlay('vgf',closeForest);return}if(!ZONES[e.to]){CH.sfx('deny');X.toast('🚧 '+e.lb+'는 아직 준비 중이에요! (다음 단계에서 열려요)');return}
+function goZone(e){if(CAMP&&CAMP.woke&&FZ==='1-4'&&e&&e.to!=='village'){return}/* 11/20: 여왕거미 둥지(동굴 1-3)는 Lv.13부터 */if(e&&e.to==='c3'&&!QS().boss_qs15){var lv=1;try{lv=window.__chLv.info().lv}catch(_){}if(lv<13){CH.sfx('deny');var tn=Date.now();if(!window.__c3T||tn-window.__c3T>3000){window.__c3T=tn;think('안쪽에서 무시무시한 기운이 흘러나온다… 지금 내 실력으로는 위험해. (여왕거미 둥지는 Lv.13부터 들어갈 수 있어요 · 지금 Lv.'+lv+')')}try{var W=WORLD;if(W&&W.P)W.P.z=Math.max(W.P.z,-17.4)}catch(_){}return}}/* 11-27 선생님: 지하 1-3·1-4는 Lv.18부터 */if(e&&(e.to==='u3'||e.to==='u4')){var lu=1;try{lu=window.__chLv.info().lv}catch(_){}if(lu<18){CH.sfx('deny');var tu=Date.now();if(!window.__u3T||tu-window.__u3T>3000){window.__u3T=tu;think('앞에서 엄청난 기운이 느껴진다… 아직은 무리야. ('+(e.to==='u3'?'1-3 물에 잠긴 신전':'1-4 빛의 제단')+'은 Lv.18부터 들어갈 수 있어요 · 지금 Lv.'+lu+')')}try{var W2=WORLD;if(W2&&W2.P)W2.P.z=Math.max(W2.P.z,-17.4)}catch(_){}return}}if(e.to==='village'){unlay('vgf',closeForest);return}if(!ZONES[e.to]){CH.sfx('deny');X.toast('🚧 '+e.lb+'는 아직 준비 중이에요! (다음 단계에서 열려요)');return}
  clearDrops();stopWorld();var tz=e.to,Z2=ZONES[tz],sp=e.sp||Z2.spawn;
  var m=$('vgf');if(m)m.classList.remove('on');try{if(LY.some(function(x){return x.n==='vgf'})){LRAW.vgf=function(){};layerClose('vgf')}}catch(_){}setTimeout(function(){openForest(sp,tz)},60)}
 function exitGate(A,e){var T=A.T;[-1,1].forEach(function(s){var p=A.add(new T.Mesh(new T.CylinderGeometry(.16,.2,2.4,8),A.std(0x6a4a2e)));p.position.set(e.x+s*1.6,1.2,e.z)});
@@ -8674,7 +8674,7 @@ function stealthTick(dt){if(!CAMP||!CAMP.inside||!CAMP.sneak||BT||calmCamp()||!W
  if(CAMP.noise>=100&&!CAMP.woke){CAMP.woke=1;/* 11/20: 들키면 무조건 전투가 먼저 — 열려 있던 「동굴로 들어갈까요?」 창도 닫음 */try{var ca=$('chA');if(ca)ca.className=''}catch(_){}CH.sfx('roar');var f=document.createElement('div');f.className='zhurt';document.body.appendChild(f);setTimeout(function(){f.remove()},500);
   var m=$('vgf');if(m)say(m,'<small>다이어 울프</small><br>크아아앙!!! 누가 감히 내 굴에!!','keep');setTimeout(function(){bossFight(true)},1600)}}
 function bossFight(ambush){CAMP&&(CAMP.woke=0);var pos=[0,-3.6];if(WORLD&&WORLD.P){WORLD.P.x=0;WORLD.P.z=-3.6}CH.sfx('roar');
- var pool=['dw','w17','w17','w17','w15','w15','w15f','w15f','w16','w16','w15','w16'];
+ var pool=['dw','w17','w17','w17','w15','w15','w15f','w15f','w16','w16','w15','w16','w17','w17','w17','w16','w16'];/* 11-27 선생님: 12 → 17마리 (정예 늑대 3 · 그림자 늑대 2 추가) */
  var sc=$('vgf');try{say(sc,'❗ <b>다이어 울프</b>와 늑대 무리가 덤벼든다!','keep')}catch(e){}BT={pending:1};var f=document.createElement('div');f.className='benc boss';f.innerHTML='<i></i><b>!</b>';document.body.appendChild(f);
  setTimeout(function(){stopWorld();if(sc)sc.classList.remove('on');var t0=Date.now(),iv=setInterval(function(){var b=$('vgb');if((b&&b.classList.contains('on')&&BT&&BT.raf)||Date.now()-t0>8000){clearInterval(iv);setTimeout(function(){f.classList.add('out');setTimeout(function(){f.remove()},400)},250)}},100);
   startBattle({pos:pos,kind:'den',boss:1,bgm:'boss',pool:pool,place:denPlace})},1100)}
@@ -8816,7 +8816,7 @@ var _bpTotal=bpTotal,_bpUsed=bpUsed,_skTotal=skTotal,_skUsed=skUsed;
 function bpOwn(c){return c==='arch'?Math.max(0,(archLv()-1)*2)+Math.max(0,archLv()-5)*BPLV+((ARC()&&ARC().bpx)||0):_bpTotal()}
 function bpUse(c){return inCtx(c,function(){return _bpUsed()})}
 bpTotal=function(){if(!hasArch())return _bpTotal();var me=CTX,ot=me==='arch'?'hero':'arch';return bpOwn(me)+bpOwn(ot)-bpUse(ot)};
-function skOwn(c){if(c==='arch'){var a=ARC();return 5+2*Math.max(0,archLv()-12)+(a.skx||0)}return _skTotal()}/* 11-22 01:09: UNBELIEVABLE 포인트는 주인공 쪽에 한 번만 (같이 쓰는 주머니라 두 번 세지 않음) */
+function skOwn(c){if(c==='arch'){var a=ARC(),al=archLv();/* 11-27 11:00 선생님: 같은 레벨이면 탱커와 같은 스킬 포인트 (Lv.5부터 1 + 레벨마다 2) · 예전: 합류 5 + Lv.12부터 레벨마다 2 */return(al>=5?1+2*(al-5):0)+(a.skx||0)}return _skTotal()}/* 11-22 01:09: UNBELIEVABLE 포인트는 주인공 쪽에 한 번만 (같이 쓰는 주머니라 두 번 세지 않음) */
 function skUse(c){return inCtx(c,function(){return _skUsed()})}
 skTotal=function(){if(!hasArch())return _skTotal();var me=CTX,ot=me==='arch'?'hero':'arch';return skOwn(me)+skOwn(ot)-skUse(ot)};
 /* 능력치: 궁수는 체력·방어가 낮고 공격·회피가 높음 */
@@ -9609,7 +9609,7 @@ setTimeout(bpMigrate,0);var _openVillageBM=openVillage;openVillage=function(a,b)
 var _hurtWB=hurtW;hurtW=function(n,a,b,c){return _hurtWB(Math.max(1,Math.round(n*.6)),a,b,c)};
 /* ===== 보스전 (2026-11-16 13:29): 졸개는 체력 65%로 빨리 정리되고, 보스 자체가 강해짐. 아저씨 없이 혼자면 보스 공격 1.8배·체력 1.5배 ===== */
 var _buildBattleBS=buildBattle;buildBattle=function(opt){var r=_buildBattleBS(opt);try{if(opt&&opt.boss&&BT&&BT.units){var solo=!BT.units.some(function(u){return u.hero&&u!==BT.H});
- BT.units.forEach(function(u){if(u.hero)return;if(u.boss){if(solo){u.atk=Math.round(u.atk*1.8);u.max=u.hp=Math.round(u.hp*1.5);u.solo=1}if(u.k==='gm19'){u.max=u.hp=1850}if(u.k==='gb20'){u.max=u.hp=2000}/* 11-23 선생님: 도끼창 골렘 장군·고대 골렘 체력 2000 */}else{u.max=u.hp=Math.max(1,Math.round(u.hp*.55))}});BT.soloBoss=solo}}catch(e){}return r};
+ BT.units.forEach(function(u){if(u.hero)return;if(u.boss){if(solo){u.atk=Math.round(u.atk*1.8);u.max=u.hp=Math.round(u.hp*1.5);u.solo=1}if(u.k==='gm19'){u.max=u.hp=2100}if(u.k==='gb20'){u.max=u.hp=2300}/* 11-27 선생님: +250 · +300 *//* 11-23 선생님: 도끼창 골렘 장군·고대 골렘 체력 2000 */}/* 11-27 선생님: 보스전 졸개도 원래 체력 그대로 (예전: 55%로 시작) */});BT.soloBoss=solo}}catch(e){}return r};
 /* 궁수 아저씨 레벨 +1 (2026-11-16 14:42): 합류 Lv.13, 이미 합류한 아저씨도 한 번 +1 (능력치·스킬 포인트는 레벨에서 자동 계산) */
 function archBump(){try{var a=QS().arch;if(!a||!a.joined||a.lvb)return;a.lvb=1;a.lv=(a.lv||12)+1;if(a.hl0!=null)a.hl0--;a.hp=null;X.sv()}catch(e){}}
 setTimeout(archBump,0);var _openVillageAB=openVillage;openVillage=function(a,b){archBump();return _openVillageAB(a,b)};
@@ -11834,7 +11834,7 @@ function stairs(A){var T=A.T,q=QS();
  [[-1.95,0],[1.95,0]].forEach(function(o){var w=A.add(new T.Mesh(new T.BoxGeometry(.5,.5,5.2),A.std(0x6a665e)));w.position.set(SX+o[0],.25,SZ-.6)});var bk=A.add(new T.Mesh(new T.BoxGeometry(4.4,.5,.5),A.std(0x6a665e)));bk.position.set(SX,.25,SZ-3.3);
  A.BOX.push([SX-2.2,SX-1.7,SZ-3.3,SZ+2]);A.BOX.push([SX+1.7,SX+2.2,SZ-3.3,SZ+2]);A.BOX.push([SX-2.2,SX+2.2,SZ-3.6,SZ-.2]);
  var g1=glow(A,0xbfffa8,5,.32);g1.position.set(SX,.6,SZ-1.6);var L=new T.PointLight(0xc8ffb0,1.1,9,1.4);L.position.set(SX,1.2,SZ-1);A.sc.add(L);A.ANIM.push(function(t){g1.material.opacity=.26+.08*Math.sin(t/600)});
- var sg=A.textSprite(T,'⬇️ 아래로 이어지는 돌계단 · 🔒 Lv.18 이상','rgba(30,50,40,.92)','#e8ffe0',.8);sg.position.set(SX,3.2,SZ-1.2);A.sc.add(sg);
+ var sg=A.textSprite(T,'⬇️ 아래로 이어지는 돌계단 · 🔒 Lv.17 이상','rgba(30,50,40,.92)','#e8ffe0',.8);sg.position.set(SX,3.2,SZ-1.2);A.sc.add(sg);
  A.trigger(SX,SZ+2.4,2.2,'⬇️ 돌계단 살펴보기',stairTalk,false)}
 function stairTalk(){var q=QS(),me=NM(),an=AN();if(q.u5done){think('계단 아래는 고요하다… 지금은 내려갈 이유가 없어.');return}
  if(!q.uStair){dlg([{n:'',t:'(여왕거미의 둥지가 있던 바로 그 자리… 거미줄이 걷힌 바닥에, 반듯한 돌계단이 아래로 나 있다)'},{n:an,t:'…말도 안 돼. 난 여기서 사흘을 버텼다. 이런 계단은 분명히 없었어.'},
@@ -11842,7 +11842,7 @@ function stairTalk(){var q=QS(),me=NM(),an=AN();if(q.u5done){think('계단 아�
    {n:'',t:'(계단 아래에서, 꿈에서 듣던 그 낮은 울림이 올라온다)'}],null,function(){q.uStair=1;X.sv();enterAsk()});return}
  enterAsk()}
 function enterAsk(){
- /* 2026-11-22 00:39 선생님: 지하 낭떠러지는 Lv.18 이상만 */var lvN=0;try{lvN=L().lv}catch(e){lvN=99}if(lvN<18){CH.sfx('deny');dlg([{n:'🔒 출입 제한',t:'지하 낭떠러지는 <b>Lv.18 이상</b>만 들어갈 수 있어요. (지금 Lv.'+lvN+')<br>레벨을 더 올리고 다시 오세요!'}]);return}
+ /* 2026-11-22 00:39 선생님: 지하 낭떠러지는 Lv.18 이상만 → 11-27 Lv.17부터 (1-3·1-4는 Lv.18부터, zones.js goZone) */var lvN=0;try{lvN=L().lv}catch(e){lvN=99}if(lvN<17){CH.sfx('deny');dlg([{n:'🔒 출입 제한',t:'지하 낭떠러지는 <b>Lv.17 이상</b>만 들어갈 수 있어요. (지금 Lv.'+lvN+')<br>레벨을 더 올리고 다시 오세요!'}]);return}
  X.ask('⬇️ 지하 낭떠러지','마을로 다시 되돌아갈 수 없습니다. 상점에서 물약을 충분히 준비해주세요','⬇️ 입장하기','🏠 잠깐 마을로',function(){var q=QS();q.uIn=1;q.uZ='u1';X.sv();window.__uGo=1;goZone({to:'u1',sp:[0,15],lb:'지하 낭떠러지'});setTimeout(function(){window.__uGo=0},500)});
  setTimeout(function(){try{var a=$('chA');if(a&&a.className==='on'){a.classList.add('uask');var b=a.querySelector('.chabt .n');if(b)b.onclick=function(){a.className='';goZone({to:'village',lb:'마을'})}}}catch(e){}},0)}
 var _bcU=buildCave;buildCave=function(A){_bcU(A);if(FZ==='c3'&&!window.__dreamBuild&&QS().uCliff)try{stairs(A)}catch(e){console.error(e)}};
@@ -11909,10 +11909,12 @@ setInterval(function(){try{if(typeof FZ!=='string'||FZ[0]!=='u')return;if(window
 /* ===== 골렘의 시련 (2026-11-21 23:56 선생님) =====
    1-1→1-2 · 1-2→1-3 · 1-3→1-4 통로 입구: 「골렘의 시련을 통과한 자만이 지나갈 수 있다」
    앞 칸 골렘들의 재료를 종류마다 5개씩 바쳐야 열림 · 열리면 보상 */
+/* 11-27 선생님: 칸마다 최소 5번은 싸우게 재료를 늘리고 보상도 올림 (한 전투에 꼭 2마리: 1-1 이끼 룬 · 1-2 자수정 · 1-3 얼음 골렘 → 그 재료 10개)
+   예전: 1-2 돌조각5·룬이끼5 → 후시딩5·약초5 / 1-3 돌조각5·룬이끼5·자수정5 → 후시딩5·약초5·최하급3 / 1-4 자수정5·덩굴5·얼음5 → 후시딩10·약초10·최하급5 */
 var TRIAL={
- u2:{from:'u1',need:[['gst1',5],['grune',5]],rw:[['potion3',5],['potion4',5]]},
- u3:{from:'u2',need:[['gst1',5],['grune',5],['gamt',5]],rw:[['potion3',5],['potion4',5],['potion5',3]]},
- u4:{from:'u3',need:[['gamt',5],['gvine',5],['gice',5]],rw:[['potion3',10],['potion4',10],['potion5',5]]}};
+ u2:{from:'u1',need:[['grune',10],['gst1',15]],rw:[['potion3',5],['potion4',8],['potion5',2]]},
+ u3:{from:'u2',need:[['gamt',10],['grune',8],['gst1',5]],rw:[['potion3',5],['potion4',8],['potion5',5],['potion6',1]]},
+ u4:{from:'u3',need:[['gice',10],['gvine',10],['gamt',5]],rw:[['potion3',10],['potion4',12],['potion5',8],['potion6',2]]}};
 function TRQ(){var q=QS();q.trial=q.trial||{};return q.trial}
 function trialDone(to){var t=TRQ()[to];return!!(t&&t.ok)}
 function trialHave(to){var t=TRQ()[to]||{};return TRIAL[to].need.map(function(x){return[x[0],x[1],Math.min(x[1],t[x[0]]||0)]})}
@@ -14469,6 +14471,24 @@ try{(function(){var d=document,b=d.createElement('button');b.type='button';b.id=
    Array.prototype.splice.apply(MANS,[at,0].concat(pg))}catch(e){console.error(e)}return _om.apply(this,arguments)};window.__openManual=function(){openManual()}}
  var st=document.createElement('style');st.textContent='.cxov{position:fixed;inset:0;z-index:9000;background:rgba(20,14,8,.55);display:flex;align-items:center;justify-content:center;padding:12px}.cxw{width:100%;max-width:420px;max-height:92vh;display:flex;flex-direction:column;background:#f6ecd8;border-radius:18px;padding:12px;box-shadow:0 8px 30px #0008}.cxtop{display:flex;justify-content:space-between;align-items:center}.cxtop b{font-size:18px;color:#4a2e08}.cxx{border:0;background:#e8d6b4;border-radius:50%;width:32px;height:32px;font-size:16px;font-weight:900}.cxwho{display:flex;gap:6px;margin:8px 0 4px}.cxwho button{flex:1;padding:8px;border-radius:12px;border:2px solid #e0c89a;background:#fff;font-weight:900;font-size:14px;color:#5a3a12}.cxwho button.on{border-color:#ffb020;background:#fff3cf}.cxwho.one b{font-size:15px;color:#5a3a12}.cxwho small{color:#a06a20}.cxtab{display:flex;gap:4px;margin:6px 0}.cxtab button{flex:1;padding:8px 4px;border:0;border-radius:10px;background:#e8d6b4;font-weight:900;font-size:14px;color:#5a3a12}.cxtab button.on{background:#8a5a2e;color:#fff}.cxbody{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:2px}.cxgo{margin-top:8px;padding:11px;border:0;border-radius:12px;background:#8a5a2e;color:#fff;font-weight:900;font-size:15px}.cxall{display:block;width:100%;margin:8px 0 2px;padding:10px;border:2px dashed #c8a060;border-radius:12px;background:#fffaf0;font-weight:900;color:#6a4a1e;font-size:14px}.cxstg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.cxst{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:9px 10px;font-size:14px;color:#5a3a12}.cxst b{font-size:17px;color:#7a4a1e}.cxtip{margin:8px 0 0;background:#fff3cf;border-radius:10px;padding:8px;font-size:13.5px}.cxeq{display:flex;gap:10px;align-items:center;background:#fff;border-radius:12px;padding:8px;margin-bottom:6px}.cxeq.cxno{opacity:.55}/* 11-26: 「no」는 다른 곳의 동그라미 모양과 겹쳐 글씨가 세로로 깨졌음 */.cxeq>div:last-child{flex:1;min-width:0}.cxeqp{width:48px;height:48px;flex:none;display:flex;align-items:center;justify-content:center;background:#f3e6cc;border-radius:10px;font-size:30px}.cxeqp img{width:44px;height:44px}.cxeq small{display:block;font-size:12px;color:#a07a4a;font-weight:700}.cxeq b{font-size:15px;color:#4a2e08}.cxeq p{margin:2px 0 0;font-size:13px;color:#5a3a12;line-height:1.4}.cxeq p.cxd{color:#8a6a4a;font-size:12.5px}.cxgl{background:#eef7ff;border:2px solid #b8d8f8;border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:13px;color:#2a3a5a;text-align:left}.cxgl ul{margin:4px 0 0;padding-left:16px}.cxgl li{margin:2px 0;line-height:1.45}.cxsk{background:#fff;border-radius:12px;padding:9px 10px;margin-bottom:8px;border-left:6px solid #ffb020;text-align:left}.cxsk.cxu{border-left-color:#ff5aa8}.cxsk.cxp,.cxsk.cxe{border-left-color:#5ab8ff}.cxsk.off{background:#fbf7ef}.cxh{display:flex;gap:8px;align-items:center}.cxh .cxi{font-size:28px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#f3e6cc;border-radius:10px;flex:none}.cxh b{font-size:15.5px;color:#4a2e08}.cxh small{display:block;font-size:12.5px;color:#8a6a4a}.cxh em{font-style:normal;color:#2a8a2a;font-weight:900}.cxch{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.cxch span{background:#fff3cf;border-radius:8px;padding:3px 7px;font-size:12.5px;color:#5a3a12;line-height:1.4}.cxlv{font-size:10.5px;color:#a07a4a;font-weight:900}.cxrows{border-top:1px dashed #e0c89a;padding-top:4px}.cxrow{display:flex;gap:6px;font-size:13px;line-height:1.45;padding:3px 4px;border-radius:6px;color:#4a3a2a}.cxrow b{flex:none;color:#a06a20;font-size:12px;padding-top:1px}.cxrow.on{background:#fff3a8}.cxcost{display:block;margin-top:4px;font-size:12px;color:#8a6a4a}.cxnone{text-align:center;color:#8a6a4a;font-size:14px;padding:16px}.mnb .cxsk,.mnb .cxgl{font-size:13px}';document.head.appendChild(st);
 })();
+
+/* ===== 2026-11-27 23:24 선생님 보스전 조정 (고2 A반 먼저) =====
+   여왕거미 체력 1600 · 공격 70 / 새끼거미 체력 120 · 공격 40~45 · 방어 12~14 (7턴마다 3마리)
+   다이어 울프 체력 1850 · 공격 85 / 처음 17마리(강한 늑대 5마리 추가) · 부하 늑대 공격 +5 (보스전에서만)
+   무리 늑대 체력 180~200 · 공격 75 · 방어 19~20 (6턴마다 3마리)
+   골렘 장군 체력 +250 · 공격 +8 / 고대 골렘 체력 +300 · 공격 +10
+   보스 회복은 2번까지 그대로 · 회복량 +50% (battle.js BHEAL) */
+(function(){try{
+ function S(k,hp,atk,df){var m=MON[k];if(!m)return;if(hp!=null)m.hp=hp;if(atk!=null)m.atk=atk;if(df!=null)m.def=df}
+ S('qs15',1600,70,null);S('sb8',120,40,12);S('sb9',120,45,14);
+ S('dw',1850,85,null);S('wl13',180,75,19);S('wl14',200,75,20);
+ if(MON.gm19&&!MON.gm19._s1127){MON.gm19._s1127=1;S('gm19',MON.gm19.hp+250,MON.gm19.atk+8,null)}
+ if(MON.gb20&&!MON.gb20._s1127){MON.gb20._s1127=1;S('gb20',MON.gb20.hp+300,MON.gb20.atk+10,null)}
+ /* 다이어 울프 보스전에서만: 함께 나온 부하 늑대 공격 +5 (늑대 군락 일반 전투는 그대로) */
+ var WK={w15:1,w15f:1,w16:1,w17:1};
+ setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over)return;if(!B.units.some(function(u){return u.boss&&u.k==='dw'}))return;
+  B.units.forEach(function(u){if(u.hero||u.boss||u._w1127||!WK[u.k])return;u._w1127=1;u.atk=(u.atk||0)+5})}catch(e){}},250);
+}catch(e){console.warn('boss1127',e)}})();
 
 
 
