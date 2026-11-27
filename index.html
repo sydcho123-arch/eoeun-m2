@@ -8744,7 +8744,7 @@ function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여�
   {n:'단비 아빠',t:'혼자서는 도저히 못 이기겠더구나. 너, 꽤 강해 보이는데… 나랑 같이 싸워 주겠니?'},{n:'',t:'🏹 <b>궁수 아저씨가 동료가 되었어요!</b> (나와 같은 레벨)'}],null,function(){archJoin('단비 아빠')})}
 function archNameModal(def,cb){var m=document.createElement('div');m.className='arnm';m.innerHTML='<div class="arnb"><b>🏹 동료 이름 짓기</b><p>궁수 아저씨를 뭐라고 부를까요? (최대 8글자)</p><input type="text" maxlength="8" value="'+esc(def)+'"><button type="button">✅ 이 이름으로 정하기</button></div>';document.body.appendChild(m);
  var inp=m.querySelector('input');setTimeout(function(){try{inp.focus();inp.select()}catch(e){}},80);m.querySelector('button').onclick=function(){var v=(inp.value||'').replace(/[<>&"']/g,'').trim().slice(0,8)||def;m.remove();CH.sfx('pop');cb(v)}}
-function archJoin(nm){var q=QS();q.arch={joined:Date.now(),nm:nm,ub0:skUB(),lv:13,lvb:1,g:0,sk:{},bp:{hp:0,atk:0,def:0,agi:0,luk:0},eq:{bd:'aa2',hd:'ah1'},hp:null,sg:0};/* 2026-11-18: 숲 순찰복 + 초록 깃털 모자 입고 합류 (이전: 가죽 조끼) */X.sv();try{LVH.badge&&LVH.badge()}catch(e){}CH.sfx('victory');
+function archJoin(nm){var q=QS();q.arch={joined:Date.now(),nm:nm,ub0:skUB(),lv:13,lvb:1,g:0,sk:{},bp:{hp:0,atk:0,def:0,agi:0,luk:0},eq:{bd:'aa2',hd:'ah1',wp:'ab2',gl:'ag1',bt:'bt1'},hp:null,sg:0,g1128:1};/* 2026-11-18: 숲 순찰복 + 초록 깃털 모자 입고 합류 (이전: 가죽 조끼) · 11-28 선생님: 참나무 장궁 + 손가락 보호대 + 가죽 장화도 들고 합류 */X.sv();try{LVH.badge&&LVH.badge()}catch(e){}CH.sfx('victory');
  setTimeout(function(){CH.gainFx({head:'🏹 동료 합류!',icon:'<span style="font-size:80px">🏹</span>',title:esc(nm)+' · Lv.'+L().lv,sub:'아직 능력치·스킬 포인트를 하나도 안 썼어요! 지금 바로 나눠 줘요'})},300);
  waitGfx(function(){dlg([{n:esc(nm),t:'좋아, 싸우기 전에 몸부터 풀어야겠다! <b>능력치 포인트</b>를 먼저 나눠 주렴. (활은 공격·민첩이 중요하단다)'}],null,function(){archerBP();waitClose('vgp',function(){
   dlg([{n:esc(nm),t:'이번엔 <b>스킬 트리</b>다! 나는 2칸 이상 떨어진 적만 스킬로 맞힐 수 있어. 붙어 있는 적은 활로 툭 치는 정도란다.'}],null,function(){archerTree();waitClose('vgsk',function(){qsReady(nm)})})})})})}
@@ -8961,6 +8961,10 @@ function ctxWire(box,kind){[].forEach.call(box.querySelectorAll('[data-cx]'),fun
  else{if(c==='arch')archerBP();else{CTX='hero';bpPanel()}}}})}
 setInterval(function(){try{if(!hasArch())return;var t=document.querySelector('#vgsk.on .sktop');if(t&&!t.parentNode.querySelector('.ctxt')){t.insertAdjacentHTML('afterend',ctxTabs());ctxWire(t.parentNode,'sk')}
  var bl=document.querySelector('.bplist');if(bl){var pn=bl.parentNode;if(!pn.querySelector('.ctxt')){var sb=pn.querySelector('.vgsub')||bl;sb.insertAdjacentHTML('beforebegin',ctxTabs());ctxWire(pn,'bp')}}}catch(e){}},250);
+
+/* 11-28 01:19 선생님: 이미 합류한 아저씨도 빈 칸에 참나무 장궁 · 손가락 보호대 · 가죽 장화 (직접 낀 칸은 그대로 · 한 번만) */
+(function(){var n=0,iv=setInterval(function(){n++;if(n>60){clearInterval(iv);return}try{var q=QS();if(!q)return;clearInterval(iv);var a=q.arch;if(!a||a.g1128)return;a.eq=a.eq||{};var G={wp:'ab2',gl:'ag1',bt:'bt1'},got=[];for(var s in G)if(!a.eq[s]){a.eq[s]=G[s];got.push((CH.ITEMDB[G[s]]||{}).nm||G[s])}a.g1128=1;X.sv();if(got.length)setTimeout(function(){try{X.toast('🏹 '+(a.nm||'아저씨')+'가 장비를 챙겨 왔어요! '+got.join(' · '),true)}catch(_){}},5000)}catch(e){}},1000)})();
+
 
 /* ===================== 새 스킬 트리 (2026-11-17) =====================
    한 사람당 트리 1개. 모양: 1 → 2 → 4 → 4 → (맨 왼쪽 갈래는 매력적인 패시브로 끝, 나머지 3갈래 → 2갈래로 합류) → 필살기(합류한 두 갈래 모두 필요)
