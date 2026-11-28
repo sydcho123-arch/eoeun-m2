@@ -7929,7 +7929,7 @@ CH.ITEMDB.tusk={ic:'🐗',nm:'멧돼지 엄니',p:24,mat:1,tier:2,d:'단단한 �
 CH.ITEMDB.wfur={ic:'🧥',nm:'늑대 가죽',p:26,mat:1,tier:2,d:'질긴 늑대 가죽 · 2단계 강화 재료'};
 CH.ITEMDB.wfang={ic:'🦷',nm:'늑대 송곳니',p:30,mat:1,tier:2,d:'날카로운 늑대 송곳니 · 2단계 강화 재료'};
 CH.ITEMDB.dwfang={ic:'🐺',nm:'다이어 울프의 송곳니',p:0,slot:'ac',nosell:1,eff:'🐺 광폭화 (전투당 1번 · 턴 안 씀): 3턴 동안 치명타 +30% · 공격력 +20% · 이동 +4 · 방어력 -30%',d:'늑대왕의 송곳니 장신구 · 광폭화: 3턴 동안 치명타 +30%, 공격력 +20%, 이동 +4칸, 대신 방어력 -30%'};
-CH.ITEMDB.qsac={ic:'🟣',nm:'여왕 독 주머니',p:0,slot:'ac',nosell:1,eff:'☠️ 공격 때 30% 맹독 + 🧪 독 묻히기 (3턴 공격력 +15% · 매 턴 체력 -10%)',d:'여왕거미의 독 주머니 장신구 · 공격할 때 30% 확률로 적에게 맹독(매 턴 30 + 내 공격력의 30%, 5턴 · 보스는 4턴 · 골렘은 독에 안 걸림) · 독 묻히기: 3턴 동안 공격력 +15%, 대신 매 턴 체력 -10% (전투당 1번 · 턴 안 씀)'};
+CH.ITEMDB.qsac={ic:'🟣',nm:'여왕 독 주머니',p:0,slot:'ac',nosell:1,eff:'☠️ 공격 때 30% 맹독 + 🧪 독 묻히기 (3턴 공격력 +15% · 매 턴 체력 -10%)',d:'여왕거미의 독 주머니 장신구 · 공격할 때 30% 확률로 적에게 맹독(매 턴 30 + 내 공격력의 30%, 5턴 · 보스는 4턴) · 독 묻히기: 3턴 동안 공격력 +15%, 대신 매 턴 체력 -10% (전투당 1번 · 턴 안 씀)'};
 CH.ITEMDB.gpelt={ic:'🛡️',nm:'회색 늑대 갑피',p:60,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
 CH.ITEMDB.frost={ic:'❄️',nm:'서리 늑대 털',p:60,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
 CH.ITEMDB.shade={ic:'🌑',nm:'그림자 늑대 털',p:70,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
@@ -8957,7 +8957,7 @@ SKP=function(){return tRaw()};
 _skUsed=skUsed;
 skActives=function(){return Object.keys(TT()).filter(function(id){return skHas(id)&&TT()[id].k})};
 skCost=function(){return 100*(Object.keys(SKS()).filter(function(id){return tLv(id)>0}).length+1)};
-function tClass(){return CTX==='arch'?{job:'직업 없음',line:'원거리 딜러 계열',next:'1차 전직: 아처'}:{job:'직업 없음',line:'탱커 계열',next:'1차 전직: 페이지'}}
+function tClass(){return CTX==='arch'?{job:'직업 없음',line:'원거리 딜러 계열'}:{job:'직업 없음',line:'탱커 계열'}}
 
 /* ---------- 예전 트리에서 옮겨 오기: 스킬 닫고 포인트·별 돌려주기 ---------- */
 function treeMigrate(){var out=[];function one(c,lab){inCtx(c,function(){var s=SKS(),ks=Object.keys(s);var bad=ks.some(function(id){var v=s[id];return !TT()[id]||!(typeof v==='number'&&v>=1&&v<=4)});if(!bad)return;var n=ks.length,st=100*n*(n+1)/2;
@@ -8976,7 +8976,7 @@ skillTree=function(){var m=$('vgsk');if(!m){m=document.createElement('div');m.id
   Object.keys(T2).forEach(function(id){(TPAR[id]||[]).forEach(function(p){var y1=(TROW[p]-1)*RH+40,y2=(TROW[id]-1)*RH+40,on=skHas(p)&&skHas(id),nx=skHas(p)&&!skHas(id);lines+='<path d="M'+TPOS[p]*4+' '+y1+' C'+TPOS[p]*4+' '+((y1+y2)/2)+' '+TPOS[id]*4+' '+((y1+y2)/2)+' '+TPOS[id]*4+' '+y2+'" class="'+(on?'on':nx?'nx':'')+'" style="--c:'+col(id)+'"/>'})});
   var h=Object.keys(T2).map(node).join('');
   m.innerHTML='<div class="skwin tw"><div class="sktop"><b>'+(CTX==='arch'?'🏹 '+esc(archName()):'⚔️ '+esc(ST().nm||'주인공'))+' 스킬 트리</b><button type="button" class="skx">✕</button></div>'+
-   '<div class="tcls"><span>🎖️ '+C.job+'</span><span>'+C.line+'</span><span class="tnx">'+C.next+' (나중에 열려요)</span></div>'+
+   '<div class="tcls"><span>🎖️ '+C.job+'</span><span>'+C.line+'</span>'+/* 11-28 선생님: 다음 단계 이름은 스포라 숨김 */'</div>'+
    '<div class="skinfo"><span>✨ 스킬 포인트 <b>'+left+'</b> / '+skTotal()+'</span><span>⭐ '+ST().pt+'</span></div>'+
    '<div class="tscroll"><div class="ttree" style="height:'+(6*RH+10)+'px"><svg viewBox="0 0 400 '+(6*RH+10)+'" preserveAspectRatio="none">'+lines+'</svg>'+h+'</div></div>'+
    '<div class="skfoot"><small>개방: 1줄 1 · 2줄 2 · 3줄 3 · 4줄 4 · 5줄 5 · 필살기 8포인트 (+⭐) · 강화: Lv2 1포인트+⭐45 · Lv3 2포인트+⭐90 · Lv4 3포인트+⭐180 · 개방 ⭐75(1~3번째)·150(4~6번째)·225 · 필살기 ⭐450<br>필살기는 바로 위 두 스킬을 모두 열어야 해요 · 맨 왼쪽 갈래는 특별한 패시브로 끝나요</small><button type="button" class="skreset">↺ 초기화 ⭐'+rsCost('sk')+'</button></div><div class="skdet" hidden></div></div>';
@@ -9891,7 +9891,7 @@ try{window.__vgP.t2=function(k){if(ZSOLO[k])dlg(ZSOLO[k]());else if(ZDUO[k.slice
 
 /* ===== 주인공 서사 (2026-11-17): 마을 입구에서 기억 없이 깨어남 · 기억의 조각 · 주술사는 알지만 말하지 않음 =====
    (설정 메모: 주인공 = 대지의 신의 조각을 받은 아이. 주술사가 이 마을로 오게 함. 아직 학생에게는 드러내지 않음) */
-var MEMS=[['wake','마을 입구에서 눈을 떴다','이름 말고는 아무것도 기억나지 않는다'],['coin','주머니 속 은화','넣은 기억이 없는 크라운 몇 닢 · 희미한 비 냄새가 났다'],['id','「여행자」','주민등록증 고향 칸은 비워 두었다'],['dream1','꿈 · 낭떠러지 앞의 목소리','「…아이야… 사랑하는…」 끊어지는 목소리가 나를 불렀다'],['stone','돌을 쥐면','손바닥이 찌릿하고, 이상하게 익숙하다'],['sham1','주술사 할머니','「왔구나」 — 뭔가 아는 눈치다'],['home','내 이름으로 된 집','처음으로 나를 증명하는 게 생겼다'],['dream2','꿈 · 따뜻한 손바닥','깨어 보니 손바닥이 아직 따뜻했다'],['fam','단비네 가족','나를 기다리는 사람도 어딘가 있을까'],['dw','다이어 울프의 눈','「너라면… 어쩌면」'],['sham2','할머니의 거짓말','그건 기다리던 사람한테 하는 말이었다'],['fest','축제의 밤','아직 모른다. 그래도 돌아올 곳이 생겼다'],['run','꿈 · 긴 돌 복도','「전하! 돌아오십시오!」 맨발로 달리던 밤. 창밖엔 비가 내렸다']];
+var MEMS=[['wake','마을 입구에서 눈을 떴다','이름 말고는 아무것도 기억나지 않는다'],['coin','주머니 속 은화','넣은 기억이 없는 크라운 몇 닢 · 희미한 비 냄새가 났다'],['id','「여행자」','주민등록증 고향 칸은 비워 두었다'],['dream1','꿈 · 낭떠러지 앞의 목소리','「…아이야… 사랑하는…」 끊어지는 목소리가 나를 불렀다'],['stone','돌을 쥐면','손바닥이 찌릿하고, 이상하게 익숙하다'],['sham1','주술사 할머니','「왔구나」 — 뭔가 아는 눈치다'],['home','내 이름으로 된 집','처음으로 나를 증명하는 게 생겼다'],['dream2','꿈 · 따뜻한 손바닥','깨어 보니 손바닥이 아직 따뜻했다'],['fam','단비네 가족','나를 기다리는 사람도 어딘가 있을까'],['dw','다이어 울프의 눈','「너라면… 어쩌면」'],['sham2','할머니의 거짓말','그건 기다리던 사람한테 하는 말이었다'],['fest','축제의 밤','아직 모른다. 그래도 돌아올 곳이 생겼다']]/* 11-28: 「전하」 꿈 기억 삭제 (스포) */;
 function MEM(){var t=T2();t.mem=t.mem||{};if(t.mem.wake&&!t.mem.coin)t.mem.coin=t.mem.wake;/* 프롤로그를 이미 지난 학생도 「주머니 속 은화」 조각을 조용히 채움 */return t.mem}
 function memGot(k){var m=MEM();if(m[k])return;m[k]=Date.now();X.sv();var it=MEMS.filter(function(x){return x[0]===k})[0];setTimeout(function(){try{X.toast('🌫️ 기억의 조각 · '+(it?it[1]:''),true)}catch(e){}},400)}
 CH.memGot=memGot;
@@ -10267,13 +10267,14 @@ var MANS=(function(){
  function mon(x,y,s,c){s=s||1;return'<g transform="translate('+x+' '+y+') scale('+s+')"><ellipse cx="0" cy="22" rx="18" ry="4" fill="#0002"/><ellipse cx="0" cy="6" rx="18" ry="15" fill="'+(c||'#8a5ac8')+'" '+O+'/>'
   +'<path d="M-16 10 l-8 10 M-12 14 l-6 10 M16 10 l8 10 M12 14 l6 10" '+O+' fill="none"/><circle cx="-6" cy="2" r="3.5" fill="#fff" '+O+'/><circle cx="6" cy="2" r="3.5" fill="#fff" '+O+'/><circle cx="-6" cy="2" r="1.4" fill="#d22"/><circle cx="6" cy="2" r="1.4" fill="#d22"/></g>'}
  function tag(x,y,t,c){var w=t.length*11.5+18;return'<g><rect x="'+(x-w/2)+'" y="'+(y-14)+'" width="'+w+'" height="24" rx="12" fill="'+(c||'#ffe27a')+'" '+O+'/><text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" font-size="14" font-weight="900" fill="#3a2412">'+t+'</text></g>'}
- var P=[];
+ var P=[];/* 11-28 선생님: 설명서 스포 금지 — 아직 안 나온 동료·아이템은 얻은 뒤에만 보여 줌 */
+ function mnHas(k){try{var q=QS();return k==='arch'?!!q.arch:k==='ruby'?!!q.sHammer:false}catch(e){return false}}
  /* 1. 우리 캐릭터 (11-24 선생님: 「나는 탱커」 글자 빼고, 캐릭터를 얻을 때마다 이모지 하나씩 · 누르면 그 캐릭터 설명) */
  var CHARS=[
   {k:'tank',e:'🛡️',nm:'탱커',has:function(){return true},art:svg(320,170,'<rect width="320" height="170" rx="18" fill="#e8f2ff"/><path d="M0 130 Q80 110 160 128 T320 122 V170 H0Z" fill="#9ad66e"/>'+hero(160,78,1.7,'r')+mon(262,108,1,'#8a5ac8')+mon(60,112,.9,'#c86a3a')+tag(160,22,'친구를 지키는 방패','#ffe27a')),
    b:'<b>앞에 서서 적의 공격을 받아 내는</b> 캐릭터예요. 바로 나!<ul><li>❤️ 체력과 🛡️ 방어력이 아주 잘 올라요 (Lv.6부터 레벨마다 <b>체력 +11 · 방어 +0.4</b> 자동 성장)</li><li>🛡️ <b>방패</b>를 들면 공격을 막을 확률이 생겨요. 막으면 피해가 절반!</li><li>📢 <b>도발</b> 같은 스킬로 적들을 나에게 끌어와 동료를 지켜요</li><li>⚔️ 근접 공격: 바로 옆 1칸 · 💨 회피 최대 <b>20%</b> · 🍀 치명타 최대 <b>25%</b></li><li>보너스 포인트 1개: 체력 +7 · 공격 +1 · 방어 +0.7 · 민첩 +0.2% · 운 +0.2% · 지능 +0.8</li></ul>'},
   {k:'arch',e:'🏹',nm:'궁수',has:function(){try{return!!QS().arch}catch(e){return false}},art:'<div class="mnchart">🏹</div>',
-   b:'<b>멀리서 활을 쏘는</b> 캐릭터예요. 단비 아빠, 궁수 아저씨!<ul><li>🏹 <b>1~2칸 떨어진 적</b>을 쏠 수 있어요 (바로 옆도 가능). 높은 곳에 서면 사거리가 더 늘어요</li><li>⛰️ <b>계단·언덕을 올라가도 이동 칸이 줄지 않아요</b> (탱커는 한 층 오를 때마다 1칸 손해)</li><li>💨 회피 최대 <b>50%</b> · 🍀 치명타 최대 <b>40%</b> — 잘 피하고 한 방이 세요</li><li>❤️ 대신 체력과 방어가 낮아요 (기본 체력 85 · 방어 1.5). <b>탱커 뒤에 세워</b> 지켜 주세요</li><li>🧪 독화살·화살비 같은 스킬이 있어요. 골렘에게는 독이 안 들어요</li><li>레벨마다 <b>공격 +1 · 체력 +7 · 민첩 +0.2%</b> 자동 성장</li><li>보너스 포인트 1개: 체력 +5 · 공격 +1.3 · 방어 +0.4 · 민첩 +0.4% · 운 +0.35% · 지능 +1</li><li>궁수 장비(활·옷)는 <b>아저씨 레벨</b>로 입어요</li></ul>'}
+   b:'<b>멀리서 활을 쏘는</b> 캐릭터예요. 단비 아빠, 궁수 아저씨!<ul><li>🏹 <b>1~2칸 떨어진 적</b>을 쏠 수 있어요 (바로 옆도 가능). 높은 곳에 서면 사거리가 더 늘어요</li><li>⛰️ <b>계단·언덕을 올라가도 이동 칸이 줄지 않아요</b> (탱커는 한 층 오를 때마다 1칸 손해)</li><li>💨 회피 최대 <b>50%</b> · 🍀 치명타 최대 <b>40%</b> — 잘 피하고 한 방이 세요</li><li>❤️ 대신 체력과 방어가 낮아요 (기본 체력 85 · 방어 1.5). <b>탱커 뒤에 세워</b> 지켜 주세요</li><li>🧪 독화살·화살비 같은 스킬이 있어요</li><li>레벨마다 <b>공격 +1 · 체력 +7 · 민첩 +0.2%</b> 자동 성장</li><li>보너스 포인트 1개: 체력 +5 · 공격 +1.3 · 방어 +0.4 · 민첩 +0.4% · 운 +0.35% · 지능 +1</li><li>궁수 장비(활·옷)는 <b>아저씨 레벨</b>로 입어요</li></ul>'}
  ];
  P.push({t:'👥 우리 캐릭터',chars:1,art:function(){var L2=CHARS.filter(function(c){return c.has()});return'<div class="mnch">'+L2.map(function(c,i){return'<button type="button" data-c="'+c.k+'" class="'+(i?'':'on')+'"><span>'+c.e+'</span><small>'+c.nm+'</small></button>'}).join('')+'</div>'},
   b:function(){var L2=CHARS.filter(function(c){return c.has()});return L2.map(function(c,i){return'<div class="mnchd" data-c="'+c.k+'"'+(i?' hidden':'')+'><div class="mna">'+c.art+'</div><div class="mnct">'+c.e+' '+c.nm+'</div>'+c.b+'</div>'}).join('')+'<div class="mnhint">💡 새 동료를 만날 때마다 여기에 캐릭터가 하나씩 늘어나요. 위 그림을 눌러 보세요!</div>'}});
@@ -10291,11 +10292,11 @@ var MANS=(function(){
  P.push({t:'✨ 스킬과 게이지',art:svg(320,150,'<rect width="320" height="150" rx="18" fill="#f6efff"/>'
   +'<rect x="30" y="58" width="260" height="26" rx="13" fill="#fff" '+O+'/><rect x="32" y="60" width="170" height="22" rx="11" fill="url(#mng)"/><defs><linearGradient id="mng"><stop offset="0" stop-color="#7ac8ff"/><stop offset="1" stop-color="#b47aff"/></linearGradient></defs><text x="160" y="76" text-anchor="middle" font-size="14" font-weight="900" fill="#3a2412">스킬 게이지 65 / 100</text>'
   +tag(82,30,'⚔️ 때리면 +10','#ffd8c4')+tag(238,30,'💥 맞으면 +6','#ffe0e6')+tag(82,120,'MISS 둘 다 +20','#d8f0ff')+tag(238,120,'🥤 프로틴 MAX','#e6ffd8')),
-  b:'<ul><li>전투에서 <b>때리고, 맞고, 빗나갈 때(MISS)</b>마다 게이지가 차요</li><li><b>MISS</b>(지능 차이로 빗나감)가 나면 <b>때린 쪽과 맞을 뻔한 쪽 모두 +20</b> — 내가 빗나가도, 적이 빗나가도 똑같아요 (우리 편은 한 턴에 한 번)</li><li><b>💨 회피</b>(민첩성으로 피함)는 게이지가 오르지 않아요. 대신 기본 공격을 회피하면 <b>바로 반격</b>해요</li><li>스킬마다 쓰는 게이지 양이 달라요. 쓰고 나면 몇 턴 <b>쉬는 시간</b>이 있어요</li><li>스킬은 <b>Lv.10부터 스킬 트리</b>에서 별로 열어요. 스킬 포인트는 Lv.5부터 모여요</li><li>🌟 <b>필살기</b>는 아주 강하지만 자동 전투에서는 쓰지 않아요. 내가 직접 눌러야 해요! 한 번 쓰면 <b>8~10턴</b> 쉬어요 (센 필살기일수록 길게)</li><li>💥 데미지를 올려 주는 효과(사냥꾼의 집중·약점 표시·회피 기동·약점 간파 등)는 서로 <b>더해지고</b>, 합쳐서 <b>최대 2배</b>까지만 올라가요</li></ul>'});
+  b:'<ul><li>전투에서 <b>때리고, 맞고, 빗나갈 때(MISS)</b>마다 게이지가 차요</li><li><b>MISS</b>(지능 차이로 빗나감)가 나면 <b>때린 쪽과 맞을 뻔한 쪽 모두 +20</b> — 내가 빗나가도, 적이 빗나가도 똑같아요 (우리 편은 한 턴에 한 번)</li><li><b>💨 회피</b>(민첩성으로 피함)는 게이지가 오르지 않아요. 대신 기본 공격을 회피하면 <b>바로 반격</b>해요</li><li>스킬마다 쓰는 게이지 양이 달라요. 쓰고 나면 몇 턴 <b>쉬는 시간</b>이 있어요</li><li>스킬은 <b>Lv.10부터 스킬 트리</b>에서 별로 열어요. 스킬 포인트는 Lv.5부터 모여요</li><li>🌟 <b>필살기</b>는 아주 강하지만 자동 전투에서는 쓰지 않아요. 내가 직접 눌러야 해요! 한 번 쓰면 <b>8~10턴</b> 쉬어요 (센 필살기일수록 길게)</li><li>💥 데미지를 올려 주는 효과(스킬·패시브로 생기는 추가 데미지)는 서로 <b>더해지고</b>, 합쳐서 <b>최대 2배</b>까지만 올라가요</li></ul>'});
  /* 4. 높은 곳 */
  P.push({t:'⛰️ 높은 곳에서 싸우기',art:svg(320,170,'<rect width="320" height="170" rx="18" fill="#e8f6ff"/><path d="M20 150 V92 H150 V150Z" fill="#a8c878" '+O+'/><path d="M150 150 V122 H300 V150Z" fill="#c8e0a0" '+O+'/>'
   +hero(95,48,1,'r')+mon(230,98,1)+'<path d="M120 60 Q175 55 205 92" fill="none" stroke="#e8423a" stroke-width="4" stroke-dasharray="8 6"/><path d="M198 80 l9 13 l-15 -2z" fill="#e8423a"/>'+tag(95,18,'내 공격 +10%','#ffe27a')+tag(230,152,'위를 때리면 -10%','#d8f0ff')),
-  b:'<b>층</b>은 땅의 높이예요: 1층(땅) · 2층 · 3층 · 4층 …<ul><li>📈 <b>위에서 아래를 때리면 더 아파요</b>: 1층 위 <b>+10%</b> · 2층 위 <b>+20%</b> · 3층 위 <b>+30%</b> (뒤·옆 보너스와 더해져요)</li><li>📉 반대로 나보다 높은 적을 <b>정면</b>에서 때리면 -10%, <b>옆</b>에서는 -5%, <b>뒤</b>에서는 그대로</li><li>🚶 한 층 <b>올라갈 때마다 이동 1칸 더</b> 써요 (내려갈 때는 그대로). 한 번에 한 층씩만 오를 수 있어요</li><li>⚔️ <b>근접 공격</b>은 위아래 <b>1개 층</b> 차이까지만 닿아요 (덩치 큰 보스는 2개 층까지)</li><li>🏹 <b>원거리 공격</b>: 위에서 아래로는 몇 층이든 쏠 수 있지만, 아래에서 위로는 <b>3개 층 이상</b> 차이 나면 못 쏴요</li></ul><div class="mnarch"><b>🏹 궁수는 이렇게 달라요</b><ul><li>서 있는 층만큼 <b>사거리가 늘어요</b>: 2층 +1칸 · 3층 +2칸 · 4층 +3칸</li><li>올라갈 때 <b>이동 칸이 줄지 않아요</b> — 높은 곳을 먼저 차지하기 좋아요</li><li>그래서 궁수는 <b>높은 곳 + 탱커 뒤</b>가 제일 좋은 자리!</li></ul></div>'});
+  b:function(){return'<b>층</b>은 땅의 높이예요: 1층(땅) · 2층 · 3층 · 4층 …<ul><li>📈 <b>위에서 아래를 때리면 더 아파요</b>: 1층 위 <b>+10%</b> · 2층 위 <b>+20%</b> · 3층 위 <b>+30%</b> (뒤·옆 보너스와 더해져요)</li><li>📉 반대로 나보다 높은 적을 <b>정면</b>에서 때리면 -10%, <b>옆</b>에서는 -5%, <b>뒤</b>에서는 그대로</li><li>🚶 한 층 <b>올라갈 때마다 이동 1칸 더</b> 써요 (내려갈 때는 그대로). 한 번에 한 층씩만 오를 수 있어요</li><li>⚔️ <b>근접 공격</b>은 위아래 <b>1개 층</b> 차이까지만 닿아요 (덩치 큰 보스는 2개 층까지)</li><li>🏹 <b>원거리 공격</b>: 위에서 아래로는 몇 층이든 쏠 수 있지만, 아래에서 위로는 <b>3개 층 이상</b> 차이 나면 못 쏴요</li></ul>'+(mnHas('arch')?'<div class="mnarch"><b>🏹 궁수는 이렇게 달라요</b><ul><li>서 있는 층만큼 <b>사거리가 늘어요</b>: 2층 +1칸 · 3층 +2칸 · 4층 +3칸</li><li>올라갈 때 <b>이동 칸이 줄지 않아요</b> — 높은 곳을 먼저 차지하기 좋아요</li><li>그래서 궁수는 <b>높은 곳 + 탱커 뒤</b>가 제일 좋은 자리!</li></ul></div>':'')+''}});
  /* 5. 방향 */
  function cell(x,y,c,t){return'<rect x="'+x+'" y="'+y+'" width="66" height="44" rx="7" fill="'+c+'" '+O+'/>'+(t?'<text x="'+(x+33)+'" y="'+(y+27)+'" text-anchor="middle" font-size="12" font-weight="900" fill="#3a2412">'+t+'</text>':'')}
  P.push({t:'🧭 방향이 중요해요',art:svg(340,170,'<rect width="340" height="170" rx="18" fill="#fff6e6"/>'+cell(84,12,'#ffd0c8','정면')+cell(12,63,'#ffe9b0','옆 +5%')+cell(156,63,'#ffe9b0','옆 +5%')+cell(84,114,'#ff9a8a','뒤 +15%')+'<rect x="84" y="63" width="66" height="44" rx="7" fill="#e6dcff" '+O+'/><text x="117" y="92" text-anchor="middle" font-size="22">👾</text><path d="M117 63 l-6 -7 h12z" fill="#3a2412"/>'+'<g font-size="12.5" fill="#3a2412"><text x="238" y="58" font-size="13.5" font-weight="900">🛡️ 방패 막기</text><text x="238" y="84">정면: 잘 막아요</text><text x="238" y="106">옆: 조금 덜</text><text x="238" y="128">뒤: 못 막아요</text></g>'),
@@ -10320,14 +10321,14 @@ var MANS=(function(){
  P.push({t:'🩹 회복 아이템',art:'<div class="mnpot">'+['potion','potion2','potion3','potion4','potion5','potion6'].map(function(id){var d=CH.ITEMDB[id]||{};return'<div>'+(CH.itemIcon?CH.itemIcon(id,d.ic,44):'')+'<b>'+(d.nm||'')+'</b><small>+'+(d.heal||0)+'</small></div>'}).join('')+'</div>',
   b:'<ul><li>전투에서 🎒 <b>아이템</b>으로 써요. <b>한 턴에 1개</b>만 쓸 수 있고, 써도 턴은 그대로예요</li><li><b>바로 옆에 붙어 있는 동료</b>에게도 줄 수 있어요</li><li>👑 <b>보스전에서는 회복약을 6개까지만</b> 쓸 수 있어요</li><li>보물상자 · 의뢰 게시판 · 내 집 약초 화분에서도 얻어요. 탐험을 많이 할수록 보스전이 쉬워져요!</li></ul>'});
  /* 8-1. 아이템 등급 (11-24 선생님) */
- P.push({t:'💎 아이템 등급',art:function(){var G=CH.GRADES||{},O=CH.GORDER||[];return'<div class="mngr"><div><em class="grtag" style="background:#fff;color:#7a6a5a;border-color:#d8c8b0">무등급</em><small>언제 어디서든 구하거나 살 수 있는 물건 (표시 없음)</small></div>'+O.map(function(g){var ex={normal:'보스 재료·보스 장비·악세사리·기념품, 강화의 물약 15·20·30%',uncommon:'강화의 물약 50%',rare:'아버지의 유산 (절대 팔 수 없음) · 강화의 물약 100%'}[g]||'아직 없음 — 앞으로의 모험에서!';return'<div><em class="grtag gr-'+g+'">'+G[g][0]+'</em><small>'+ex+'</small></div>'}).join('')+'</div>'},
+ P.push({t:'💎 아이템 등급',art:function(){var G=CH.GRADES||{},O=CH.GORDER||[];return'<div class="mngr"><div><em class="grtag" style="background:#fff;color:#7a6a5a;border-color:#d8c8b0">무등급</em><small>언제 어디서든 구하거나 살 수 있는 물건 (표시 없음)</small></div>'+O.map(function(g){var ex={normal:'보스 재료·보스 장비·악세사리·기념품, 강화의 물약 15·20·30%',uncommon:'강화의 물약 50%',rare:(mnHas('ruby')?'아버지의 유산 (절대 팔 수 없음) · ':'')+'강화의 물약 100%'}[g]||'아직 없음 — 앞으로의 모험에서!';return'<div><em class="grtag gr-'+g+'">'+G[g][0]+'</em><small>'+ex+'</small></div>'}).join('')+'</div>'},
   b:'아래로 갈수록 <b>귀한 물건</b>이에요: 무등급 → 일반 → 고급 → 희귀 → 영웅 → 전설 → 신화<ul><li>등급은 물건 이름 끝 【 】과 그림 옆 리본으로 보여요 (창고에서는 칸 오른쪽 위)</li><li>등급이 있는 물건은 상점에서 살 수 없어요. 보스·이벤트·숨겨진 곳에서 얻어요</li></ul>'});
  /* 8-2. 아이템 칸 네 귀퉁이 읽는 법 (11-24 14:55 선생님) */
- P.push({t:'🔍 아이템 칸 읽는 법',art:function(){var ic='';try{var dd=CH.ITEMDB.rubysword;ic=dd&&dd.img?'<img src="'+dd.img+'" style="width:56px;height:56px">':'<span style="font-size:44px">🗡️</span>'}catch(e){ic='<span style="font-size:44px">🗡️</span>'}
+ P.push({t:'🔍 아이템 칸 읽는 법',art:function(){var ic='',rb=mnHas('ruby');try{var dd=rb?CH.ITEMDB.rubysword:null;ic=dd&&dd.img?'<img src="'+dd.img+'" style="width:56px;height:56px">':'<span style="font-size:44px">🗡️</span>'}catch(e){ic='<span style="font-size:44px">🗡️</span>'}
   var B='position:absolute;font-style:normal;font-weight:900;color:#fff;background:#4a2e08;border-radius:6px;padding:0 4px;font-size:11px;line-height:15px',
    L='position:absolute;font-size:11.5px;font-weight:800;color:#5a3a10;line-height:1.3;width:130px';
   return'<div style="position:relative;width:310px;height:220px;margin:4px auto">'
-   +'<div style="position:absolute;left:95px;top:50px;width:120px;height:112px;border-radius:14px;border:2.5px solid #e0a020;background:radial-gradient(#fff6c8,#ffe08a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">'+ic+'<small style="font-size:12px;font-weight:800;color:#6b4413;margin-bottom:8px">아버지의 유산</small>'
+   +'<div style="position:absolute;left:95px;top:50px;width:120px;height:112px;border-radius:14px;border:2.5px solid #e0a020;background:radial-gradient(#fff6c8,#ffe08a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">'+ic+'<small style="font-size:12px;font-weight:800;color:#6b4413;margin-bottom:8px">'+(rb?'아버지의 유산':'멋진 검')+'</small>'
    +'<i style="'+B+';left:4px;top:4px">×2</i>'
    +'<i class="gr-rare" style="position:absolute;right:4px;top:4px;font-style:normal;font-size:10px;font-weight:900;padding:1.5px 5px;border-radius:6px;border:1px solid #fff">희귀</i>'
    +'<i style="'+B+';left:4px;bottom:4px">3강</i>'
@@ -10337,7 +10338,7 @@ var MANS=(function(){
    +'<div style="'+L+';right:0;top:0;text-align:right"><b style="color:#2a6ad8">② 오른쪽 위</b><br>아이템 등급</div>'
    +'<div style="'+L+';left:0;bottom:0"><b style="color:#4a2e08">③ 왼쪽 아래</b><br>강화한 단계 (1강~5강)</div>'
    +'<div style="'+L+';right:0;bottom:0;text-align:right"><b style="color:#4a2e08">④ 오른쪽 아래</b><br>몇 단계 강화 재료 (1~5)</div></div>'},
-  b:'창고 칸의 네 귀퉁이를 보면 그 물건을 한눈에 알 수 있어요.<ul><li><b>① 왼쪽 위 ×2</b> — 같은 물건을 몇 개 가지고 있는지 (1개면 안 보여요)</li><li><b>② 오른쪽 위 등급</b> — 일반 · 고급 · 희귀 … 귀한 정도 (💎 아이템 등급 쪽을 보세요)</li><li><b>③ 왼쪽 아래 1강~5강</b> — 주술사 할머니에게 강화한 단계 (강화 안 했으면 안 보여요)</li><li><b>④ 오른쪽 아래 1~5</b> — 이 재료가 <b>몇 단계 강화</b>에 쓰이는지. 예) 토끼 꼬리 <b>1</b> = 1강에 쓰는 재료, 골렘 돌조각 <b>5</b> = 5강에 쓰는 재료</li></ul>'});
+  b:'창고 칸의 네 귀퉁이를 보면 그 물건을 한눈에 알 수 있어요.<ul><li><b>① 왼쪽 위 ×2</b> — 같은 물건을 몇 개 가지고 있는지 (1개면 안 보여요)</li><li><b>② 오른쪽 위 등급</b> — 일반 · 고급 · 희귀 … 귀한 정도 (💎 아이템 등급 쪽을 보세요)</li><li><b>③ 왼쪽 아래 1강~5강</b> — 주술사 할머니에게 강화한 단계 (강화 안 했으면 안 보여요)</li><li><b>④ 오른쪽 아래 1~5</b> — 이 재료가 <b>몇 단계 강화</b>에 쓰이는지. 예) 토끼 꼬리 <b>1</b> = 1강에 쓰는 재료 … <b>5</b> = 5강에 쓰는 재료</li></ul>'});
  /* 9. 컴퓨터 조작 */
  P.push({t:'⌨️ 컴퓨터로 할 때',art:'<div class="mnkeys"><div><kbd>← ↑ → ↓</kbd><span>걷기 · 칸/적 고르기</span></div><div><kbd>Enter</kbd><span>말 걸기 · 확정 · 공격 (공격할 적이 없으면 턴 끝)</span></div><div><kbd>Space</kbd><span>마을·숲: 점프 / 전투: 스킬</span></div><div><kbd>Ctrl</kbd><span>전투: 아이템 · 방향 · 도망 메뉴</span></div><div><kbd>Esc</kbd><span>창 닫기 / 전투: 도망</span></div><div><kbd>+ −</kbd><span>화면 크게 · 작게</span></div><div><kbd>F3</kbd><span>📜 퀘스트 보기</span></div></div>',
   b:'휴대폰에서는 화면의 버튼을 누르면 돼요. 이 설명서는 캐릭터 메뉴 → <b>📖 설명서</b>에서 언제든 다시 볼 수 있어요. 그럼, 즐거운 모험 되세요! 🌟'});
@@ -11722,10 +11723,7 @@ function gaiaTalk(){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께
   ar?{n:G,t:'「활을 든 그대. 그대 몸 안의 바람도… 이 아이를 지키려고 무던히 애쓰더구나. 이 아이 곁을 끝까지 지켜 주어 고맙다. …그대에게는 미안한 일이 될 거야. 그래도 부디, 앞으로도 이 아이 곁에 있어 주렴.」'}:null,
   {n:G,t:'「이제 자거라, 내 아이야. 다 끝날 때까지, 여기서. 땅이 너를 지켜 줄 거야. …사랑한단다.」'},
   {n:'',t:'(따뜻한 빛이 온몸을 감싼다. 아픈 곳이 하나씩 사라져 간다… 그리고 두 사람은 깊은, 아주 깊은 잠에 빠져들었다)'},
-  {n:'',t:'(…꿈을 꾼다. 끝이 보이지 않는 긴 돌 복도. 벽마다 횃불이 타오르고, 나는 맨발로 달리고 있다)'},
-  {n:'',t:'(등 뒤에서 누군가 외친다. 「…전하! 돌아오십시오, 전하—!」)'},
-  {n:me,t:'(전하…? 누구를 부르는 거지. …설마, 나를?)'},
-  {n:'',t:'(복도 끝, 활짝 열린 창 너머로 비가 내리고 있었다. 빗속에 누군가 서 있다. …꿈은 거기서 끊겼다)',onShow:function(){try{CH.memGot('run')}catch(e){}}}].filter(Boolean);
+  /* 11-28 선생님: 「전하」 꿈 장면 삭제 (스포) */].filter(Boolean);
  dlg(L,null,function(){flashScr('#fffbe8',1800);setTimeout(function(){
    window.__storyOn=0;window.__u5mode=null;window.__fmus=null;try{W.camOv=null}catch(e){}U5=null;var q=QS();q.uIn=0;q.ruin=Date.now();X.sv();try{CH.ruin.wake()}catch(e){console.error(e)}},1400)})}
 
