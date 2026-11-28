@@ -3894,7 +3894,7 @@ function esc(t){var d=document.createElement('div');d.textContent=t;return d.inn
 /* ---------- 별 ---------- */
 var tT=null;
 function hideT(){var t=$('chToast');clearTimeout(tT);if(t)t.className=''}
-function toast(msg,big){var t=$('chToast');if(!t){t=document.createElement('div');t.id='chToast';t.onclick=hideT;document.body.appendChild(t)}t.textContent=msg;t.className='on'+(big?' big':'');clearTimeout(tT);tT=setTimeout(hideT,big?3600:3000)}
+function plainT(t){return String(t==null?'':t).replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/[ \t]+\n/g,'\n').trim()}/* 11-28 선생님: 안내문에 <b> 같은 코드가 그대로 보이지 않게 — 글자만 */ function toast(msg,big){msg=plainT(msg);var t=$('chToast');if(!t){t=document.createElement('div');t.id='chToast';t.onclick=hideT;document.body.appendChild(t)}t.textContent=msg;t.style.whiteSpace='pre-line';t.className='on'+(big?' big':'');clearTimeout(tT);tT=setTimeout(hideT,big?3600:3000)}
 document.addEventListener('pointerdown',function(){var t=$('chToast');if(t&&t.className.indexOf('on')>=0)hideT()},true);
 function logp(n,why){ST.log.unshift({t:Date.now(),n:n,w:why});ST.log=ST.log.slice(0,60)}
 function burst(anchor,n){var a=anchor||$('chPill')||$('chNew')||$('chPt');if(!a)return;var r=a.getBoundingClientRect();if(!r.width)return;a.classList.remove('chpop');void a.offsetWidth;a.classList.add('chpop');var cx=r.left+r.width/2,cy=r.top+r.height/2,k=Math.min(14,6+Math.round((n||1)/2));for(var i=0;i<k;i++){var s=document.createElement('span');s.className='chspark';s.textContent=i%3?'⭐':'✨';var ang=Math.PI*2*i/k+Math.random()*.5,d=36+Math.random()*44;s.style.cssText='left:'+cx+'px;top:'+cy+'px;--dx:'+Math.round(Math.cos(ang)*d)+'px;--dy:'+Math.round(Math.sin(ang)*d)+'px;font-size:'+(12+Math.round(Math.random()*10))+'px;animation-delay:'+Math.round(Math.random()*120)+'ms';document.body.appendChild(s);(function(e){setTimeout(function(){e.remove()},1100)})(s)}}
@@ -3967,7 +3967,7 @@ function rBody(){var bd=$('chBd'),h='';
 function rAll(){rPrev();rTabs();rBody();rFoot()}
 
 /* ---------- 확인창 ---------- */
-function ask(t,s,yes,no,fn){var a=$('chA');if(!a){a=document.createElement('div');a.id='chA';document.body.appendChild(a)}a.innerHTML='<div class="chab"><b>'+esc(t)+'</b><p>'+esc(s)+'</p><div class="chabt"><button type="button" class="y">'+esc(yes)+'</button><button type="button" class="n">'+esc(no)+'</button></div></div>';a.className='on';
+function ask(t,s,yes,no,fn){var a=$('chA');if(!a){a=document.createElement('div');a.id='chA';document.body.appendChild(a)}a.innerHTML='<div class="chab"><b>'+esc(plainT(t))+'</b><p>'+esc(plainT(s)).replace(/\n/g,'<br>')+'</p><div class="chabt"><button type="button" class="y">'+esc(yes)+'</button><button type="button" class="n">'+esc(no)+'</button></div></div>';a.className='on';
  a.querySelector('.n').onclick=function(){a.className=''};a.querySelector('.y').onclick=function(){a.className='';fn&&fn()}}
 
 /* ---------- 만들기 창 열기/닫기 ---------- */
@@ -4358,7 +4358,7 @@ function renderLv(){var m=panel('chlv'),l=L(),d=X.day(),h='';
  h+='<div class="chlh"><b>🏅 내 레벨</b><button type="button" class="chpx" data-x="chlv">✕</button></div>';
  h+='<div class="chlvbig">Lv.'+l.lv+'<small>/ 99</small></div><div class="chbar big"><i style="width:'+Math.min(100,l.g)+'%"></i><em>'+Math.min(100,Math.floor(l.g))+'%</em></div>';
  if(l.g>=100&&lockedNext(l))h+='<div class="chnote2 warn">🔒 게이지가 가득 찼지만 Lv.'+(l.lv+1)+' 자물쇠가 잠겨 있어요. 아래 조건을 모두 달성하면 열쇠를 받아요.<br>📦 자물쇠가 잠겨 있는 동안 <b>Lv.'+(l.lv+1)+' 게이지를 50%까지만</b> 미리 모을 수 있어요. (지금 미리 모은 양: <b>'+Math.floor(l.g-100)+'% / 50%</b>)'+(l.g>=GCAP?'<br>⛔ <b>더 이상은 쌓이지 않아요.</b> 자물쇠를 열면 다시 쌓여요.':'')+'</div>';
- h+='<div class="chlt">게이지 모으는 방법</div><ul class="chul"><li>📱 <b>앱 이용</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📖 <b>필기장 보기</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📅 <b>출석 도장</b> 1개 +2% <small>(+10⭐)</small></li><li>🎬 <b>숏츠</b> 1개 +1% <small>(하루 최대 5%, 같은 영상은 중복 안 됨)</small></li><li>📝 <b>퀴즈</b> GOOD +5% · BETTER +8% · PERFECT +10% <small>(더 높은 등급이 되면 차이만큼만 · 같은 문제 세트에서 PERFECT는 2번째에 +5%, 그 뒤로는 게이지 없음)</small></li><li>👑 <b>UNBELIEVABLE</b> 달성 +30%</li><li>⭐ 레벨 업 1번마다 별 지급! <b>Lv.4까지 20개</b> · <b>Lv.5부터 100개</b></li></ul>';
+ h+='<div class="chlt">게이지 모으는 방법</div><ul class="chul"><li>📱 <b>앱 이용</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📖 <b>필기장 보기</b> 15분마다 +2% <small>(하루 최대 6%)</small></li><li>📅 <b>출석 도장</b> 1개 +2% <small>(+10⭐)</small></li><li>🎬 <b>숏츠</b> 1개 +1% <small>(하루 최대 5%, 같은 영상은 중복 안 됨)</small></li><li>📝 <b>퀴즈</b> GOOD +5% · BETTER +8% · PERFECT +10% <small>(더 높은 등급이 되면 차이만큼만 · 같은 문제 세트에서 PERFECT는 2번째에 +5%, 그 뒤로는 게이지 없음)</small></li><li>👑 <b>UNBELIEVABLE</b> 달성 +30% <small>(📝 종합테스트는 +60%)</small></li><li>⭐ 레벨 업 1번마다 별 지급! <b>Lv.4까지 20개</b> · <b>Lv.5~9는 100개</b> · <b>Lv.10부터 150개</b></li></ul>';
  h+='<div class="chlt">자물쇠 (10레벨마다)</div><div class="chlocks">';
  for(var n=10;n<=90;n+=10){var un=l.un[n],key=l.keys[n],cur=l.lv===n-1,cls=un?'open':key?'key':'lock';h+='<button type="button" class="chlk '+cls+'" data-n="'+n+'"><span>'+(n===10&&!un&&l.lv>=9&&CH.lock3?CH.lock3(30):(un?'🔓':key?'🔑':'🔒'))+'</span><b>Lv.'+n+'</b><small>'+(un?'해금 완료':key?(cur&&l.g>=100?'🔑+⭐100으로 열기!':'열쇠 보유'):cur?'조건 공개됨':'Lv.'+(n-1)+' 달성 시 공개')+'</small></button>'}
  h+='</div>';
@@ -6675,60 +6675,8 @@ SPP.sb8=[0x241f3a,0x6a7ad8,0xffb347,1,1];SPP.sb9=[0x2a1f44,0x8a6ae8,0xffb347,1,1
 /* ===================== 스킬 트리 ===================== */
 /* k: 종류  hit(근접) aoe(범위) range(원거리) dash(순간이동 공격) heal buff debuff all(맵 전체) / p: 패시브
    g: 필요 게이지, cd: 다시 쓰기까지 내 턴 수, ult: 필살기(전투당 1번) */
-var SK={
- R:{t:0,nm:'모험가의 각성',ic:'🌱',p:{atk:2,hp:10},d:'모험을 시작한 마음가짐. 공격력 +2, 체력 +10'},
- A:{t:1,par:['R'],nm:'강타',ic:'💥',k:'hit',mul:1.6,g:20,cd:2,d:'힘을 모아 한 번에 내려친다 (1.6배)'},
- A1:{t:2,par:['A'],nm:'연속 베기',ic:'⚔️',k:'hit',mul:.9,hits:2,g:30,cd:2,d:'빠르게 2번 벤다 (0.9배 × 2)'},
- A1a:{t:3,par:['A1'],nm:'삼연참',ic:'🗡️',k:'hit',mul:.95,hits:3,g:40,cd:3,d:'눈 깜짝할 새 3번 벤다 (0.95배 × 3)'},
- A1a4:{t:4,par:['A1a'],nm:'날카로운 칼날',ic:'🔪',p:{atk:3},d:'공격력 +3'},
- A1a5:{t:5,par:['A1a4'],nm:'폭풍 연참',ic:'🌀',k:'hit',mul:1.05,hits:4,g:55,cd:3,d:'폭풍처럼 4번 벤다 (1.05배 × 4)'},
- A1b:{t:3,par:['A1'],nm:'갑옷 가르기',ic:'🪓',k:'hit',mul:1.4,pierce:.5,g:35,cd:3,d:'방어력의 절반을 무시하고 벤다 (1.4배 · 보스는 25%만 무시)'},
- A1b4:{t:4,par:['A1b'],nm:'전사의 근력',ic:'💪',p:{atk:3,hp:15},d:'공격력 +3, 체력 +15'},
- A1b5:{t:5,par:['A1b4'],nm:'일격필살',ic:'☠️',k:'hit',mul:3,pierce:1,g:60,cd:4,d:'방어력을 완전히 무시하는 한 방 (3배 · 보스는 절반만 무시)'},
- A1U:{t:6,par:['A1a5','A1b5'],nm:'천둥 일섬',ic:'⚡',k:'aoe',shape:'r3',mul:3,stun:1,g:95,ult:1,d:'【필살기】 3칸 안의 모든 적에게 번개 베기 (3배 + 기절)'},
- A2:{t:2,par:['A'],nm:'회전 베기',ic:'🌪️',k:'aoe',shape:'adj',mul:1.2,g:35,cd:3,d:'빙글 돌며 바로 옆 적 모두 공격 (1.2배)'},
- A2a:{t:3,par:['A2'],nm:'대지 가르기',ic:'🌋',k:'aoe',shape:'cross2',mul:1.3,g:40,cd:3,d:'십자 2칸 안의 적 모두 공격 (1.3배)'},
- A2a4:{t:4,par:['A2a'],nm:'묵직한 일격',ic:'🔨',p:{atk:4},d:'공격력 +4'},
- A2a5:{t:5,par:['A2a4'],nm:'지진 강타',ic:'🧱',k:'aoe',shape:'r2',mul:1.6,stun:.5,g:55,cd:4,d:'땅을 내려쳐 2칸 안 모두 공격 (1.6배, 50% 기절)'},
- A2b:{t:3,par:['A2'],nm:'검기 날리기',ic:'🌙',k:'range',r:3,mul:1.3,g:35,cd:3,d:'3칸 안의 적에게 검기를 날린다 (1.3배)'},
- A2b4:{t:4,par:['A2b'],nm:'검의 집중',ic:'🧘',p:{gg:20},d:'스킬 게이지가 20% 더 빨리 찬다'},
- A2b5:{t:5,par:['A2b4'],nm:'검기 폭풍',ic:'🌊',k:'range',r:4,splash:1,mul:1.6,g:55,cd:4,d:'4칸 안의 적과 그 주변까지 휩쓴다 (1.6배)'},
- A2U:{t:6,par:['A2a5','A2b5'],nm:'만검 귀환',ic:'🗡️',k:'all',mul:2.2,g:95,ult:1,d:'【필살기】 하늘에서 검이 쏟아져 모든 적 공격 (2.2배)'},
- B:{t:1,par:['R'],nm:'단단한 몸',ic:'🛡️',p:{def:2,hp:20},d:'방어력 +2, 체력 +20'},
- B1:{t:2,par:['B'],nm:'치유의 숨결',ic:'💚',k:'heal',pct:25,g:30,cd:3,d:'최대 체력의 25% 회복'},
- B1a:{t:3,par:['B1'],nm:'생명의 샘',ic:'⛲',k:'heal',pct:40,g:40,cd:4,d:'최대 체력의 40% 회복'},
- B1a4:{t:4,par:['B1a'],nm:'강인한 체력',ic:'❤️',p:{hp:40},d:'체력 +40'},
- B1a5:{t:5,par:['B1a4'],nm:'재생의 빛',ic:'✨',k:'heal',pct:60,regen:10,g:55,cd:5,d:'60% 회복 + 3턴 동안 매 턴 10% 회복'},
- B1b:{t:3,par:['B1'],nm:'물약 장인',ic:'🧪',p:{pot:30},d:'물약 회복량 +30%'},
- B1b4:{t:4,par:['B1b'],nm:'단련된 몸',ic:'🏋️',p:{hp:30,def:1},d:'체력 +30, 방어력 +1'},
- B1b5:{t:5,par:['B1b4'],nm:'피의 계약',ic:'🩸',k:'hit',mul:1.5,drain:50,g:45,cd:3,d:'1.5배 공격 + 준 데미지의 절반만큼 회복'},
- B1U:{t:6,par:['B1a5','B1b5'],nm:'불사조의 축복',ic:'🔥',k:'buff',full:1,def:2,turns:3,g:95,ult:1,d:'【필살기】 체력 완전 회복 + 3턴 동안 방어력 2배'},
- B2:{t:2,par:['B'],nm:'방패 태세',ic:'🛡️',k:'buff',def:2,turns:2,g:25,cd:3,d:'2턴 동안 방어력 2배'},
- B2a:{t:3,par:['B2'],nm:'방패 밀치기',ic:'🤜',k:'hit',mul:1.2,stun:1,g:35,cd:3,d:'방패로 밀쳐 반드시 기절 (1.2배)'},
- B2a4:{t:4,par:['B2a'],nm:'철벽',ic:'🧱',p:{def:3},d:'방어력 +3'},
- B2a5:{t:5,par:['B2a4'],nm:'방패 폭풍',ic:'💫',k:'aoe',shape:'adj',mul:1.4,stun:1,g:55,cd:4,d:'바로 옆 적 모두 1.4배 + 기절'},
- B2b:{t:3,par:['B2'],nm:'가시 갑옷',ic:'🌵',p:{thorn:30},d:'맞으면 받은 데미지의 30%를 되돌려 준다'},
- B2b4:{t:4,par:['B2b'],nm:'수호자의 의지',ic:'🙏',p:{def:2,hp:25},d:'방어력 +2, 체력 +25'},
- B2b5:{t:5,par:['B2b4'],nm:'위압의 함성',ic:'📢',k:'debuff',atkDown:30,turns:2,g:45,cd:4,d:'모든 적의 공격력 30% 감소 (2턴)'},
- B2U:{t:6,par:['B2a5','B2b5'],nm:'불굴의 요새',ic:'🏰',k:'buff',inv:1,turns:2,g:95,ult:1,d:'【필살기】 2턴 동안 데미지를 받지 않고, 맞을 때마다 반격'},
- C:{t:1,par:['R'],nm:'날렵한 발',ic:'👟',p:{mv:1,agi:2},d:'이동 +1칸, 민첩성 +2%'},
- C1:{t:2,par:['C'],nm:'그림자 걸음',ic:'👤',k:'dash',r:3,mul:1.3,g:30,cd:3,d:'3칸 안 적의 등 뒤로 순간이동해 공격 (1.3배 + 뒤 공격)'},
- C1a:{t:3,par:['C1'],nm:'바람 가르기',ic:'🍃',k:'dash',r:4,mul:1.6,g:40,cd:3,d:'4칸 안 적의 등 뒤로 순간이동 (1.6배)'},
- C1a4:{t:4,par:['C1a'],nm:'질풍',ic:'💨',p:{agi:3,mv:1},d:'민첩성 +3%, 이동 +1칸'},
- C1a5:{t:5,par:['C1a4'],nm:'잔상 습격',ic:'👥',k:'dash',r:5,mul:1,hits:3,g:55,cd:4,d:'5칸 안 적의 뒤로 가서 3번 공격'},
- C1b:{t:3,par:['C1'],nm:'연막',ic:'🌫️',k:'buff',agi:30,turns:2,g:30,cd:3,d:'2턴 동안 민첩성 +30% (잘 피하면 반격!)'},
- C1b4:{t:4,par:['C1b'],nm:'날쌘 몸놀림',ic:'🤸',p:{agi:4},d:'민첩성 +4%'},
- C1b5:{t:5,par:['C1b4'],nm:'반격의 달인',ic:'🥋',p:{ctr:50},d:'회피 반격 데미지 1.5배'},
- C1U:{t:6,par:['C1a5','C1b5'],nm:'질풍노도',ic:'🌪️',k:'all',mul:1.5,dash:1,g:95,ult:1,d:'【필살기】 바람이 되어 모든 적을 차례로 벤다 (1.5배)'},
- C2:{t:2,par:['C'],nm:'급소 찌르기',ic:'🎯',k:'hit',mul:.8,crit:1,g:40,cd:4,d:'반드시 크리티컬 (0.8배 × 3배, 보스는 2배 + 기절)'},
- C2a:{t:3,par:['C2'],nm:'행운의 별',ic:'⭐',p:{luk:3},d:'운 +3%'},
- C2a4:{t:4,par:['C2a'],nm:'행운아',ic:'🍀',p:{luk:3,agi:1},d:'운 +3%, 민첩성 +1%'},
- C2a5:{t:5,par:['C2a4'],nm:'운명의 일격',ic:'🎲',k:'hit',mul:1.5,gamble:1,g:45,cd:3,d:'50% 확률로 4배(보스는 2.5배), 아니면 1.5배'},
- C2b:{t:3,par:['C2'],nm:'독침',ic:'🦂',k:'hit',mul:1,psn:8,g:35,cd:3,d:'공격 + 3턴 동안 독 (매 턴 최대 체력의 8%)'},
- C2b4:{t:4,par:['C2b'],nm:'맹독',ic:'☣️',p:{psn:50},d:'독 데미지 +50%'},
- C2b5:{t:5,par:['C2b4'],nm:'맹독 안개',ic:'🟢',k:'aoe',shape:'r2',mul:1,psn:8,g:55,cd:4,d:'2칸 안 모든 적 공격 + 독'},
- C2U:{t:6,par:['C2a5','C2b5'],nm:'대박 찬스',ic:'🎰',k:'aoe',shape:'r3',mul:1,crit:1,g:95,ult:1,d:'【필살기】 3칸 안 모든 적에게 크리티컬'}
-};
+var SK={};/* 11-28 선생님: 예전 스킬 트리(강타·대박 찬스 등) 삭제 — 지금은 trees2.js 탱커·궁수 트리만 씀 */
+
 var SKDIR=[['A','⚔️','검의 길','#ff7a5a'],['B','🛡️','수호의 길','#5ab8ff'],['C','🌪️','바람의 길','#6ae08a']];
 function SKS(){var q=QS();q.sk=q.sk||{};return q.sk}
 function skUB(){var s=ST();return s.ub!=null?s.ub:Object.keys(s.u||{}).length}
@@ -6775,7 +6723,7 @@ function SG(){var q=QS();if(q.sg==null)q.sg=0;return q}
 function talkNow(){try{return!!document.querySelector('.vgdlg.on,#chA.on,.chpanel.on,#enhp.on,.arnm,.mnbook,.arnm,#vgeq.on,#vgsk.on,.v10')}catch(e){return false}}
 /* 화면에 보이는 몬스터 레벨 (2026-11-19 16:46 선생님 확정) · 표기만 바뀜: 체력·공격·보상·지능 계산은 원래 lv 그대로 */
 var DLV={sp12:11,ss11:11,cs13:13,cs14:13,qs15:14,wl13:13,wl14:13,w15:14,w15f:14,w16:14,w17:15,dw:16};
-function dLv(u){var k=u&&u.k;if(!k&&u&&typeof MON!=='undefined')for(var x in MON)if(MON[x]===u){k=x;break}if(k&&DLV[k])return DLV[k];return Math.max(1,((u&&u.lv)||1)-1)}/* 표에 없는 몬스터는 원래 lv − 1 (16:56 확정, 이전 −2) */
+function dLv(u){if(window.__lv1128)return Math.max(1,(u&&u.lv)||1);var k=u&&u.k;if(!k&&u&&typeof MON!=='undefined')for(var x in MON)if(MON[x]===u){k=x;break}if(k&&DLV[k])return DLV[k];return Math.max(1,((u&&u.lv)||1)-1)}/* 11-28 선생님: 화면 레벨이 진짜 레벨 — boss1127.js에서 MON.lv를 화면 레벨로 바꾼 뒤에는 lv 그대로 *//* 표에 없는 몬스터는 원래 lv − 1 (16:56 확정, 이전 −2) */
 /* ===================== 숲 몬스터 · 턴제 전투 ===================== */
 var MIMG='vg/m_';var MPC={};
 function mpic(k){if(/^(r1|r2|f3|f4)$/.test(k))return MIMG+k+'_i0.webp';if(MPC[k])return MPC[k];try{var T=THREE,c=document.createElement('canvas');c.width=c.height=128;var R=new T.WebGLRenderer({canvas:c,alpha:true,antialias:true,preserveDrawingBuffer:true});R.setClearColor(0,0);
@@ -7098,14 +7046,14 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function setSprite(u){if(u.hero)return;u.g.userData.want=Math.atan2(u.f[0],u.f[1])}
  function place(u){var hop=u.hop||0;if(u.hero){u.g.position.set(u.wx,u.wy,u.wz);u.g.rotation.y=Math.atan2(u.f[0],u.f[1]);if(u===H){arrowG.position.set(u.wx,u.wy+.03,u.wz);arrowG.rotation.y=Math.atan2(u.f[0],u.f[1]);arrowG.visible=!B.over&&B.phase==='player'}if(u.aura&&u!==H)u.aura.position.set(u.wx,u.wy+.04,u.wz)}
   else{u.g.position.set(u.wx+(u.ix||0),u.wy+(u.iy||0),u.wz+(u.iz||0))}u.sh.position.set(u.wx,u.wy+.02,u.wz);if(u.aura)u.aura.position.set(u.wx,u.wy+.04,u.wz)}
- function upBar(u){if(u&&u.hero&&u!==H&&B.party)try{drawMe()}catch(_){};var p=Math.max(0,u.hp)/u.max;u.el.querySelector('b').style.width=(p*100)+'%';if(u.hero){var gb=u.el.querySelector('.sgb b');if(gb)gb.style.width=((u===H?B.g:u.st&&u.st.g)||0)+'%'}else{var st2=u.el.querySelector('.bst');if(st2)st2.textContent=(opt.boss&&!u.agro&&u.hp>=u.max?'💤':'')+((u.psn&&u.psn.t>0)||(u.psn2&&u.psn2.t>0)?'☠️':'')+(u.weak&&u.weak.t>0?'⬇️':'')+(u.stun?'💫':'')+(u.howl&&u.howl.t>0?'🔺':'')+(u.bfD&&u.bfD.t>0?'🛡️':'')+(u.bfA&&u.bfA.t>0?'🔥':'')+(u.bfE&&u.bfE.t>0?'👻':'')+(u.mpMax?' 🔷'+(u.mp|0):'');var mg=u.el.querySelector('.msgb b');if(mg)mg.style.width=Math.min(100,u.sg||0)+'%';if(u.boss&&!B.ph3&&B.ph2&&u.hp>0&&u.hp<=u.max*.2&&!B.over){B.ph3=1;u.dr=.15;u.atk=Math.round((u.atk0||u.atk)*1.4);u.eva=(u.eva||0)+5;u.luk=(u.luk||0)+5;setTimeout(function(){if(!u.dead)num(u,'💢 광폭화! 공격력 +20% · 받는 피해 -15% · 회피·치명 ↑','crit')},900);try{CH.sfx('roar')}catch(_){}screenFlash('r');B.shake=.7;setTimeout(function(){if(!B.over)msg('💢 '+u.nm+'이(가) 광폭화했다! 공격력 +20%, 받는 피해 15% 감소, 회피·치명타가 또 올랐다!','enemy',2400)},300);try{u.g.traverse(function(o){if(o.isMesh&&o.material&&o.material.emissive){o.material.emissive.setHex(0x8a1004);o.material.emissiveIntensity=.9}})}catch(_){}if(B.bossEl)B.bossEl.classList.add('rage2')}
-   if(u.boss&&!B.ph2&&u.hp>0&&u.hp<=u.max*.5&&!B.over){B.ph2=1;window.__bmus='boss2';u.atk0=u.atk;u.atk=Math.round(u.atk0*1.2);u.eva=(u.eva||0)+5;u.luk=(u.luk||0)+5;u.mv=(u.mv||3)+1;u.sgr=Math.round((u.sgr||20)*1.4);setTimeout(function(){if(!u.dead)num(u,'🔥 분노! 공격력 +20% · 회피·치명 ↑ · 이동 +1','crit')},900);try{CH.sfx('roar')}catch(_){}screenFlash('r');B.shake=.5;setTimeout(function(){if(!B.over)msg('🔥 '+u.nm+'이(가) 분노했다! 공격력 +20%, 회피·치명타가 올랐다! (체력 20% 아래면 광폭화)','enemy',2200)},300);try{u.g.traverse(function(o){if(o.isMesh&&o.material&&o.material.emissive){o.material=o.material.clone();o.material.emissive.setHex(0x551008);o.material.emissiveIntensity=.6}})}catch(_){}if(B.bossEl)B.bossEl.classList.add('rage')}if(u.boss&&B.bossEl){B.bossEl.querySelector('i b').style.width=(p*100)+'%';B.bossEl.querySelector('em').textContent=Math.max(0,u.hp)+' / '+u.max;var bg2=B.bossEl.querySelector('.bbg b');if(bg2)bg2.style.width=Math.min(100,u.sg||0)+'%'}}u.el.querySelector('em').textContent=Math.max(0,u.hp)+'/'+u.max;u.el.classList.toggle('low',p<.3)}
+ function upBar(u){if(u&&u.hero&&u!==H&&B.party)try{drawMe()}catch(_){};var p=Math.max(0,u.hp)/u.max;u.el.querySelector('b').style.width=(p*100)+'%';if(u.hero){var gb=u.el.querySelector('.sgb b');if(gb)gb.style.width=((u===H?B.g:u.st&&u.st.g)||0)+'%'}else{var st2=u.el.querySelector('.bst');if(st2)st2.textContent=(opt.boss&&!u.agro&&u.hp>=u.max?'💤':'')+((u.psn&&u.psn.t>0)||(u.psn2&&u.psn2.t>0)?'☠️':'')+(u.weak&&u.weak.t>0?'⬇️':'')+(u.stun?'💫':'')+(u.howl&&u.howl.t>0?'🔺':'')+(u.bfD&&u.bfD.t>0?'🛡️':'')+(u.bfA&&u.bfA.t>0?'🔥':'')+(u.bfE&&u.bfE.t>0?'👻':'')+(u.mk&&u.mk.t>0?'🎯':'')+(u.mpMax?' 🔷'+(u.mp|0):'');var mg=u.el.querySelector('.msgb b');if(mg)mg.style.width=Math.min(100,u.sg||0)+'%';if(u.boss&&!B.ph3&&B.ph2&&u.hp>0&&u.hp<=u.max*.2&&!B.over){B.ph3=1;u.dr=.15;u.atk=Math.round((u.atk0||u.atk)*1.4);u.eva=(u.eva||0)+5;u.luk=(u.luk||0)+5;setTimeout(function(){if(!u.dead)num(u,'💢 광폭화! 공격력 처음보다 +40% · 받는 피해 -15% · 회피·치명 ↑','crit')},900);try{CH.sfx('roar')}catch(_){}screenFlash('r');B.shake=.7;setTimeout(function(){if(!B.over)msg('💢 '+u.nm+'이(가) 광폭화했다! 공격력이 처음보다 +40%, 받는 피해 15% 감소, 회피·치명타가 또 올랐다!','enemy',2400)},300);try{u.g.traverse(function(o){if(o.isMesh&&o.material&&o.material.emissive){o.material.emissive.setHex(0x8a1004);o.material.emissiveIntensity=.9}})}catch(_){}if(B.bossEl)B.bossEl.classList.add('rage2')}
+   if(u.boss&&!B.ph2&&u.hp>0&&u.hp<=u.max*.5&&!B.over){B.ph2=1;window.__bmus='boss2';u.atk0=u.atk;u.atk=Math.round(u.atk0*1.2);u.eva=(u.eva||0)+5;u.luk=(u.luk||0)+5;u.mv=(u.mv||3)+1;u.sgr=Math.round((u.sgr||20)*1.4);setTimeout(function(){if(!u.dead)num(u,'🔥 분노! 공격력 +20% · 받는 피해 -10% · 회피·치명 ↑ · 이동 +1','crit')},900);try{CH.sfx('roar')}catch(_){}screenFlash('r');B.shake=.5;setTimeout(function(){if(!B.over)msg('🔥 '+u.nm+'이(가) 분노했다! 공격력 +20%, 받는 피해 -10%, 회피·치명타가 올랐다! (체력 20% 아래면 광폭화)','enemy',2200)},300);try{u.g.traverse(function(o){if(o.isMesh&&o.material&&o.material.emissive){o.material=o.material.clone();o.material.emissive.setHex(0x551008);o.material.emissiveIntensity=.6}})}catch(_){}if(B.bossEl)B.bossEl.classList.add('rage')}if(u.boss&&B.bossEl){B.bossEl.querySelector('i b').style.width=(p*100)+'%';B.bossEl.querySelector('em').textContent=Math.max(0,u.hp)+' / '+u.max;var bg2=B.bossEl.querySelector('.bbg b');if(bg2)bg2.style.width=Math.min(100,u.sg||0)+'%'}}u.el.querySelector('em').textContent=Math.max(0,u.hp)+'/'+u.max;u.el.classList.toggle('low',p<.3)}
  /* 보스 패시브: 부하 소환 (2026-11-16)
     여왕거미: 깨어난 뒤 7턴마다 새끼거미(Lv.6~7) 2마리 (2026-11-18 10시, 이전 3마리·그전 4턴·4마리) · 여왕 방어 22 · 늑대왕(다이어 울프): 우리를 알아챈 뒤 3턴마다 늑대(Lv.11~12) 3마리 */
  var BSP={qs15:{every:7,n:3,cap:12,ks:['sb8','sb9'],agro:1,wake:'🕷️ 여왕거미가 깨어났어요! 이제 <b>7턴마다</b> 새끼거미를 낳아요!',col:0xb07aff,ic:'🥚',nm:'새끼 부화',sfx:'hiss',say:function(c){return '🥚 여왕거미 패시브 <b>새끼 부화</b>! 새끼거미 '+c+'마리가 태어났어요!'}},
   dw:{every:6,n:3,cap:6,ks:['wl13','wl14'],agro:1,wake:'🐺 늑대왕이 우리를 알아챘어요! 이제 <b>6턴마다</b> 늑대를 불러요!',col:0xffb04a,ic:'🐺',nm:'늑대 부르기',sfx:'howl',say:function(c){return '🐺 늑대왕 패시브 <b>늑대 부르기</b>! 울음소리에 늑대 '+c+'마리가 달려왔어요!'}},
   gm19:{also:{every:8,n:2,cap:4,ks:['gw'],hpAt:.6,col:0xc9b48a,ic:'🧱',nm:'돌 깨우기',sfx:'boom',first:'🧱 체력이 60% 아래로! 이제 <b>8턴마다</b> 작은 블록 골렘 2마리를 깨워요!',say:function(c){return '🧱 땅이 울리며 <b>작은 블록 골렘</b> '+c+'마리가 깨어났어요!'}},every:5,n:1,cap:2,ks:['g13','g14'],agro:1,wake:'🪓 골렘 장군이 깨어났어요! <b>5턴마다</b> 바위 골렘을 일으켜요! (체력 60% 아래부터는 <b>8턴마다</b> 작은 블록 골렘 2마리도)',col:0xd8b07a,ic:'🧱',nm:'바위 깨우기',sfx:'boom',say:function(c){return '🧱 골렘 장군 패시브 <b>바위 깨우기</b>! 바닥의 바위가 골렘 '+c+'마리로 일어났어요!'}},
-  gb20:{also2:{every:9,n:2,cap:4,ks:['g16','g17','g18'],rnd:1,agro:1,col:0x9ad0ff,ic:'⚙️',nm:'골렘 소환',sfx:'boom',say:function(c){return '⚙️ 고대 골렘 패시브 <b>골렘 소환</b>! 바닥에서 골렘 '+c+'마리가 솟아올랐어요!'}},also:{every:8,n:2,cap:4,ks:['gw'],hpAt:.6,col:0xc9b48a,ic:'🧱',nm:'돌 깨우기',sfx:'boom',first:'🧱 체력이 60% 아래로! 이제 <b>8턴마다</b> 작은 블록 골렘 2마리를 깨워요!',say:function(c){return '🧱 땅이 울리며 <b>작은 블록 골렘</b> '+c+'마리가 깨어났어요!'}},every:4,n:2,cap:3,ks:['gc'],agro:1,wake:'💠 고대 골렘이 깨어났어요! <b>4턴마다</b> 코어 파편을 떼어 내요! (파편은 다가와서 <b>자폭</b>해요) · 체력이 60% 아래가 되면 <b>8턴마다</b> 작은 블록 골렘 2마리도 깨워요!',col:0x86ffd8,ic:'💠',nm:'코어 분리',sfx:'boom',say:function(c){return '💠 고대 골렘 패시브 <b>코어 분리</b>! 마력 파편 '+c+'개가 떨어져 나왔어요! 붙으면 자폭해요!'}}};
+  gb20:{also2:{every:9,n:2,cap:4,ks:['g16','g17','g18'],rnd:1,agro:1,col:0x9ad0ff,ic:'⚙️',nm:'골렘 소환',sfx:'boom',say:function(c){return '⚙️ 고대 골렘 패시브 <b>골렘 소환</b>! 바닥에서 골렘 '+c+'마리가 솟아올랐어요!'}},also:{every:8,n:2,cap:4,ks:['gw'],hpAt:.6,col:0xc9b48a,ic:'🧱',nm:'돌 깨우기',sfx:'boom',first:'🧱 체력이 60% 아래로! 이제 <b>8턴마다</b> 작은 블록 골렘 2마리를 깨워요!',say:function(c){return '🧱 땅이 울리며 <b>작은 블록 골렘</b> '+c+'마리가 깨어났어요!'}},every:4,n:2,cap:3,ks:['gc'],agro:1,wake:'💠 고대 골렘이 깨어났어요! <b>4턴마다</b> 코어 파편을 떼어 내요! (파편은 다가와서 <b>자폭</b>해요) · <b>9턴마다</b> 자수정·덩굴·얼음 골렘 2마리도 불러요 · 체력이 60% 아래가 되면 <b>8턴마다</b> 작은 블록 골렘 2마리도 깨워요!',col:0x86ffd8,ic:'💠',nm:'코어 분리',sfx:'boom',say:function(c){return '💠 고대 골렘 패시브 <b>코어 분리</b>! 마력 파편 '+c+'개가 떨어져 나왔어요! 붙으면 자폭해요!'}}};
  function bossSpawn(){var tot=0;B.units.forEach(function(q){var P0=BSP[q.k];if(!P0)return;[P0].concat(P0.also?[P0.also]:[]).concat(P0.also2?[P0.also2]:[]).forEach(function(P){if(q.dead||B.over)return;if(P.hpAt){if(q.hp/q.max>P.hpAt)return;if(q._hpT==null){q._hpT=B.turn;if(P.first)msg(P.first,'enemy',2200)}if((B.turn-q._hpT)%P.every!==0)return}else{var t0=P.agro?q.agroT:1;if(t0==null||B.turn<=t0||(B.turn-t0)%P.every!==0)return}
    var alive=B.units.filter(function(u){return u.spawnOf===q&&!u.dead&&P.ks.indexOf(u.k)>=0}).length,n=Math.min(P.n,P.cap-alive);if(n<=0){msg(P.ic+' 부하가 너무 많아서 더 나오지 못했어요','enemy',1500);return}
    var cells=[];for(var r=1;r<=5&&cells.length<n;r++)for(var dx=-r;dx<=r;dx++)for(var dz=-r;dz<=r;dz++){if(Math.abs(dx)+Math.abs(dz)!==r||cells.length>=n)continue;var x=q.x+dx,z=q.z+dz;if(passable(x,z)&&!unitAt(x,z)&&!cells.some(function(c){return c[0]===x&&c[1]===z}))cells.push([x,z])}
@@ -7182,10 +7130,12 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function effAtk(u){return u.hero?H.atk:Math.round(u.atk*(u.weak&&u.weak.t>0?(1-u.weak.p/100):1)*(u.bfA&&u.bfA.t>0?1+u.bfA.p/100:1))}
  function effDef(u){return u.hero?H.def*(B.buf.def&&B.buf.def.t>0?B.buf.def.m:1):Math.round((u.defOv!=null?u.defOv:u.def)*(u.bfD&&u.bfD.t>0?1+u.bfD.p/100:1))}
  /* 지능 명중 (2026-11-17): 90% + (공격 지능 − 맞는 쪽 지능)×2%, 60~100% · 궁극기는 항상 명중 */
- function intOf(u){if(!u)return 0;if(u.hero)return u.int||0;if(u.int==null){var lv=u.lv||1;u.int=(lv<=10?0:(lv-10)*2)+(u.boss?4:0)}return u.int}
+ function intOf(u){if(!u)return 0;if(u.hero)return u.int||0;if(u.int==null){var lv=(u.d&&u.d.lv0)||u.lv||1;/* 11-28: 명중 계산은 예전 내부 레벨 그대로 */u.int=(lv<=10?0:(lv-10)*2)+(u.boss?4:0)}return u.int}
  function hitPct(a,d){return Math.max(60,Math.min(100,90+(intOf(a)-intOf(d))*2))}
  function hitOk(a,d){return Math.random()*100<hitPct(a,d)}
- function missG(u){if(u&&u.hero){if(B.imG)return;B.imG=1;gauge(20*(1+(B.sp.gg||0)/100))}else if(u&&u.d&&u.d.sk)u.sg=Math.min(100,(u.sg||0)+20)}
+ /* 11-28 선생님: MISS(빗나감)는 때린 쪽·맞을 뻔한 쪽 모두 스킬 게이지 +20 (같은 수치) · 💨 회피는 게이지 없음 · 우리 편은 한 턴에 한 번 */
+ function missG(u,o){missG1(u);missG1(o)}
+ function missG1(u){if(!u)return;if(u.hero){if(u!==H||u._imT===B.turn)return;u._imT=B.turn;gauge(20)}/* 11-28: 캐릭터마다 한 턴에 한 번 */else if(u.d&&u.d.sk){u.sg=Math.min(100,(u.sg||0)+20);try{upBar(u)}catch(_){}}}
  function effAgi(){return H.agi+(B.buf.agi&&B.buf.agi.t>0?B.buf.agi.a:0)}
  function gauge(n){B.g=Math.max(0,Math.min(100,(B.g||0)+n));SG().sg=Math.round(B.g);X.sv();drawMe();upBar(H);var sb=m.querySelector('.bsk');if(sb)sb.classList.toggle('ready',skActives().some(function(id){return !canUse(id)}))}
  function sideOf(att,def){var vx=att.x-def.x,vz=att.z-def.z;if(!vx&&!vz)return'front';/* 멀리서 쏘는 공격도 방향을 따짐 (큰 쪽 축 기준) */var ux=Math.abs(vx)>=Math.abs(vz)?Math.sign(vx):0,uz=ux?0:Math.sign(vz);if(ux===def.f[0]&&uz===def.f[1])return'front';if(ux===-def.f[0]&&uz===-def.f[1])return'back';return'side'}
@@ -7234,17 +7184,20 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function hOf(u){try{return top(u.x,u.z)}catch(e){return u.wy||0}}
  function dirMul(att,def,dk,r){var p=dk==='back'?15:dk==='side'?5:0,dh=hOf(att)-hOf(def),fd=flr(att)-flr(def);if(dh>.3){p+=10+(fd>=2?10*(fd-1):0);if(r){r.hi=1;r.hiv=10+(fd>=2?10*(fd-1):0)}}else if(dh<-.3&&dk!=='back'){var lv=dk==='front'?10:5;p-=lv;if(r){r.lo=1;r.lov=lv}}if(r)r.pct=p;return 1+p/100}
  function dirTxt(r,dk){var s=[];if(dk==='back')s.push('뒤 +15%');else if(dk==='side')s.push('옆 +5%');if(r&&r.hi)s.push('⛰️ 높은 곳 +'+(r.hiv||10)+'%');if(r&&r.lo)s.push('⛰️ 낮은 곳 -'+(r.lov||10)+'%');return s.join(' · ')}
+ /* 11-28 선생님: 치명타 배수 — 일반 몹 2.5배 · 보스 1.8배 (예전 3배·2배) + 매서운 화살촉 Lv.3·4 치명타 피해 +0.2·+0.4 */
+ var BSKR=.15,BULR=.15,BPCAP=100;/* BPCAP: 데미지 보너스 합계 상한 % *//* 보스 스킬·필살기 방어 (11-28 선생님: 모든 보스 통일) */
+ function critM(def){return(def&&def.boss?1.8:2.5)+((B.sp&&B.sp.crd)||0)}
  function calc(att,def,dk,rollCrit,noRoll){var a=effAtk(att),d=effDef(def),r={dmg:0,miss:false,crit:false,weak:false,dk:dk};
   if(a<d){r.weak=true;if(!noRoll&&Math.random()<1/3){r.miss=true;return r}r.dmg=1;return r}
   if(a===d){r.weak=true;r.dmg=1;return r}
   var m2=dirMul(att,def,dk,r);r.dmg=Math.max(1,Math.round((a-d)*m2));
-  if(rollCrit&&Math.random()*100<(att.luk||0)){r.crit=true;r.dmg*=(def&&def.boss?2:3)/* 11-23: 보스에게 치명타는 2배 */}if(B.dark){if(att.hero)r.dmg=Math.max(1,Math.round(r.dmg*.5));else if(def.hero)r.dmg=Math.round(r.dmg*1.3)}return r}
+  if(rollCrit&&Math.random()*100<(att.luk||0)+((att.hero&&B.sp&&B.sp.crc)||0)){r.crit=true;r.cm=att.hero?critM(def):3;r.dmg=Math.round(r.dmg*r.cm)/* 11-28: 우리 치명타 2.5배(보스 1.8배) · 몬스터 쪽 계산은 그대로 */}if(B.dark){if(att.hero)r.dmg=Math.max(1,Math.round(r.dmg*.5));else if(def.hero)r.dmg=Math.round(r.dmg*1.3)}return r}
  /* 몬스터 → 주인공: 방어가 아무리 높아도 공격력의 10%는 들어옴 (방어만 올려 무적이 되는 것 방지) */
  var _calc0=calc;calc=function(att,def,dk,rc,nr){var r=_calc0(att,def,dk,rc,nr);try{if(def&&def.hero&&att&&!att.hero){var fl=Math.ceil(effAtk(att)*(att.boss?.25:.1)*(r.crit?3:1));/* 11-22: 보스는 최소 25% */if(r.miss){r.miss=false;r.weak=false}if(r.dmg<fl)r.dmg=fl}}catch(e){}return r};
  /* 광폭화한 보스: 받는 피해 15% 감소 (피해율) */
- var _calcDR=calc;calc=function(att,def,dk,rc,nr){var r=_calcDR(att,def,dk,rc,nr);try{if(att&&att.hero&&B.sp&&B.sp.dmgP&&def&&!def.hero&&r.dmg>0)r.dmg=Math.round(r.dmg*(1+B.sp.dmgP/100))}catch(e){}try{if(att&&att.hero&&B.sp&&B.sp.exe&&def&&!def.hero&&def.max&&def.hp/def.max<=.3&&r.dmg>0)r.dmg=Math.round(r.dmg*(1+B.sp.exe/(def.boss?200:100)))/* 11-23: 보스는 처형 보너스 절반 */}catch(e){}try{if(def&&def.dr&&!def.hero&&r.dmg>1)r.dmg=Math.max(1,Math.round(r.dmg*(1-def.dr)))}catch(e){}return r};
+ var _calcDR=calc;calc=function(att,def,dk,rc,nr){var r=_calcDR(att,def,dk,rc,nr);/* 11-28 선생님: 데미지 보너스(집중·약점 표시·회피 기동·약점 간파)는 곱하지 않고 퍼센트끼리 더해서 합계 +100%(2배)까지만 */try{if(att&&att.hero&&def&&!def.hero&&r.dmg>0){var bp=0;if(B.sp&&B.sp.dmgP)bp+=B.sp.dmgP/(def.boss?2:1);/* 사냥꾼의 집중 — 보스는 절반 */if(def.mk&&def.mk.t>0)bp+=def.mk.p;/* 조준 사격 「약점 표시」 — 보스도 그대로 */if(att===H&&!B._ctr&&B.buf&&B.buf.nx&&B.buf.agi&&B.buf.agi.t>0)bp+=B.buf.nx.p;/* 회피 기동: 다음 공격 1번 */if(B.sp&&B.sp.exe&&def.max&&def.hp/def.max<=.5)bp+=B.sp.exe/(def.boss?2:1);/* 약점 간파 — 체력 50% 이하 · 보스는 절반 */if(bp>0)r.dmg=Math.round(r.dmg*(1+Math.min(BPCAP,bp)/100))}}catch(e){}try{if(def&&def.dr&&!def.hero&&r.dmg>1)r.dmg=Math.max(1,Math.round(r.dmg*(1-def.dr)))}catch(e){}return r};
  /* 11-22 08:41 보스 분노: 체력 절반 아래면 받는 피해 +10% (공격 +20%는 원래 있음) → 긴 싸움을 끝내기 쉽게 */
- var _calcRg=calc;calc=function(att,def,dk,rc,nr){var r=_calcRg(att,def,dk,rc,nr);try{if(att&&att.hero&&def&&def.boss&&def.max&&def.hp<def.max*.5&&r.dmg>0){r.dmg=Math.round(r.dmg*1.1);if(!nr&&!B._rage){B._rage=1;setTimeout(function(){try{if(!def.dead)num(def,'😡 분노! 공격 +20% · 받는 피해 +10%','weak');msg('😡 보스가 분노했어요! 더 세게 때리지만, 그만큼 더 아파해요 (받는 피해 +10%)','enemy',1800)}catch(_){}},300)}}}catch(e){}return r};
+ var _calcRg=calc;calc=function(att,def,dk,rc,nr){var r=_calcRg(att,def,dk,rc,nr);try{if(att&&att.hero&&def&&def.boss&&def.max&&def.hp<def.max*.5&&r.dmg>0){r.dmg=Math.max(1,Math.round(r.dmg*.9));/* 11-28 선생님: 분노하면 받는 피해 -10% (예전 +10%) */}}catch(e){}return r};
  function dmgPrev(u){var dk=sideOf(H,u),r=calc(H,u,dk,false,true);return{dk:dk,dmg:r.dmg,weak:r.weak,r:r}}
  /* 화면 효과 */
  function fxAt(u,cls,html,dy){var p=proj(u.wx,u.wy+(dy==null?1.2:dy),u.wz),e=document.createElement('div');e.className=cls;e.innerHTML=html||'';e.style.left=p[0]+'px';e.style.top=p[1]+'px';fxL.appendChild(e);setTimeout(function(){e.remove()},1600);return e}
@@ -7293,13 +7246,13 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function punch(u,v,f){B.zfT=f||.7;B.userPan=0;B.want.set((u.wx+v.wx)/2,0,(u.wz+v.wz)/2);clearTimeout(B.pzT);B.pzT=setTimeout(function(){B.zfT=1},1100)}
  function hitstop(ms,slow){B.ts=.03;setTimeout(function(){B.ts=slow||1},ms)}
  function screenFlash(c){var e=document.createElement('div');e.className='bflash '+(c||'');m.appendChild(e);setTimeout(function(){e.remove()},400)}
- function strike(u,isCounter,after){if(u&&!u.hero)u.atkd=1;/* 11/20: 공격을 받으면(빗나가도) 자던 적이 깸 */H.f=[u.x-H.x,u.z-H.z];place(H);var dk=sideOf(H,u),r=calc(H,u,dk,true);if(!r.miss&&!isCounter&&!hitOk(H,u)){r.miss=true;r.im=true}if(!r.miss&&(u.eva||(u.bfE&&u.bfE.t>0))&&dk!=='back'&&Math.random()*100<(u.eva||0)+(u.bfE&&u.bfE.t>0?u.bfE.p:0)){r.miss=true;r.eva=true}var shot=H.arch&&man(H,u)>=2;if(H.arch&&!shot&&!r.miss)r.dmg=Math.max(1,Math.round(r.dmg*.5));if(shot)arrowFx(H,u);if(isCounter&&B.sp.ctr&&!r.miss)r.dmg=Math.round(r.dmg*(1+B.sp.ctr/100));punch(H,u,isCounter?.62:.7);
+ function strike(u,isCounter,after){if(u&&!u.hero)u.atkd=1;/* 11/20: 공격을 받으면(빗나가도) 자던 적이 깸 */H.f=[u.x-H.x,u.z-H.z];place(H);B._ctr=isCounter?1:0;var dk=sideOf(H,u),r=calc(H,u,dk,true);B._ctr=0;if(!isCounter&&B.buf&&B.buf.nx)B.buf.nx.hit=1;/* 회피 기동의 「다음 공격 1번」 사용 */if(!r.miss&&!isCounter&&!hitOk(H,u)){r.miss=true;r.im=true}if(!r.miss&&(u.eva||(u.bfE&&u.bfE.t>0))&&dk!=='back'&&Math.random()*100<(u.eva||0)+(u.bfE&&u.bfE.t>0?u.bfE.p:0)){r.miss=true;r.eva=true}var shot=H.arch&&man(H,u)>=2;if(H.arch&&!shot&&!r.miss)r.dmg=Math.max(1,Math.round(r.dmg*.5));if(shot)arrowFx(H,u);if(isCounter&&B.sp.ctr&&!r.miss)r.dmg=Math.round(r.dmg*(1+B.sp.ctr/100));punch(H,u,isCounter?.62:.7);
   var T0={punch:.16,blade:.27,hammer:.36,bow:.3,dagger:.15,great:.4}[H.wk],AT={punch:.45,blade:.55,hammer:.7,bow:.55,dagger:.42,great:.78}[H.wk];H.g.userData.atk=AT;H.g.userData.atkT=AT;H.g.userData.atkK=H.wk;
   CH.sfx(H.wk==='bow'?(shot?'swish':'punch'):H.wk==='punch'?'punch':H.wk==='hammer'?'smash':'slash');if(H.wk==='dagger')setTimeout(function(){CH.sfx('swish')},170);if(H.wk==='great')setTimeout(function(){CH.sfx('boom');B.shake=.3},T0*1000);var ox=H.wx,oz=H.wz;
   tween(AT,function(p){var k=p<.4?p/.4:p<.6?1:1-(p-.6)/.4;H.wx=ox+H.f[0]*.26*k;H.wz=oz+H.f[1]*.26*k;place(H)},function(){H.wx=ox;H.wz=oz;place(H)});
   setTimeout(function(){
-   if(r.miss){num(u,r.eva?'💨 회피!':'MISS','miss');CH.sfx('miss');if(!isCounter&&!r.eva)missG(H);if(r.eva){var ex0=u.wx,ez0=u.wz;tween(.25,function(p){var k2=Math.sin(p*Math.PI)*.3;u.wx=ex0+H.f[0]*k2;u.wz=ez0+H.f[1]*k2;place(u)},function(){u.wx=ex0;u.wz=ez0;place(u)})}}
-   else{u.hp-=r.dmg;flash(u,r.crit);u.an.hurt=1;wpOnHit(u);burst(u,r.crit?'crit':H.wk==='great'?'hammer':H.wk==='dagger'?'blade':H.wk);if(!isCounter)gauge(10*(1+B.sp.gg/100));if(H.ac==='qsac'&&!(u.d&&u.d.gol)&&Math.random()<.3){u.psn={d:30,t:u.boss?4:5};setTimeout(function(){if(!u.dead)num(u,'☠️ 맹독! '+(u.boss?4:5)+'턴 동안 -30','psn')},450)}
+   if(r.miss){num(u,r.eva?'💨 회피!':'MISS','miss');CH.sfx('miss');if(!isCounter&&!r.eva)missG(H,u);if(r.eva){var ex0=u.wx,ez0=u.wz;tween(.25,function(p){var k2=Math.sin(p*Math.PI)*.3;u.wx=ex0+H.f[0]*k2;u.wz=ez0+H.f[1]*k2;place(u)},function(){u.wx=ex0;u.wz=ez0;place(u)})}}
+   else{u.hp-=r.dmg;flash(u,r.crit);u.an.hurt=1;wpOnHit(u);burst(u,r.crit?'crit':H.wk==='great'?'hammer':H.wk==='dagger'?'blade':H.wk);if(!isCounter)gauge(10*(1+B.sp.gg/100));if(H.ac==='qsac'&&!(u.d&&u.d.gol)&&Math.random()<.3){var qd=30+Math.round((H.atk||0)*.3);/* 11-28 선생님: 맹독 = 30 + 공격력의 30% */u.psn={d:qd,t:u.boss?4:5};setTimeout(function(){if(!u.dead)num(u,'☠️ 맹독! '+(u.boss?4:5)+'턴 동안 -'+qd,'psn')},450)}
     if(r.crit){CH.sfx('crit');hitstop(140,.35);setTimeout(function(){B.ts=1},520);B.shake=.45;screenFlash('w');B.zfT=.55;if(!u.boss)u.stun=1;num(u,'CRITICAL!<br>'+r.dmg,'crit');setTimeout(function(){if(!u.dead){num(u,u.boss?'🛡️ 기절 면역':'💫 기절','stun');if(!u.boss)CH.sfx('stun')}},600)}
     else{hitstop(H.wk==='hammer'||H.wk==='great'?120:H.wk==='dagger'?45:70);num(u,r.dmg+(!r.weak&&dirTxt(r,dk)?'<small>'+dirTxt(r,dk)+'</small>':''),r.weak?'weak':'');B.shake=H.wk==='hammer'?.28:.14}
     var kx=u.wx,kz=u.wz,kb=r.crit?.4:.2;tween(.22,function(p){var s=Math.sin(p*Math.PI)*kb;u.wx=kx+H.f[0]*s;u.wz=kz+H.f[1]*s;place(u)},function(){u.wx=kx;u.wz=kz;place(u)});upBar(u)}
@@ -7309,7 +7262,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function kill(u){u.dead=1;try{dexKill(u.k)}catch(e){}CH.sfx('poof');try{var st2=fxAt(u,'bko','',.8),hh='';for(var i=0;i<8;i++){var a=i/8*6.28;hh+='<i style="--x:'+(Math.cos(a)*46|0)+'px;--y:'+(Math.sin(a)*46|0)+'px">★</i>'}st2.innerHTML=hh;if(!B.units.some(function(q){return!q.hero&&!q.dead&&q!==u})&&!B.finFx){B.finFx=1;try{CH.sfx('crit');setTimeout(function(){CH.sfx('boom')},120)}catch(e){}B.ts=.22;B.zfT=.6;B.userPan=0;B.want.set(u.wx,0,u.wz);screenFlash('w');var fe=document.createElement('div');fe.className='bfinish';fe.innerHTML='FINISH!';m.appendChild(fe);setTimeout(function(){B.ts=1;B.zfT=1},650);setTimeout(function(){fe.remove()},1500)}}catch(e){}u.el.remove();var S0=u.S;u.an.dead=0;tween(.6,function(p){u.an.dead=p;u.sh.material.opacity=.28*(1-p)},function(){sc.remove(u.g);sc.remove(u.sh)});
   fxAt(u,'bpoof','<i></i><i></i><i></i><i></i><i></i>',.5);var dr=u.d.drop;B.drops.push({id:dr[0],n:dr[1]});if(u.d.extra)u.d.extra.forEach(function(e){B.drops.push({id:e[0],n:e[1]})})}
  /* 턴 진행 */
- function playerTurn(){if(B.over||B.stop)return;B.imG=0;if(B.auto)B.userPan=0;Object.keys(B.cd).forEach(function(k){if(B.cd[k]>0)B.cd[k]--});['def','agi','inv','rfl'].forEach(function(k){if(B.buf[k]&&B.buf[k].t>0)B.buf[k].t--});B.hrDone=0;if(B.guard&&B.guard.by===H&&B.guard.t>0){B.guard.t--;if(!B.guard.t)setTimeout(function(){num(H,'🤝 맹세가 끝났어요','miss')},600)}B.units.forEach(function(q){if(q.aura)q.aura.visible=!!((B.buf.def&&B.buf.def.t>0)||(B.buf.inv&&B.buf.inv.t>0)||(B.buf.agi&&B.buf.agi.t>0))});
+ function playerTurn(){if(B.over||B.stop)return;B.imG=0;if(B.auto)B.userPan=0;Object.keys(B.cd).forEach(function(k){if(B.cd[k]>0)B.cd[k]--});['def','agi','inv','rfl'].forEach(function(k){if(B.buf[k]&&B.buf[k].t>0)B.buf[k].t--});B.hrDone=0;if(B.buf.nx&&(B.buf.nx.hit||!(B.buf.agi&&B.buf.agi.t>0)))delete B.buf.nx;if(B.guard&&B.guard.by===H&&B.guard.t>0){B.guard.t--;if(!B.guard.t)setTimeout(function(){num(H,'🤝 맹세가 끝났어요','miss')},600)}B.units.forEach(function(q){if(q.aura)q.aura.visible=!!((B.buf.def&&B.buf.def.t>0)||(B.buf.inv&&B.buf.inv.t>0)||(B.buf.agi&&B.buf.agi.t>0))});
   /* 11-26 단단한 체력: 탱커 턴마다 최대 체력의 일부 회복 */try{var rgP=B.sp&&B.sp.rgn;if(rgP&&!H.arch&&H.hp>0&&H.hp<H.max){var rg1=Math.max(1,Math.round(H.max*rgP/100)),nh1=Math.min(H.max,H.hp+rg1);setTimeout(function(){num(H,'❤️ +'+(nh1-H.hp),'heal')},0);H.hp=nh1;HPS().hp=nh1;X.sv();upBar(H);lowHp()}}catch(_){}
   if(B.buf.regen&&B.buf.regen.t>0){B.buf.regen.t--;var rg=Math.round(H.max*B.buf.regen.p/100),nh=Math.min(H.max,H.hp+rg);if(nh>H.hp){num(H,'+'+(nh-H.hp),'heal');H.hp=nh;HPS().hp=nh;X.sv();upBar(H);lowHp()}}
   if(H.psn&&H.psn.t>0){H.psn.t--;H.hp=Math.max(0,H.hp-H.psn.d);HPS().hp=H.hp;X.sv();flash(H);num(H,'☠️ -'+H.psn.d+(H.psn.t?' <small>(독 '+H.psn.t+'턴 남음)</small>':' <small>(독이 풀렸어요)</small>'),'psn');CH.sfx('poison');upBar(H);lowHp();if(H.hp<=0){if(fallen())setTimeout(endPlayerTurn,700);else setTimeout(defeat,600);return}}
@@ -7321,7 +7274,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
   function next(){if(B.over)return;if(i>=list.length){B.turn++;if(B.party){B.party.forEach(function(p){p.done=0});setH(party()[0])}var sp=0;try{sp=qsSpawn()}catch(e){}setTimeout(playerTurn,sp?2300:300);return}var u=list[i++];if(u.dead){next();return}if(idle(u)){setTimeout(next,0);return}var tby=(u.taunt&&u.taunt.t>0&&u.taunt.by&&!u.taunt.by.dead&&u.taunt.by.hp>0)?u.taunt.by:null;if(u.taunt&&u.taunt.t>0)u.taunt.t--;if(B.party){var tg=tby||party().slice().sort(function(a,b){return man(a,u)-man(b,u)||a.hp/a.max-b.hp/b.max})[0];if(tg)setH(tg)}drawOrder(u);focus(u);
    if(u.d&&u.d.gol){u.psn=null;u.psn2=null}/* 2026-11-21: 골렘은 독 면역 */
    if(u.psn&&u.psn.t>0){u.psn.t--;u.hp-=u.psn.d;flash(u);num(u,'☠️ '+u.psn.d,'psn');CH.sfx('poison');upBar(u);if(u.hp<=0){kill(u);drawOrder(null);setTimeout(function(){if(!foes().length){victory();return}next()},700);return}}    if(u.psn2&&u.psn2.t>0){u.psn2.t--;u.hp-=u.psn2.d;flash(u);setTimeout(function(){if(!u.dead)num(u,'☠️ '+u.psn2.d+' <small>독화살</small>','psn')},u.psn&&u.psn.t>=0?350:0);upBar(u);if(u.hp<=0){kill(u);drawOrder(null);setTimeout(function(){if(!foes().length){victory();return}next()},700);return}}
-   if(u.weak&&u.weak.t>0)u.weak.t--;
+   if(u.weak&&u.weak.t>0)u.weak.t--;if(u.mk&&u.mk.t>0)u.mk.t--;
    if(u.boss){u.stun=0;u.web=0;u.root=0}if(u.stun>0){u.stun--;num(u,'💫 기절해서 못 움직여요','stun');CH.sfx('stun');upBar(u);setTimeout(next,850);return}
    var many=list.length>8,far=many&&dist(u,H)>5;if(!far){fxAt(u,'balert','!',1.5);CH.sfx('alert');u.an.hurt=.5}setTimeout(function(){aiAct(u,function(){setTimeout(next,far?40:many?150:300)})},far?60:many?260:480)}
   setTimeout(next,900)}
@@ -7456,8 +7409,8 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function hurtPost(u,dmg){if(H.hp<=0&&B.sp&&B.sp.endure&&!H.endured){H.endured=1;H.hp=1+Math.round(H.max*(B.sp.endH||0)/100);HPS().hp=H.hp;setTimeout(function(){num(H,'🔥 불굴! 버텼다!','crit');CH.sfx('buff')},200);screenFlash('w')}
   var rf=((B.sp&&B.sp.rfl)||0)+(B.buf.rfl&&B.buf.rfl.t>0?B.buf.rfl.p:0);if(rf&&u&&!u.dead&&dmg>0){var td=Math.max(1,Math.round(dmg*rf/100*(u.boss?.5:1)));setTimeout(function(){if(u.dead||B.over)return;u.hp-=td;flash(u);num(u,'🌵 반사 '+td,'weak');upBar(u);if(u.hp<=0){kill(u);drawOrder(null)}},260)}}
  function hurtH(u,dmg,lbl,cls,noEv){if(B.buf.inv&&B.buf.inv.t>0){num(H,'🏰 무적!','miss');CH.sfx('smash');return 0}
-  if(!noEv&&!(u&&!u.hero&&sideOf(u,H)==='back')&&Math.random()*100<effAgi()){num(H,'회피!','miss');CH.sfx('miss');return 0}
-  if(!noEv&&u&&!u.hero&&!hitOk(u,H)){num(H,'MISS','miss');CH.sfx('miss');missG(u);return 0}
+  if(!noEv&&!(u&&!u.hero&&sideOf(u,H)==='back')&&Math.random()*100<effAgi()){num(H,'회피!','miss');CH.sfx('miss');try{rangedCtr(u)}catch(_){}return 0}
+  if(!noEv&&u&&!u.hero&&!hitOk(u,H)){num(H,'MISS','miss');CH.sfx('miss');missG(u,H);return 0}
   dmg=Math.max(1,Math.round(dmg*(u.howl&&u.howl.t>0?1.25:1)));dmg=hurtAdj(u,dmg);
   /* 11-22 아저씨 패시브 「바람의 가호」: 몬스터 스킬·마법이 최대 체력 35% 이상이면 완전히 회피 · Lv1 한 전투 1번 · Lv2 4턴 뒤 1번 더 */
   try{if(B._msk&&H.arch&&u&&!u.hero&&dmg>=H.max*.35){var wl=inCtx('arch',function(){return tLv('B2W')})||0,wn=B.wdN||0;if(wl>wn&&(wn===0||B.turn-(B.wdT||0)>=4)){B.wdN=wn+1;B.wdT=B.turn;num(H,'🌪️ 바람의 가호! 피했다','miss');CH.sfx('miss');msg('🌪️ 바람이 '+esc(H.nm||'아저씨')+'을(를) 감싸 큰 공격을 흘려보냈어요!'+(wl>=2&&B.wdN<2?' (4턴 뒤 한 번 더)':' (이번 전투에는 더 발동하지 않아요)'),'me',1800);return 0}}}catch(_){}
@@ -7483,7 +7436,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
     if(d&&k.bl&&!H.bleed){H.bleed={d:k.bl,t:3};setTimeout(function(){num(H,'🩸 출혈! 3턴 동안 매 턴 -'+k.bl,'psn')},350)}if(d)extraFx(u,k,d);
     if(d&&k.st&&Math.random()<k.st){H.stun=1;setTimeout(function(){num(H,'💫 기절!','stun');CH.sfx('stun')},400)}
     i++;if(i<hits&&H.hp>0){setTimeout(function(){lunge(u,.3);one()},380)}else fin()})()},u.boss?700:450)}
- function monAttack(u,cb){B._msk=0;u.f=[H.x-u.x,H.z-u.z];setSprite(u);var dk=sideOf(u,H),ev=dk!=='back'&&Math.random()*100<effAgi(),/* 11/20: 뒤에서 맞으면 회피 불가 */r=calc(u,H,dk,!!u.luk),inv=B.buf.inv&&B.buf.inv.t>0;if(inv)ev=false;if(!inv&&!ev&&!r.miss&&!hitOk(u,H)){r.miss=true;missG(u)}punch(u,H,.78);
+ function monAttack(u,cb){B._msk=0;u.f=[H.x-u.x,H.z-u.z];setSprite(u);var dk=sideOf(u,H),ev=dk!=='back'&&Math.random()*100<effAgi(),/* 11/20: 뒤에서 맞으면 회피 불가 */r=calc(u,H,dk,!!u.luk),inv=B.buf.inv&&B.buf.inv.t>0;if(inv)ev=false;if(!inv&&!ev&&!r.miss&&!hitOk(u,H)){r.miss=true;missG(u,H)}punch(u,H,.78);
   var ox=u.wx,oz=u.wz;CH.sfx(u.d.snd);u.an.atk=0;tween(.42,function(p){u.an.atk=p;var k=Math.sin(p*Math.PI);u.wx=ox+u.f[0]*.38*k;u.wz=oz+u.f[1]*.38*k;place(u)},function(){u.wx=ox;u.wz=oz;u.an.atk=null;place(u)});
   setTimeout(function(){if(inv){num(H,'🏰 무적!','miss');CH.sfx('smash');setTimeout(function(){if(B.over||u.dead){cb();return}msg('🏰 요새의 반격!','me',800);strike(u,true,function(){if(!foes().length){victory();return}cb()})},380);return}
    if(ev||r.miss){num(H,ev?'회피!':'MISS','miss');CH.sfx('miss');var hx=H.wx;tween(.25,function(p){H.wx=hx-Math.sin(p*Math.PI)*.25*u.f[0];H.wz=wz(H.z)-Math.sin(p*Math.PI)*.25*u.f[1];place(H)},function(){H.wx=hx;H.wz=wz(H.z);place(H)});
@@ -7491,6 +7444,9 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
    else{if(r.crit){r.dmg=Math.max(1,Math.round(r.dmg/3*1.8));setTimeout(function(){num(H,'💥 치명타!','crit');CH.sfx('crit')},120)}if(u.howl&&u.howl.t>0)r.dmg=Math.round(r.dmg*1.25);r.dmg=hurtAdj(u,r.dmg);H.hp-=r.dmg;hurtPost(u,r.dmg);H.g.userData.hurt=.4;flash(H);burst(H,'mon');CH.sfx('hurt');B.shake=u.d.gol?.5:.22;if(u.d.gol)try{CH.sfx('smash')}catch(_){};hitstop(60);screenFlash('r');num(H,'-'+r.dmg+(!r.weak&&dirTxt(r,dk)?'<small>'+dirTxt(r,dk).replace('뒤 +','뒤에서 +').replace('옆 +','옆에서 +')+'</small>':''),'hurt');if(u.d.psn&&Math.random()<(u.d.sk?u.d.sk.p:.4)){H.psn=(H.psn&&H.psn.t>0)?{d:Math.max(H.psn.d,u.d.psn),t:Math.max(H.psn.t,3)}:{d:u.d.psn,t:3};setTimeout(function(){msg((u.d.sk?u.d.sk.ic+' '+u.nm+'의 '+u.d.sk.nm+'!':'☠️ 독!'),'enemy',1100);num(H,'☠️ 독 중독! 3턴 동안 매 턴 -'+u.d.psn,'psn');CH.sfx('poison')},380)}upBar(H);drawMe();HPS().hp=Math.max(0,H.hp);X.sv();lowHp();gauge(6*(1+B.sp.gg/100));
     if(B.sp.thorn&&H.hp>0){var td=Math.max(1,Math.round(r.dmg*B.sp.thorn/100));setTimeout(function(){if(u.dead)return;u.hp-=td;flash(u);num(u,'🌵 '+td,'weak');upBar(u);if(u.hp<=0)kill(u)},250)}}
    setTimeout(function(){if(H.hp<=0&&!fallen()){defeat();return}cb()},450)},230)}
+ /* 11-28 선생님: 회피 기동을 켠 동안에는 몬스터의 스킬·원거리 공격을 피해도 반격 (기본 공격 회피 반격은 원래 있음) */
+ function rangedCtr(u){if(!u||u.hero||u.dead||B.over||H.hp<=0||!(B.buf.agi&&B.buf.agi.t>0&&B.buf.agi.rc))return;var hh=H;B._ctr=1;var r=calc(H,u,sideOf(H,u),true);B._ctr=0;if(r.miss)return;var d=r.dmg;if(H.arch&&man(H,u)<2)d=Math.max(1,Math.round(d*.5));if(B.sp&&B.sp.ctr)d=Math.round(d*(1+B.sp.ctr/100));
+  setTimeout(function(){if(u.dead||B.over)return;try{if(hh.arch&&man(hh,u)>=2)arrowFx(hh,u)}catch(_){}try{CH.sfx('counter')}catch(_){}msg('⚡ 회피하고 반격!','me',900);u.hp-=d;flash(u,r.crit);u.an.hurt=1;num(u,(r.crit?'CRITICAL!<br>':'')+d+'<small>반격</small>',r.crit?'crit':'');upBar(u);if(u.hp<=0&&!u.dead)kill(u)},380)}
  function lowHp(){var low=H.hp>0&&H.hp/H.max<.3;m.classList.toggle('lowhp',low);if(low&&!B.hb){B.hb=setInterval(function(){if(B.over||!m.classList.contains('lowhp')){clearInterval(B.hb);B.hb=null;return}CH.sfx('heart')},1100)}}
  /* ===== 스킬 ===== */
  function man(a,b){return Math.abs(a.x-b.x)+Math.abs(a.z-b.z)}
@@ -7569,7 +7525,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
   setTimeout(function(){B.ts=1;runSkill(sk,u,function(){drawOrder(null);setTimeout(function(){if(!foes().length){victory();return}afterAct()},500)})},TWAIT[tt])}
  B.dbg={hiRng:hiRng,dirMul:dirMul,sideOf:sideOf,G:G,calc:function(a,d,k){return calc(a,d,k,false,true)},strike:strike,hurtAdj:hurtAdj,hitPct:hitPct,intOf:intOf,doSkill:doSkill,hurtH:hurtH,setH:setH,place:place,canUse:canUse,inAtk:inAtk,skillTargets:skillTargets,end:endPlayerTurn};
  /* 궁수 「치고 빠지기」: 공격·스킬 뒤 n칸 더 이동 */
- function afterAct(){if(B.over||B.stop)return;var n=(B.sp&&B.sp.hrun)||0;if(n&&!B.hrDone&&foes().length&&H.hp>0){B.hrDone=1;B.hr=1;B.hrMv=H.mv;H.mv=n;B.moved=false;B.undo=null;B.phase='player';refreshHL();msg('🏃 치고 빠지기! '+n+'칸 더 움직일 수 있어요 · 안 움직이려면 <b>⏭ 턴 끝</b>','me',2000);m.querySelector('.bend').classList.add('pulse');if(B.auto)setTimeout(autoHR,450);return}endPlayerTurn()}
+ function afterAct(){if(B.over||B.stop)return;try{if(B.buf.nx&&B.buf.nx.hit)delete B.buf.nx}catch(_){}var n=(B.sp&&B.sp.hrun)||0;if(n&&!B.hrDone&&foes().length&&H.hp>0){B.hrDone=1;B.hr=1;B.hrMv=H.mv;H.mv=n;B.moved=false;B.undo=null;B.phase='player';refreshHL();msg('🏃 치고 빠지기! '+n+'칸 더 움직일 수 있어요 · 안 움직이려면 <b>⏭ 턴 끝</b>','me',2000);m.querySelector('.bend').classList.add('pulse');if(B.auto)setTimeout(autoHR,450);return}endPlayerTurn()}
  function autoHR(){if(!B.hr||B.over||B.phase!=='player')return;var R2=reach(H,H.mv),best=null,bs=-1e9,FS=foes();[[H.x,H.z]].concat(Object.keys(R2.res).map(function(k){return k.split(',').map(Number)})).forEach(function(c){var o=unitAt(c[0],c[1]);if(o&&o!==H)return;var dmin=99;FS.forEach(function(q){dmin=Math.min(dmin,Math.abs(c[0]-q.x)+Math.abs(c[1]-q.z))});var sc2=Math.min(dmin,4)*10-(dmin<=1?40:0)-(Math.abs(c[0]-H.x)+Math.abs(c[1]-H.z))*.5;if(sc2>bs){bs=sc2;best=c}});
   if(best&&(best[0]!==H.x||best[1]!==H.z)){var path=pathTo(R2,best[0],best[1]);B.moved=true;B.phase='busy';clearHL();walkPath(H,path,function(){B.phase='player';setTimeout(endPlayerTurn,300)})}else endPlayerTurn()}
  function arrowFx(a,b,small){try{var p0=proj(a.wx,a.wy+.9,a.wz),p1=proj(b.wx,b.wy+.6,b.wz),e=document.createElement('div');e.className='barrow'+(small?' sm':'');e.style.left=p0[0]+'px';e.style.top=p0[1]+'px';e.style.setProperty('--dx',(p1[0]-p0[0])+'px');e.style.setProperty('--dy',(p1[1]-p0[1])+'px');e.style.setProperty('--a',Math.atan2(p1[1]-p0[1],p1[0]-p0[0])+'rad');fxL.appendChild(e);setTimeout(function(){e.remove()},500)}catch(_){}}
@@ -7580,14 +7536,15 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
  function elFx(u,el){if(!el)return;try{var e=fxAt(u,'bel '+el,'',.6),h='<s></s>';var n=el==='bolt'?3:el==='ice'?6:9;for(var i=0;i<n;i++){var a=Math.random()*6.28,r2=24+Math.random()*38;h+='<i style="--x:'+(Math.cos(a)*r2|0)+'px;--y:'+((el==='fire'?-Math.abs(Math.sin(a))*r2*1.4:Math.sin(a)*r2)|0)+'px;--d:'+(Math.random()*.2).toFixed(2)+'s;--r:'+((Math.random()*360)|0)+'deg"></i>'}e.innerHTML=h;
    if(!B.elT||performance.now()-B.elT>250){B.elT=performance.now();ring(u.wx,u.wz,ELC[el],2.2);try{CH.sfx(ELS[el])}catch(_){}}}catch(_){}}
  function rainFx(u,rad,el){try{var p=proj(u.wx,u.wy+.2,u.wz),e=document.createElement('div');e.className='brain '+(el||'');e.style.left=p[0]+'px';e.style.top=p[1]+'px';var w=40+rad*46,h='';for(var i=0;i<22;i++)h+='<i style="--x:'+((Math.random()*2-1)*w|0)+'px;--y:'+((Math.random()*2-1)*w*.45|0)+'px;--d:'+(Math.random()*.55).toFixed(2)+'s"></i>';e.innerHTML=h;fxL.appendChild(e);setTimeout(function(){e.remove()},1400)}catch(_){}}
- function skHit(u,sk,mul,opt){opt=opt||{};if(u.dead)return 0;if(!u.hero)u.atkd=1;elFx(u,elOf(sk));var dk=sideOf(H,u),def=u;if(sk.pierce){def={def:u.def*(1-sk.pierce*(u.boss?.5:1))/* 11-23: 보스는 방어 무시 절반 */,f:u.f,x:u.x,z:u.z,hero:false,boss:u.boss,dr:u.dr,hp:u.hp,max:u.max}}
-  if(!sk.ult&&!opt.noMiss&&!hitOk(H,u)){num(u,'MISS','miss');CH.sfx('miss');missG(H);return 0}
-  var r=calc(H,def,dk,!sk.crit),m2=mul;if(sk.gamble)m2=Math.random()<.5?(u.boss?2.5:4):1.5;/* 11-23: 보스는 대박 2.5배 */var dmg;
-  if(r.miss&&!sk.crit){num(u,'MISS','miss');CH.sfx('miss');missG(H);return 0}
-  dmg=Math.max(1,Math.round((r.weak?1:r.dmg/(r.crit?(u.boss?2:3):1))*m2));var crit=r.crit||sk.crit;if(crit)dmg*=(u.boss?2:3);
-  u.hp-=dmg;flash(u,crit);u.an.hurt=1;burst(u,crit?'crit':opt.fx||H.wk);num(u,(crit?'CRITICAL!<br>':'')+dmg+(sk.gamble&&m2>=2.5?'<small>🎲 대박! ×'+m2+'</small>':''),crit?'crit':'skill');
+ function skHit(u,sk,mul,opt){opt=opt||{};if(u.dead)return 0;if(!u.hero)u.atkd=1;elFx(u,elOf(sk));var dk=sideOf(H,u),def=u;if(sk.pierce){def={def:u.def*(1-sk.pierce*(u.boss?.5:1))/* 11-23: 보스는 방어 무시 절반 */,f:u.f,x:u.x,z:u.z,hero:false,boss:u.boss,dr:u.dr,hp:u.hp,max:u.max,mk:u.mk}}
+  if(!sk.ult&&!opt.noMiss&&!hitOk(H,u)){num(u,'MISS','miss');CH.sfx('miss');missG(H,u);return 0}
+  var r=calc(H,def,dk,!sk.crit),m2=mul;if(B.buf&&B.buf.nx)B.buf.nx.hit=1;var dmg;
+  if(r.miss&&!sk.crit){num(u,'MISS','miss');CH.sfx('miss');missG(H,u);return 0}
+  dmg=Math.max(1,Math.round((r.weak?1:r.dmg/(r.crit?(r.cm||critM(u)):1))*m2));var crit=r.crit||sk.crit;if(crit)dmg=Math.round(dmg*critM(u));if(u.boss)dmg=Math.max(1,Math.round(dmg*(1-(sk.ult?BULR:BSKR))));/* 11-28 선생님: 모든 보스(앞으로 나올 보스도) 스킬 피해 -15% · 필살기 피해 -15% */
+  u.hp-=dmg;flash(u,crit);u.an.hurt=1;burst(u,crit?'crit':opt.fx||H.wk);num(u,(crit?'CRITICAL!<br>':'')+dmg,crit?'crit':'skill');
   if(crit||(sk.stun&&Math.random()<sk.stun)){if(u.boss){if(sk.stun)setTimeout(function(){if(!u.dead)num(u,'🛡️ 기절 면역','stun')},400)}else{var stT=(!crit&&sk.stunT)?sk.stunT:1;u.stun=Math.max(u.stun||0,stT);setTimeout(function(){if(!u.dead)num(u,'💫 기절'+(stT>1?' '+stT+'턴':''),'stun')},400)}}
-  if(sk.psn&&u.d&&u.d.gol){setTimeout(function(){if(!u.dead)num(u,'🧱 골렘은 독에 걸리지 않아요','miss')},300)}else if(sk.psn){var pd=Math.max(1,Math.ceil(u.max*sk.psn/100*(1+B.sp.psn/100)/(u.boss?3:1)));/* 11/20: 최대 체력 % 독은 보스에게 1/3만 · 장신구 맹독과 따로 걸림(u.psn2) */u.psn2={d:pd,t:u.boss?2:3};setTimeout(function(){if(!u.dead)num(u,'☠️ 독'+(u.boss?' (보스 2턴)':''),'psn')},500)}
+  if(sk.psn&&u.d&&u.d.gol){setTimeout(function(){if(!u.dead)num(u,'🧱 골렘은 독에 걸리지 않아요','miss')},300)}else if(sk.psn){var pd=Math.max(1,Math.ceil(u.max*sk.psn/100*(1+B.sp.psn/100)/(u.boss?2:1)));/* 11-28 선생님: 최대 체력 % 독은 보스에게 절반 · 3턴 (예전 1/3·2턴) · 장신구 맹독과 따로 걸림(u.psn2) */u.psn2={d:pd,t:3};setTimeout(function(){if(!u.dead)num(u,'☠️ 독 3턴','psn')},500)}
+  if(sk.mark&&u.hp>0&&!u.dead){u.mk={p:sk.mark,t:2};setTimeout(function(){if(!u.dead)num(u,'🎯 약점 표시! 2턴 동안 받는 피해 +'+sk.mark+'%','weak')},650)}
   if(sk.drain){var hl=Math.round(dmg*sk.drain/100),nh=Math.min(H.max,H.hp+hl);if(nh>H.hp){setTimeout(function(){num(H,'+'+(nh-H.hp),'heal')},300);H.hp=nh;HPS().hp=nh;X.sv();upBar(H);drawMe();lowHp()}}
   upBar(u);B.shake=Math.max(B.shake,crit?.4:.18);if(u.hp<=0)setTimeout(function(){if(!u.dead)kill(u)},300);return dmg}
  function swing(target,kind){if(target){H.f=[Math.sign(target.x-H.x)||0,Math.sign(target.z-H.z)||0];if(H.f[0]&&H.f[1])H.f[1]=0;if(!H.f[0]&&!H.f[1])H.f=[0,1];place(H)}var AT=kind==='punch'?.45:.55;H.g.userData.atk=AT;H.g.userData.atkT=AT;H.g.userData.atkK=kind||H.wk;CH.sfx(H.wk==='punch'?'punch':H.wk==='hammer'?'smash':'slash')}
@@ -7637,7 +7594,7 @@ function buildBattle(opt){var T=THREE,HORDE=!opt.pool&&!opt.boss&&!(typeof FZ===
    setTimeout(function(){num(H,'+'+(nh-H.hp),'heal');H.hp=nh;HPS().hp=nh;X.sv();if(sk.regen)B.buf.regen={p:sk.regen,t:3};upBar(H);drawMe();lowHp();setTimeout(done,500)},450);return}
   if(sk.k==='buff'){CH.sfx('buff');ring(H.wx,H.wz,sk.inv?0xffd84a:sk.agi?0xd0d0ff:0x6ab8ff,3);H.g.userData.emo=1;
    if(sk.full){var nh2=H.max;num(H,'+'+(nh2-H.hp),'heal');H.hp=nh2;HPS().hp=nh2;X.sv();upBar(H);lowHp()}
-   if(sk.def)B.buf.def={m:sk.def,t:sk.turns};if(sk.agi)B.buf.agi={a:sk.agi,t:sk.turns};if(sk.inv)B.buf.inv={t:sk.turns};
+   if(sk.def)B.buf.def={m:sk.def,t:sk.turns};if(sk.agi){B.buf.agi={a:sk.agi,t:sk.turns,rc:sk.rctr?1:0};if(sk.nx)B.buf.nx={p:sk.nx};else delete B.buf.nx}if(sk.inv)B.buf.inv={t:sk.turns};
    num(H,sk.inv?'🏰 무적!':sk.agi?'🌫️ 회피 UP':'🛡️ 방어 UP','skill');if(H.aura)H.aura.visible=true;drawMe();setTimeout(done,800);return}
   if(sk.k==='debuff'){CH.sfx('enemyturn');ring(H.wx,H.wz,0xff6a4a,7);B.shake=.3;vFoes().forEach(function(q){q.weak={p:sk.atkDown,t:sk.turns};num(q,'⬇️ 공격력 -'+sk.atkDown+'%','psn');upBar(q)});setTimeout(done,900);return}
   done()}
@@ -7972,7 +7929,7 @@ CH.ITEMDB.tusk={ic:'🐗',nm:'멧돼지 엄니',p:24,mat:1,tier:2,d:'단단한 �
 CH.ITEMDB.wfur={ic:'🧥',nm:'늑대 가죽',p:26,mat:1,tier:2,d:'질긴 늑대 가죽 · 2단계 강화 재료'};
 CH.ITEMDB.wfang={ic:'🦷',nm:'늑대 송곳니',p:30,mat:1,tier:2,d:'날카로운 늑대 송곳니 · 2단계 강화 재료'};
 CH.ITEMDB.dwfang={ic:'🐺',nm:'다이어 울프의 송곳니',p:0,slot:'ac',nosell:1,eff:'🐺 광폭화 (전투당 1번 · 턴 안 씀): 3턴 동안 치명타 +30% · 공격력 +20% · 이동 +4 · 방어력 -30%',d:'늑대왕의 송곳니 장신구 · 광폭화: 3턴 동안 치명타 +30%, 공격력 +20%, 이동 +4칸, 대신 방어력 -30%'};
-CH.ITEMDB.qsac={ic:'🟣',nm:'여왕 독 주머니',p:0,slot:'ac',nosell:1,eff:'☠️ 공격 때 30% 맹독 + 🧪 독 묻히기 (3턴 공격력 +15% · 매 턴 체력 -10%)',d:'여왕거미의 독 주머니 장신구 · 공격할 때 30% 확률로 적에게 맹독(매 턴 -30, 5턴) · 독 묻히기: 3턴 동안 공격력 +15%, 대신 매 턴 체력 -10% (전투당 1번 · 턴 안 씀)'};
+CH.ITEMDB.qsac={ic:'🟣',nm:'여왕 독 주머니',p:0,slot:'ac',nosell:1,eff:'☠️ 공격 때 30% 맹독 + 🧪 독 묻히기 (3턴 공격력 +15% · 매 턴 체력 -10%)',d:'여왕거미의 독 주머니 장신구 · 공격할 때 30% 확률로 적에게 맹독(매 턴 30 + 내 공격력의 30%, 5턴 · 보스는 4턴 · 골렘은 독에 안 걸림) · 독 묻히기: 3턴 동안 공격력 +15%, 대신 매 턴 체력 -10% (전투당 1번 · 턴 안 씀)'};
 CH.ITEMDB.gpelt={ic:'🛡️',nm:'회색 늑대 갑피',p:60,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
 CH.ITEMDB.frost={ic:'❄️',nm:'서리 늑대 털',p:60,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
 CH.ITEMDB.shade={ic:'🌑',nm:'그림자 늑대 털',p:70,mat:1,tier:5,colony:1,d:'늑대 군락 재료 · 5단계 강화 (무기·몸통 5강 필수)'};
@@ -8663,7 +8620,7 @@ function buildF14(A){var T=A.T,r=A.rnd,Z=ZONES['1-4'],P=Z.path;A.noMon=calmCamp(
  traps(A);forestDrops(A);forestMons(A)}
 function campGate(){if(calmCamp()){CH.sfx('door');enterCamp(false);return}
  if(nightCamp()){X.ask('🌙 늑대들이 모두 잠들어 있습니다','몰래 들어가 보시겠습니까? 들킴 게이지가 가득 차면 늑대들이 깨어나 전투가 시작돼요. (잠든 늑대 근처에서는 천천히!)','몰래 들어가기','돌아가기',function(){enterCamp(true)})}
- else X.ask('☀️ 늑대들이 활동 중입니다','전투가 시작됩니다. 들어가시겠습니까? (다이어 울프 Lv.16 + 늑대 무리) ⭐ 권장: Lv.15 이상 · 아저씨와 함께 · 회복 아이템 6개(보스전 최대)','들어가기','돌아가기',function(){bossFight(false)})}
+ else X.ask('☀️ 늑대들이 활동 중입니다','전투가 시작됩니다. 들어가시겠습니까? (다이어 울프 Lv.16 + 늑대 16마리) 우두머리 곁의 늑대들은 더 사나워요: 공격 +20%에 +5 더 · 방어 +10%. 6턴마다 무리 늑대 3마리를 불러요. 보스는 스킬·필살기 피해를 15% 덜 받아요. ⭐ 권장: Lv.15 이상 · 회복약은 6개까지만 쓸 수 있어요','들어가기','돌아가기',function(){bossFight(false)})}
 function enterCamp(sneak){if(!WORLD)return;WORLD.P.x=0;WORLD.P.z=-11.6;CAMP.inside=true;CAMP.noise=0;CAMP.sneak=sneak;stealthUI();if(sneak){CH.sfx('creep');think('쉿… 조용히, 아주 조용히 가야 해…',300)}}
 function stealthUI(){var m=$('vgf');if(!m)return;var e=m.querySelector('.zstl');if(!(CAMP&&CAMP.inside&&CAMP.sneak&&!calmCamp())){if(e)e.remove();return}if(!e){e=document.createElement('div');e.className='zstl';e.innerHTML='<b>🤫 들킴 게이지</b><i><s></s></i>';m.appendChild(e)}e.querySelector('s').style.width=Math.min(100,CAMP.noise).toFixed(0)+'%';e.classList.toggle('hot',CAMP.noise>65)}
 var LP=null;
@@ -8738,7 +8695,7 @@ function queenNest(A){var T=A.T;var nest=new T.Mesh(new T.CircleGeometry(7,24),n
  A.ANIM.push(function(t,dt){var p=(t/900)%1;q.userData.tick(dt||.016,{atk:p<.4?p/.4:null});ar.position.y=Math.abs(Math.sin(t/300))*.1});
  var sg=A.textSprite(T,'⚔️ 누군가 여왕거미와 싸우고 있다!','rgba(90,20,40,.92)','#fff',.8);sg.position.set(0,4.4,-9);A.sc.add(sg);
  A.trigger(0,-5,3.4,'🏹 아저씨를 도우러 가기',function(){queenEvent()},false)}
-function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. ⭐ 권장: Lv.13 이상 · 회복 아이템 6개(보스전 최대) 이상이면 더 좋아요','싸우러 가기','조금 더 준비',function(){qsReady(archName())});return}
+function queenEvent(){if(QS().boss_qs15)return;if(hasArch()){X.ask('🕷️ 여왕거미와 싸울까요?',archName()+'와 함께 여왕거미(Lv.14)와 새끼 독거미 무리에게 도전해요. 보스는 스킬·필살기 피해를 15% 덜 받아요. ⭐ 권장: Lv.13 이상 · 회복약은 6개까지만 쓸 수 있어요','싸우러 가기','조금 더 준비',function(){qsReady(archName())});return}
  CH.sfx('help');dlg([{n:'???',t:'크윽… 이 여왕거미 녀석, 사흘째 버티는 중인데…! 누, 누구냐?!'},{n:'',t:'(깃털 꽂힌 초록 사냥 모자를 쓴 날렵한 아저씨가 거미줄을 피하며 활을 쏘고 있다)'},{n:esc(ST().nm||'나'),t:'혹시… <b>단비 아빠</b> 아니세요?! 마을에서 다들 걱정하고 있어요!'},
   {n:'단비 아빠',t:'단비를 안다고?! 허허… 숲에서 늑대 떼에 쫓기다가 이 동굴로 피했는데, 입구는 가시로 막고… 그만 여왕거미 둥지에 갇혀 버렸지 뭐냐.'},
   {n:'단비 아빠',t:'혼자서는 도저히 못 이기겠더구나. 너, 꽤 강해 보이는데… 나랑 같이 싸워 주겠니?'},{n:'',t:'🏹 <b>궁수 아저씨가 동료가 되었어요!</b> (나와 같은 레벨)'}],null,function(){archJoin('단비 아빠')})}
@@ -8829,56 +8786,7 @@ function archerChar(){var c=archerCh();c.eq=inCtx('arch',function(){return EQ()}
 var _jl=CH.jumpLv;CH.jumpLv=function(){var a=_jl();if(hasArch())a=Math.max(a,inCtx('arch',function(){return _jl()}),inCtx('hero',function(){return _jl()}));return a};
 var _spd=CH.spd;CH.spd=function(){var a=_spd();if(hasArch())a=Math.max(inCtx('arch',function(){return _spd()}),inCtx('hero',function(){return _spd()}));return a};
 /* ===== 궁수 스킬 트리 (주인공과 같은 모양 · 46칸) ===== */
-var AK={R:{t:0,nm:'궁수의 감각',ic:'🏹',p:{atk:2,agi:2},d:'오랜 사냥으로 다듬은 감각. 공격력 +2, 민첩 +2%'}};
-function ak(id,t,par,nm,ic,o,d){var s={t:t,par:[par],nm:nm,ic:ic,d:d};for(var k in o)s[k]=o[k];AK[id]=s}
-/* 명사수의 길 */
-ak('A',1,'R','정조준 사격','🎯',{k:'arrow',r:3,min:2,mul:1.4,g:20,cd:2},'숨을 고르고 정확히 쏜다 (2~3칸 · 1.4배)');
-ak('A1',2,'A','연사','🏹',{k:'arrow',r:3,min:2,mul:.85,hits:2,g:30,cd:2},'화살 2발을 연달아 (0.85배 × 2)');
-ak('A2',2,'A','저격 준비','🔭',{k:'arrow',r:5,min:2,mul:1.6,g:30,cd:2},'멀리 있는 적을 노린다 (최대 5칸 · 1.6배)');
-ak('A1a',3,'A1','삼연사','🏹',{k:'arrow',r:3,min:2,mul:.85,hits:3,g:40,cd:3},'화살 3발 (0.85배 × 3)');
-ak('A1b',3,'A1','관통 화살','➶',{k:'arrow',r:5,min:2,mul:1.5,pierce:.5,g:40,cd:3},'방어력을 절반 무시 (1.5배 · 보스는 25%만)');
-ak('A2a',3,'A2','저격','🎯',{k:'arrow',r:6,min:3,mul:2.2,g:40,cd:3},'3~6칸 먼 적에게 강한 한 발 (2.2배)');
-ak('A2b',3,'A2','기절 화살','💫',{k:'arrow',r:4,min:2,mul:1.2,stun:.5,g:40,cd:3},'50% 확률로 기절 (1.2배)');
-ak('A1a4',4,'A1a','날카로운 화살촉','🔺',{p:{atk:3}},'공격력 +3');ak('A1b4',4,'A1b','행운의 깃털','🪶',{p:{luk:2}},'운 +2%');
-ak('A2a4',4,'A2a','명사수의 눈','👁️',{p:{atk:4}},'공격력 +4');ak('A2b4',4,'A2b','가벼운 몸','💨',{p:{agi:3}},'민첩 +3%');
-ak('A1a5',5,'A1a4','폭풍 연사','🌪️',{k:'arrow',r:3,min:2,mul:.9,hits:4,g:55,cd:3},'화살 4발 (0.9배 × 4)');
-ak('A1b5',5,'A1b4','꿰뚫는 일격','⚡',{k:'arrow',r:6,min:2,mul:1.8,pierce:1,g:55,cd:3},'방어력 완전 무시 (1.8배 · 보스는 절반만)');
-ak('A2a5',5,'A2a4','일격필살','💥',{k:'arrow',r:6,min:2,mul:1.1,crit:true,g:55,cd:4},'반드시 치명타 (×3, 보스는 ×2)');
-ak('A2b5',5,'A2b4','마비 화살','🌀',{k:'arrow',r:5,min:2,mul:1.5,stun:.9,g:55,cd:3},'90% 기절 (1.5배)');
-ak('A1U',6,'A1a5','천 개의 화살','☄️',{k:'volley',min:2,mul:1.3,hits:2,g:90,cd:0,ult:1},'필살기 · 2칸 이상 떨어진 모든 적에게 화살비 2번');
-ak('A2U',6,'A2a5','별을 꿰뚫는 화살','🌠',{k:'arrow',r:9,min:2,mul:2,crit:true,g:90,cd:0,ult:1},'필살기 · 9칸까지, 반드시 치명타');
-/* 화살비의 길 */
-ak('B',1,'R','화살비','🌧️',{k:'rain',r:4,min:2,rad:1,mul:1,g:25,cd:2},'고른 적과 그 주변 1칸에 화살비 (1배)');
-ak('B1',2,'B','불화살비','🔥',{k:'rain',r:4,min:2,rad:1,mul:1.1,psn:6,g:30,cd:2},'불붙은 화살비 · 화상 (1.1배)');
-ak('B2',2,'B','얼음 화살비','❄️',{k:'rain',r:4,min:2,rad:1,mul:1,stun:.3,g:30,cd:2},'30% 기절 (1배)');
-ak('B1a',3,'B1','넓은 화살비','🌧️',{k:'rain',r:5,min:2,rad:2,mul:.9,g:40,cd:3},'주변 2칸까지 (0.9배)');
-ak('B1b',3,'B1','독안개 화살','☠️',{k:'rain',r:4,min:2,rad:1,mul:.9,psn:10,g:40,cd:3},'독 안개 (0.9배 + 독)');
-ak('B2a',3,'B2','폭발 화살','💥',{k:'rain',r:4,min:2,rad:1,mul:1.5,g:40,cd:3},'폭발 (1.5배)');
-ak('B2b',3,'B2','서리 폭풍','🌨️',{k:'rain',r:4,min:2,rad:2,mul:.8,stun:.4,g:40,cd:3},'주변 2칸 · 40% 기절');
-ak('B1a4',4,'B1a','화살통 확장','🎒',{p:{atk:3}},'공격력 +3');ak('B1b4',4,'B1b','바람 걸음','🌬️',{p:{mv:1}},'이동 +1칸 (궁수 패시브)');
-ak('B2a4',4,'B2a','화약 다루기','🧨',{p:{atk:3}},'공격력 +3');ak('B2b4',4,'B2b','집중','🧘',{p:{gg:15}},'게이지 +15% 빨리 참');
-ak('B1a5',5,'B1a4','유성 화살비','☄️',{k:'rain',r:5,min:2,rad:2,mul:1.2,g:55,cd:3},'주변 2칸 (1.2배)');
-ak('B1b5',5,'B1b4','맹독 구름','☁️',{k:'rain',r:5,min:2,rad:2,mul:.9,psn:15,g:55,cd:3},'주변 2칸 맹독');
-ak('B2a5',5,'B2a4','대폭발','🎆',{k:'rain',r:5,min:2,rad:2,mul:1.6,g:55,cd:4},'주변 2칸 대폭발 (1.6배)');
-ak('B2b5',5,'B2b4','눈보라','🌬️',{k:'rain',r:5,min:2,rad:3,mul:.9,stun:.5,g:55,cd:4},'주변 3칸 · 50% 기절');
-ak('B1U',6,'B1a5','하늘을 뒤덮는 화살','🌌',{k:'volley',min:2,mul:1.6,g:90,cd:0,ult:1},'필살기 · 2칸 이상 모든 적 (1.6배)');
-ak('B2U',6,'B2a5','대지 폭격','🌋',{k:'rain',r:6,min:2,rad:3,mul:2,g:90,cd:0,ult:1},'필살기 · 주변 3칸 대폭격 (2배)');
-/* 숲 사냥꾼의 길 */
-ak('C',1,'R','응급처치','🩹',{k:'heal',pct:25,g:25,cd:3},'체력 25% 회복');
-ak('C1',2,'C','바람 걸음','🍃',{k:'buff',agi:20,turns:3,g:30,cd:3},'3턴 동안 회피 +20%');
-ak('C2',2,'C','그물 화살','🕸️',{k:'arrow',r:4,min:2,mul:.8,stun:.6,g:30,cd:3},'60% 기절 (0.8배)');
-ak('C1a',3,'C1','은신','🌫️',{k:'buff',agi:40,turns:2,g:40,cd:4},'2턴 동안 회피 +40%');
-ak('C1b',3,'C1','숲의 축복','🌿',{k:'heal',pct:40,regen:5,g:40,cd:4},'체력 40% + 3턴 재생');
-ak('C2a',3,'C2','덫 화살','🪤',{k:'arrow',r:5,min:2,mul:1,stun:.7,g:40,cd:3},'70% 기절 (1배)');
-ak('C2b',3,'C2','흡혈 화살','🩸',{k:'arrow',r:4,min:2,mul:1.2,drain:50,g:40,cd:3},'준 데미지 50% 회복');
-ak('C1a4',4,'C1a','사냥꾼의 발','👢',{p:{agi:4}},'민첩 +4%');ak('C1b4',4,'C1b','튼튼한 몸','💪',{p:{hp:30}},'체력 +30');
-ak('C2a4',4,'C2a','빠른 발걸음','🦶',{p:{mv:1}},'이동 +1칸');ak('C2b4',4,'C2b','사냥의 운','🍀',{p:{luk:3}},'운 +3%');
-ak('C1a5',5,'C1a4','바람의 정령','🌪️',{k:'buff',agi:60,turns:3,g:55,cd:5},'3턴 동안 회피 +60%');
-ak('C1b5',5,'C1b4','생명의 숲','🌳',{k:'heal',pct:70,regen:10,g:55,cd:5},'체력 70% + 재생');
-ak('C2a5',5,'C2a4','덫 사냥꾼','⛓️',{k:'arrow',r:5,min:2,mul:1.1,stun:.9,g:55,cd:4},'90% 기절 (1.1배)');
-ak('C2b5',5,'C2b4','피의 화살','🩸',{k:'arrow',r:5,min:2,mul:1.6,drain:80,g:55,cd:4},'준 데미지 80% 회복 (1.6배)');
-ak('C1U',6,'C1a5','숲의 수호','🛡️',{k:'buff',inv:1,full:1,turns:2,g:90,cd:0,ult:1},'필살기 · 체력 전부 회복 + 2턴 무적');
-ak('C2U',6,'C2b5','사냥의 시간','🐺',{k:'volley',min:2,mul:1.4,drain:30,g:90,cd:0,ult:1},'필살기 · 2칸 이상 모든 적 + 흡혈');
+var AK={};/* 11-28 선생님: 예전 궁수 스킬 트리(정조준 사격·일격필살 등) 삭제 — 지금은 trees2.js AT만 씀 */
 var ADIR=[['A','🎯','명사수의 길','#ffb84a'],['B','🌧️','화살비의 길','#6ac8ff'],['C','🍃','숲 사냥꾼의 길','#7ae08a']],HDIR=SKDIR;
 /* SK를 문맥(주인공/궁수)에 따라 바꿔 보여 주는 대리 객체 */
 var SKH=SK;function SKD(){return CTX==='arch'?AK:SKH}
@@ -9003,20 +8911,20 @@ var HT={
 /* ---------- 🏹 원거리 딜러 (궁수 아저씨) ---------- */
 var AT={
  R:{nm:'사냥꾼의 감각',ic:'🏹',max:4,p:{atk:[2,3,4,6],agi:[2,3,4,5]},d:function(L){return '오랜 사냥으로 다듬은 감각. 공격력 +'+pv([2,3,4,6],L)+', 회피 +'+pv([2,3,4,5],L)+'%'}},
- A:{nm:'조준 사격',ic:'🎯',max:4,k:'arrow',r:4,min:2,mul:[1.5,1.7,1.9,2.2],g:20,cd:2,d:function(L){return '숨을 고르고 정확히 쏜다 (2~'+this.r+'칸 · '+pv(this.mul,L)+'배)'}},
+ A:{nm:'조준 사격',ic:'🎯',max:4,k:'arrow',r:4,min:2,mul:[1.5,1.65,1.8,2],mark:[10,15,20,25],g:20,cd:3,d:function(L){return '숨을 고르고 약점을 정확히 쏜다 (2~'+this.r+'칸 · '+pv(this.mul,L)+'배) · 🎯 약점 표시: 맞은 적은 2턴 동안 받는 피해 +'+pv(this.mark,L)+'% (보스에게도 그대로 · 동료가 때려도 적용)'}},/* 11-28 선생님 */
  B:{nm:'독화살',ic:'☠️',max:4,k:['arrow','arrow','rain','rain'],r:4,min:2,rad:1,mul:[.9,1,1,1.1],psn:[6,8,9,12],g:25,cd:[2,2,3,3],
-  d:function(L){return (L>=3?'고른 적과 주변 1칸 모두에게 ':'')+'독화살 (2~'+this.r+'칸 · '+pv(this.mul,L)+'배) + 3턴 동안 매 턴 최대 체력의 '+pv(this.psn,L)+'% 독 (보스에게는 1/3)'+(L<3?' · Lv.3부터 광역':'')}},
- A1:{nm:'매서운 화살촉',ic:'🔺',max:4,p:{atk:[2,3,4,6]},d:function(L){return '공격력 +'+pv([2,3,4,6],L)}},
- A2:{nm:'저격',ic:'🔭',max:4,k:'arrow',r:[5,5,5,6],min:2,mul:[2.3,2.7,3.1,3.6],g:35,cd:2,d:function(L){return '【주력기】 최대 '+pv(this.r,L)+'칸 먼 적에게 강한 한 발 (2~'+pv(this.r,L)+'칸 · '+pv(this.mul,L)+'배)'}},/* 11-26 선생님: Lv.4는 사거리 2~6 */
+  d:function(L){return (L>=3?'고른 적과 주변 1칸 모두에게 ':'')+'독화살 (2~'+this.r+'칸 · '+pv(this.mul,L)+'배) + 3턴 동안 매 턴 최대 체력의 '+pv(this.psn,L)+'% 독 (보스에게는 위력 절반)'+(L<3?' · Lv.3부터 광역':'')}},
+ A1:{nm:'매서운 화살촉',ic:'🔺',max:4,p:{atk:[3,4,6,8],crc:[2,3,5,7],crd:[0,0,.2,.4]},d:function(L){return '공격력 +'+pv([3,4,6,8],L)+' · 치명타 확률 +'+pv([2,3,5,7],L)+'%'+(L>=3?' · 치명타 피해 '+(L>=4?'2.9':'2.7')+'배 (보스 '+(L>=4?'2.2':'2.0')+'배)':' · Lv.3부터 치명타 피해도 올라요 (2.5 → 2.7 → 2.9배)')}},/* 11-28 선생님 */
+ A2:{nm:'저격',ic:'🔭',max:4,k:'arrow',r:[5,5,5,6],min:2,mul:[2,2.3,2.6,3],/* 11-28 선생님: 2.3/2.7/3.1/3.6 → 2/2.3/2.6/3 */g:35,cd:2,d:function(L){return '【주력기】 최대 '+pv(this.r,L)+'칸 먼 적에게 강한 한 발 (2~'+pv(this.r,L)+'칸 · '+pv(this.mul,L)+'배)'}},/* 11-26 선생님: Lv.4는 사거리 2~6 */
  B1:{nm:'바람 걸음',ic:'🌬️',max:1,p:{mv:1},d:function(){return '이동 +1칸 (강화 없음)'}},
  B2:{nm:'화살비',ic:'🌧️',max:4,k:'rain',r:[4,5,5,6],min:2,rad:[1,1,2,2],mul:[1,1.15,1.15,1.35],g:30,cd:3,
   d:function(L){return '고른 적과 주변 '+pv(this.rad,L)+'칸(네모)에 화살비 (2~'+pv(this.r,L)+'칸 · '+pv(this.mul,L)+'배)'}},
- A1E:{nm:'약점 간파',ic:'👁️',max:4,end:1,p:{exe:[20,30,40,50]},d:function(L){return '【끝 갈래】 체력 30% 이하인 적에게 주는 데미지 +'+pv([20,30,40,50],L)+'% (기본 공격·스킬 모두 · 보스는 절반)'}},
+ A1E:{nm:'약점 간파',ic:'👁️',max:4,end:1,p:{exe:[15,25,35,45]},d:function(L){return '【끝 갈래】 체력 50% 이하인 적에게 주는 데미지 +'+pv([15,25,35,45],L)+'% (기본 공격·스킬 모두 · 보스는 절반)'}},/* 11-28 선생님: 30% → 50% 이하 · 보스 절반 */
  A2P:{nm:'매의 눈',ic:'🦅',max:1,p:{rng:1},d:function(){return '사정거리 +1칸: 기본 공격 3칸까지, 화살 스킬 사거리도 +1 (강화 없음)'}},
- B1P:{nm:'회피 기동',ic:'💨',max:4,k:'buff',agi:[25,30,35,40],turns:[2,2,3,3],g:25,cd:4,d:function(L){return pv(this.turns,L)+'턴 동안 회피 +'+pv(this.agi,L)+'% (피하면 반격!)'}},
+ B1P:{nm:'회피 기동',ic:'💨',max:4,k:'buff',agi:[25,30,35,40],turns:[2,2,3,3],nx:[25,30,35,45],rctr:1,g:25,cd:4,d:function(L){return pv(this.turns,L)+'턴 동안 회피 +'+pv(this.agi,L)+'% · 켜는 동안 다음 공격 1번 데미지 +'+pv(this.nx,L)+'% · 켜는 동안에는 몬스터의 스킬·원거리 공격을 피해도 반격'}},/* 11-28 선생님 */
  B2P:{nm:'화살통 정리',ic:'🎒',max:4,p:{gg:[20,30,40,50]},d:function(L){return '스킬 게이지가 '+pv([20,30,40,50],L)+'% 더 빨리 찬다'}},
  B2W:{nm:'바람의 가호',ic:'🌪️',max:2,p:{},d:function(L){return '【패시브】 몬스터의 스킬·마법이 내 최대 체력의 35% 이상을 깎을 만큼 세면, 바람이 감싸 그 공격을 완전히 피한다 · '+(L>=2?'한 전투에 2번 (처음 피한 뒤 4턴이 지나야 두 번째 발동)':'한 전투에 1번 (Lv.2: 4턴 뒤 한 번 더)')}},/* 11-22 01:00 선생님 */
- M1:{nm:'치고 빠지기',ic:'🏃',max:4,p:{hrun:[1,2,3,4]},d:function(L){return '공격이나 스킬을 쓴 뒤 턴이 끝나기 전에 '+pv([1,2,3,4],L)+'칸 더 움직일 수 있다'}},
+ M1:{nm:'치고 빠지기',ic:'🏃',max:4,p:{hrun:[1,2,3,5]},d:function(L){return '공격이나 스킬을 쓴 뒤 턴이 끝나기 전에 '+pv([1,2,3,5],L)+'칸 더 움직일 수 있다'}},
  M2:{nm:'사냥꾼의 집중',ic:'🔥',max:4,p:{dmgP:[6,9,12,16]},d:function(L){return '주는 모든 데미지 +'+pv([6,9,12,16],L)+'% (기본 공격·스킬 모두 · 보스는 절반)'}},
  U:{nm:'천 개의 화살',ic:'☄️',max:4,k:'volley',ult:1,min:2,hits:2,mul:[1.3,1.5,1.7,2],g:90,cd:0,d:function(L){return '【필살기】 2칸 이상 떨어진 화면 안 모든 적에게 화살비 2번 ('+pv(this.mul,L)+'배 × 2)'}}
 };
@@ -9036,7 +8944,7 @@ function tRes(id,L,raw){var b=TT()[id];if(!b)return undefined;L=L||tLv(id)||1;va
  return o}
 /* 11-26 선생님: 이름에 「방패」가 붙은 스킬은 방패를 들고 있을 때만 발동 */
 function hasShield(){try{var e=(typeof CTX!=='undefined'&&CTX==='arch')?null:EQ();return !!(e&&e.sh)}catch(_){return true}}
-function tRaw(){var o={hp:0,atk:0,def:0,agi:0,luk:0,mv:0,gg:0,pot:0,thorn:0,ctr:0,psn:0,rfl:0,dr:0,hpP:0,endure:0,endH:0,exe:0,rng:0,hrun:0,dmgP:0};Object.keys(SKS()).forEach(function(id){var L=tLv(id);if(!L)return;var r=tRes(id,L,true);if(r&&r.sh&&!hasShield())return;if(r&&r.p)for(var k in r.p)o[k]=(o[k]||0)+r.p[k]});return o}
+function tRaw(){var o={hp:0,atk:0,def:0,agi:0,luk:0,mv:0,gg:0,pot:0,thorn:0,ctr:0,psn:0,rfl:0,dr:0,hpP:0,endure:0,endH:0,exe:0,rng:0,hrun:0,dmgP:0,crc:0,crd:0};Object.keys(SKS()).forEach(function(id){var L=tLv(id);if(!L)return;var r=tRes(id,L,true);if(r&&r.sh&&!hasShield())return;if(r&&r.p)for(var k in r.p)o[k]=(o[k]||0)+r.p[k]});return o}
 SK=new Proxy({},{get:function(t,p){if(typeof p!=='string')return undefined;return tRes(p)},has:function(t,p){return p in TT()},ownKeys:function(){return Object.keys(TT())},getOwnPropertyDescriptor:function(t,p){return p in TT()?{value:tRes(p),enumerable:true,configurable:true,writable:true}:undefined}});
 skHas=function(id){return tLv(id)>0};
 function tOpenCost(id){var r=TROW[id];return r===1?1:r===6?8:r}
@@ -9435,8 +9343,8 @@ var _addItemS=CH.addItem;
 /* ===== 일일 의뢰 게시판 ===== */
 var JOBS=[['r1',3],['f3',3],['d4',3],['d5',2],['p6',2],['wc7',3],['b8',2],['w9',2],['rt10',3],['bt11',2],['sp12',2],['w15',2]];
 function jobsToday(){var q=QS(),d=dayN();if(!q.jobs||q.jobs.d!==d){var seen=q.dex||{},pool=JOBS.filter(function(j){return seen[j[0]]});if(pool.length<2)pool=JOBS.slice(0,4);var a=pool[(d*7)%pool.length],b=pool[(d*7+3)%pool.length];if(b===a)b=pool[(d*7+1)%pool.length];q.jobs={d:d,l:[a,b].map(function(j){return{k:j[0],n:j[1],s:(q.dex||{})[j[0]]||0,done:0}})};X.sv()}return q.jobs}
-function jobsPanel(){var q=QS(),J=jobsToday(),h='<div class="vgsub">매일 아침 새 의뢰 2개 · 보상은 물약과 재료예요</div><div class="vglist">';J.l.forEach(function(j,i){var m=MON[j.k],cur=Math.min(j.n,((q.dex||{})[j.k]||0)-j.s),ok=cur>=j.n;h+='<div class="vgrow"><span class="ic"><img src="'+mpic(j.k)+'" style="width:46px;height:46px;object-fit:contain"></span><div><b>'+m.nm+' '+j.n+'마리 처치 ('+cur+'/'+j.n+')'+(j.done?' ✅':'')+'</b><small>📍 '+DEXZ[j.k]+' · 보상: '+(m.lv>=12?'최하급 물약 1':m.lv>=7?'약초 1':'후시딩 1')+' + '+(m.drop&&CH.ITEMDB[m.drop[0]]?CH.ITEMDB[m.drop[0]].nm+' 2':'')+'</small></div>'+(j.done?'':'<button type="button" data-jb="'+i+'"'+(ok?'':' class="dim"')+'>'+(ok?'보상 받기':'진행 중')+'</button>')+'</div>'});
- var p=panel('📋 마을 의뢰 게시판',h+'</div>');[].forEach.call(p.querySelectorAll('[data-jb]'),function(b){b.onclick=function(e){e.stopPropagation();var j=J.l[+b.dataset.jb],m=MON[j.k];if(((q.dex||{})[j.k]||0)-j.s<j.n){CH.sfx('deny');X.toast('아직 의뢰를 다 못 했어요');return}var rw=[[m.lv>=12?'potion5':m.lv>=7?'potion4':'potion3',1]];/* 어려운 의뢰(Lv.12+) 최하급 물약 · 보통 약초 · 쉬움 후시딩 */if(m.drop&&CH.ITEMDB[m.drop[0]])rw.push([m.drop[0],2]);sGive(rw,function(){j.done=1;X.sv();jobsPanel()})}})}
+function jobsPanel(){var q=QS(),J=jobsToday(),h='<div class="vgsub">매일 아침 새 의뢰 2개 · 보상은 물약과 재료예요</div><div class="vglist">';J.l.forEach(function(j,i){var m=MON[j.k],cur=Math.min(j.n,((q.dex||{})[j.k]||0)-j.s),ok=cur>=j.n;h+='<div class="vgrow"><span class="ic"><img src="'+mpic(j.k)+'" style="width:46px;height:46px;object-fit:contain"></span><div><b>'+m.nm+' '+j.n+'마리 처치 ('+cur+'/'+j.n+')'+(j.done?' ✅':'')+'</b><small>📍 '+DEXZ[j.k]+' · 보상: '+((m.lv0||m.lv)>=12?'최하급 물약 1':(m.lv0||m.lv)>=7?'약초 1':'후시딩 1')+' + '+(m.drop&&CH.ITEMDB[m.drop[0]]?CH.ITEMDB[m.drop[0]].nm+' 2':'')+'</small></div>'+(j.done?'':'<button type="button" data-jb="'+i+'"'+(ok?'':' class="dim"')+'>'+(ok?'보상 받기':'진행 중')+'</button>')+'</div>'});
+ var p=panel('📋 마을 의뢰 게시판',h+'</div>');[].forEach.call(p.querySelectorAll('[data-jb]'),function(b){b.onclick=function(e){e.stopPropagation();var j=J.l[+b.dataset.jb],m=MON[j.k];if(((q.dex||{})[j.k]||0)-j.s<j.n){CH.sfx('deny');X.toast('아직 의뢰를 다 못 했어요');return}var rw=[[(m.lv0||m.lv)>=12?'potion5':(m.lv0||m.lv)>=7?'potion4':'potion3',1]];/* 어려운 의뢰(Lv.12+) 최하급 물약 · 보통 약초 · 쉬움 후시딩 */if(m.drop&&CH.ITEMDB[m.drop[0]])rw.push([m.drop[0],2]);sGive(rw,function(){j.done=1;X.sv();jobsPanel()})}})}
 var _bvS2=buildVillage;buildVillage=function(A){_bvS2(A);try{var T=A.T,x=5.4,z=9.6;A.cylm(.09,2,x-.9,1,z,0x6a4426);A.cylm(.09,2,x+.9,1,z,0x6a4426);var bd=A.add(new T.Mesh(new T.BoxGeometry(2.1,1.2,.12),A.std(0xb8834a)));bd.position.set(x,1.5,z);[[-.5,.2,0xfff6e0],[.4,.25,0xffe8b0],[-.1,-.25,0xfff6e0]].forEach(function(p){var pp=A.add(new T.Mesh(new T.BoxGeometry(.5,.4,.02),A.std(p[2])));pp.position.set(x+p[0],1.5+p[1],z+.08)});var sg=A.textSprite(T,'📋 의뢰 게시판','rgba(90,50,24,.94)','#ffe8b0',.7);sg.position.set(x,2.7,z);A.sc.add(sg);A.COL.push([x,z,.9]);A.trigger(x,z+1.2,1.6,'📋 의뢰 게시판 보기',jobsPanel,false)}catch(e){console.error(e)}};
 try{window.__vgP.S={ql:questLog,jobs:jobsPanel,box:boxPanel,cook:cookPanel,furn:furnPanel,shaman:function(){shamanTalk()},guard:function(){guardTalk()},men:function(){openGather()}}}catch(e){}
 
@@ -9613,7 +9521,7 @@ setTimeout(bpMigrate,0);var _openVillageBM=openVillage;openVillage=function(a,b)
 var _hurtWB=hurtW;hurtW=function(n,a,b,c){return _hurtWB(Math.max(1,Math.round(n*.6)),a,b,c)};
 /* ===== 보스전 (2026-11-16 13:29): 졸개는 체력 65%로 빨리 정리되고, 보스 자체가 강해짐. 아저씨 없이 혼자면 보스 공격 1.8배·체력 1.5배 ===== */
 var _buildBattleBS=buildBattle;buildBattle=function(opt){var r=_buildBattleBS(opt);try{if(opt&&opt.boss&&BT&&BT.units){var solo=!BT.units.some(function(u){return u.hero&&u!==BT.H});
- BT.units.forEach(function(u){if(u.hero)return;if(u.boss){if(solo){u.atk=Math.round(u.atk*1.8);u.max=u.hp=Math.round(u.hp*1.5);u.solo=1}if(u.k==='gm19'){u.max=u.hp=2100}if(u.k==='gb20'){u.max=u.hp=2300}/* 11-27 선생님: +250 · +300 *//* 11-23 선생님: 도끼창 골렘 장군·고대 골렘 체력 2000 */}/* 11-27 선생님: 보스전 졸개도 원래 체력 그대로 (예전: 55%로 시작) */});BT.soloBoss=solo}}catch(e){}return r};
+ BT.units.forEach(function(u){if(u.hero)return;if(u.boss){/* 11-28 선생님: 혼자 보스전 보정(체력 ×1.5 · 공격 ×1.8) 삭제 — 아저씨는 늘 함께라 쓰이지 않음 */if(u.k==='gm19'){u.max=u.hp=2100}if(u.k==='gb20'){u.max=u.hp=2300}/* 11-27 선생님: +250 · +300 *//* 11-23 선생님: 도끼창 골렘 장군·고대 골렘 체력 2000 */}/* 11-27 선생님: 보스전 졸개도 원래 체력 그대로 (예전: 55%로 시작) */});BT.soloBoss=solo}}catch(e){}return r};
 /* 궁수 아저씨 레벨 +1 (2026-11-16 14:42): 합류 Lv.13, 이미 합류한 아저씨도 한 번 +1 (능력치·스킬 포인트는 레벨에서 자동 계산) */
 function archBump(){try{var a=QS().arch;if(!a||!a.joined||a.lvb)return;a.lvb=1;a.lv=(a.lv||12)+1;if(a.hl0!=null)a.hl0--;a.hp=null;X.sv()}catch(e){}}
 setTimeout(archBump,0);var _openVillageAB=openVillage;openVillage=function(a,b){archBump();return _openVillageAB(a,b)};
@@ -9662,7 +9570,7 @@ CH.stats=function(){var arch=(CTX==='arch'&&ARC()),lv=arch?archLv():L().lv,C=csd
 /* 예전 포인트는 돌려주고 새 규칙으로 다시 찍게 함 (주인공 · 궁수 각각) */
 function bpMigrate3(){try{var q=QS();if(!q||q.bpv3)return;var used=function(b){return b?BPK.reduce(function(a,k){return a+(b[k]||0)},0):0},had=used(q.bp)+used(q.arch&&q.arch.bp)>0,z=function(){return{hp:0,atk:0,def:0,agi:0,luk:0,int:0}};
  q.bp=z();if(q.arch){q.arch.bp=z();q.arch.hp=null}q.hp=null;q.bpv3=Date.now();q.bpv2=q.bpv2||q.bpv3;X.sv();
- if(had)setTimeout(function(){var m=document.createElement('div');m.className='arnm';m.innerHTML='<div class="arnb"><b>📢 캐릭터별 능력치가 새로 생겼어요</b><p style="text-align:left;line-height:1.7">• 캐릭터마다 <b>포인트를 따로</b> 써요<br>• 새 능력치 <b>🧠 지능</b> — 높으면 덜 빗나가요<br>• Lv.6부터 레벨마다 <b>포인트 6개 + 자동 성장</b><br>• 🛡️ 주인공은 체력·방어, 🏹 아저씨는 공격·회피가 잘 올라요<br><br>찍어 둔 포인트를 모두 돌려드렸어요.<br><b>메뉴 → 장비 맞추기 → 능력치</b>에서 다시 나눠 주세요!</p><button type="button">알겠어요</button></div>';document.body.appendChild(m);m.querySelector('button').onclick=function(){m.remove()}},1700)}catch(e){}}
+ if(had)setTimeout(function(){var m=document.createElement('div');m.className='arnm';m.innerHTML='<div class="arnb"><b>📢 캐릭터별 능력치가 새로 생겼어요</b><p style="text-align:left;line-height:1.7">• 캐릭터마다 <b>포인트를 따로</b> 써요<br>• 새 능력치 <b>🧠 지능</b> — 높으면 덜 빗나가요<br>• Lv.6부터 레벨마다 <b>포인트 8개 + 자동 성장</b><br>• 🛡️ 주인공은 체력·방어, 🏹 아저씨는 공격·회피가 잘 올라요<br><br>찍어 둔 포인트를 모두 돌려드렸어요.<br><b>메뉴 → 장비 맞추기 → 능력치</b>에서 다시 나눠 주세요!</p><button type="button">알겠어요</button></div>';document.body.appendChild(m);m.querySelector('button').onclick=function(){m.remove()}},1700)}catch(e){}}
 setTimeout(bpMigrate3,30);var _openVillageS3=openVillage;openVillage=function(a,b){bpMigrate3();return _openVillageS3(a,b)};
 try{window.__vgP.bp=function(c){CTX=c||'hero';bpPanel();if(c==='arch')ctxUntilClosed('vgp')};window.__vgP.eq=function(){openEquip()};window.__vgP.st2=function(c){return inCtx(c||'hero',function(){return CH.stats()})}}catch(e){}
 /* 히든 무기 안내 */
@@ -10372,7 +10280,7 @@ var MANS=(function(){
  /* 2. 능력치 */
  /* 11-24 선생님: 능력치는 캐릭터마다 오르는 값이 달라서 — 제목 아래 캐릭터 그림을 누르면 그 캐릭터 기준으로 */
  var STC={tank:{pp:['+7','+1','+0.7','+0.2%','+0.2%','+0.8'],cap:[20,25]},arch:{pp:['+5','+1.3','+0.4','+0.4%','+0.35%','+1'],cap:[50,40]}};
- function st6(k){var c=STC[k]||STC.tank;var R=[['❤️','체력','버틸 수 있는 힘. 0이 되면 쓰러져요'],['⚔️','공격력','피해 = 내 공격력 − 상대 방어력'],['🛡️','방어력','받는 피해를 줄여요 (그래도 공격의 10%는 들어와요)'],['💨','민첩성','적의 공격을 피할 확률 (최대 '+c.cap[0]+'%)'],['🍀','운','치명타 확률! 치명타는 피해 3배 (최대 '+c.cap[1]+'%)'],['🧠','지능','명중률. 기본 90%, 상대보다 높으면 덜 빗나가요']];
+ function st6(k){var c=STC[k]||STC.tank;var R=[['❤️','체력','버틸 수 있는 힘. 0이 되면 쓰러져요'],['⚔️','공격력','피해 = 내 공격력 − 상대 방어력 · 내 공격력이 상대 방어력보다 낮으면 피해는 1이고, 3번 중 1번은 빗나가요'],['🛡️','방어력','받는 피해를 줄여요 (그래도 공격의 10%는 들어와요 · 👑 보스 공격은 25%)'],['💨','민첩성','적의 공격을 피할 확률 (최대 '+c.cap[0]+'%) · 기본 공격을 💨회피하면 바로 반격! (MISS와 달라요) · 뒤에서 맞으면 피할 수 없어요'],['🍀','운','치명타 확률! 치명타는 피해 2.5배 · 보스에게는 1.8배 (최대 '+c.cap[1]+'%) · 치명타를 맞은 일반 몹은 1턴 기절'],['🧠','지능','명중률. 기본 90%, 상대보다 1 높을 때마다 +2% (최소 60% · 최대 100%) · 필살기는 항상 맞아요']];
   return'<div class="mnst6">'+R.map(function(s,i){return'<div><span>'+s[0]+'</span><b>'+s[1]+'</b><small>'+s[2]+'</small><em>1포인트 '+c.pp[i]+'</em></div>'}).join('')+'</div>'}
  P.push({t:'📊 능력치 6가지',art:function(){var L2=CHARS.filter(function(c){return c.has()&&STC[c.k]});return'<div class="mnch">'+L2.map(function(c,i){return'<button type="button" data-c="'+c.k+'" class="'+(i?'':'on')+'"><span>'+c.e+'</span><small>'+c.nm+'</small></button>'}).join('')+'</div>'},
   b:function(){var L2=CHARS.filter(function(c){return c.has()&&STC[c.k]});return L2.map(function(c,i){return'<div class="mnchd" data-c="'+c.k+'"'+(i?' hidden':'')+'><div class="mnct">'+c.e+' '+c.nm+'의 능력치</div><div class="mna">'+st6(c.k)+'</div></div>'}).join('')+'<div>레벨이 오르면 <b>보너스 포인트</b>가 생겨요 (Lv.2~5는 4개씩, Lv.6부터 8개씩). 캐릭터 메뉴 → 🛡️ 장비 맞추기 → <b>능력치</b>에서 원하는 곳에 나눠 올려요.<br>💡 <b>공격력 − 방어력</b>이 피해라서, 공격력 1만 올라도 생각보다 훨씬 세져요!</div>'}});
@@ -10382,8 +10290,8 @@ var MANS=(function(){
  /* 3. 스킬 게이지 */
  P.push({t:'✨ 스킬과 게이지',art:svg(320,150,'<rect width="320" height="150" rx="18" fill="#f6efff"/>'
   +'<rect x="30" y="58" width="260" height="26" rx="13" fill="#fff" '+O+'/><rect x="32" y="60" width="170" height="22" rx="11" fill="url(#mng)"/><defs><linearGradient id="mng"><stop offset="0" stop-color="#7ac8ff"/><stop offset="1" stop-color="#b47aff"/></linearGradient></defs><text x="160" y="76" text-anchor="middle" font-size="14" font-weight="900" fill="#3a2412">스킬 게이지 65 / 100</text>'
-  +tag(82,30,'⚔️ 때리면 +10','#ffd8c4')+tag(238,30,'💥 맞으면 +6','#ffe0e6')+tag(82,120,'💨 빗나가도 +20','#d8f0ff')+tag(238,120,'🥤 프로틴 MAX','#e6ffd8')),
-  b:'<ul><li>전투에서 <b>때리고, 맞고, 빗나갈 때</b>마다 게이지가 차요 (빗나감 보너스는 한 턴에 한 번)</li><li>스킬마다 쓰는 게이지 양이 달라요. 쓰고 나면 몇 턴 <b>쉬는 시간</b>이 있어요</li><li>스킬은 <b>Lv.10부터 스킬 트리</b>에서 별로 열어요. 스킬 포인트는 Lv.5부터 모여요</li><li>🌟 <b>필살기</b>는 아주 강하지만 자동 전투에서는 쓰지 않아요. 내가 직접 눌러야 해요!</li></ul>'});
+  +tag(82,30,'⚔️ 때리면 +10','#ffd8c4')+tag(238,30,'💥 맞으면 +6','#ffe0e6')+tag(82,120,'MISS 둘 다 +20','#d8f0ff')+tag(238,120,'🥤 프로틴 MAX','#e6ffd8')),
+  b:'<ul><li>전투에서 <b>때리고, 맞고, 빗나갈 때(MISS)</b>마다 게이지가 차요</li><li><b>MISS</b>(지능 차이로 빗나감)가 나면 <b>때린 쪽과 맞을 뻔한 쪽 모두 +20</b> — 내가 빗나가도, 적이 빗나가도 똑같아요 (우리 편은 한 턴에 한 번)</li><li><b>💨 회피</b>(민첩성으로 피함)는 게이지가 오르지 않아요. 대신 기본 공격을 회피하면 <b>바로 반격</b>해요</li><li>스킬마다 쓰는 게이지 양이 달라요. 쓰고 나면 몇 턴 <b>쉬는 시간</b>이 있어요</li><li>스킬은 <b>Lv.10부터 스킬 트리</b>에서 별로 열어요. 스킬 포인트는 Lv.5부터 모여요</li><li>🌟 <b>필살기</b>는 아주 강하지만 자동 전투에서는 쓰지 않아요. 내가 직접 눌러야 해요! 한 번 쓰면 <b>8~10턴</b> 쉬어요 (센 필살기일수록 길게)</li><li>💥 데미지를 올려 주는 효과(사냥꾼의 집중·약점 표시·회피 기동·약점 간파 등)는 서로 <b>더해지고</b>, 합쳐서 <b>최대 2배</b>까지만 올라가요</li></ul>'});
  /* 4. 높은 곳 */
  P.push({t:'⛰️ 높은 곳에서 싸우기',art:svg(320,170,'<rect width="320" height="170" rx="18" fill="#e8f6ff"/><path d="M20 150 V92 H150 V150Z" fill="#a8c878" '+O+'/><path d="M150 150 V122 H300 V150Z" fill="#c8e0a0" '+O+'/>'
   +hero(95,48,1,'r')+mon(230,98,1)+'<path d="M120 60 Q175 55 205 92" fill="none" stroke="#e8423a" stroke-width="4" stroke-dasharray="8 6"/><path d="M198 80 l9 13 l-15 -2z" fill="#e8423a"/>'+tag(95,18,'내 공격 +10%','#ffe27a')+tag(230,152,'위를 때리면 -10%','#d8f0ff')),
@@ -10391,7 +10299,7 @@ var MANS=(function(){
  /* 5. 방향 */
  function cell(x,y,c,t){return'<rect x="'+x+'" y="'+y+'" width="66" height="44" rx="7" fill="'+c+'" '+O+'/>'+(t?'<text x="'+(x+33)+'" y="'+(y+27)+'" text-anchor="middle" font-size="12" font-weight="900" fill="#3a2412">'+t+'</text>':'')}
  P.push({t:'🧭 방향이 중요해요',art:svg(340,170,'<rect width="340" height="170" rx="18" fill="#fff6e6"/>'+cell(84,12,'#ffd0c8','정면')+cell(12,63,'#ffe9b0','옆 +5%')+cell(156,63,'#ffe9b0','옆 +5%')+cell(84,114,'#ff9a8a','뒤 +15%')+'<rect x="84" y="63" width="66" height="44" rx="7" fill="#e6dcff" '+O+'/><text x="117" y="92" text-anchor="middle" font-size="22">👾</text><path d="M117 63 l-6 -7 h12z" fill="#3a2412"/>'+'<g font-size="12.5" fill="#3a2412"><text x="238" y="58" font-size="13.5" font-weight="900">🛡️ 방패 막기</text><text x="238" y="84">정면: 잘 막아요</text><text x="238" y="106">옆: 조금 덜</text><text x="238" y="128">뒤: 못 막아요</text></g>'),
-  b:'<ul><li>적의 <b>뒤</b>에서 때리면 <b>+15%</b>, <b>옆</b>에서 때리면 <b>+5%</b>! (높은 곳 보너스와 함께 더해져요)</li><li>나도 마찬가지예요. 적에게 <b>등을 보이면 더 아파요</b></li><li>방패 막기는 정면에서 가장 잘 돼요. 옆에서는 막을 확률이 조금 줄고, 뒤에서는 못 막아요</li><li>캐릭터를 누르고 <b>↻ 방향</b>으로 바라보는 쪽을 바꿀 수 있어요</li></ul>'});
+  b:'<ul><li>적의 <b>뒤</b>에서 때리면 <b>+15%</b>, <b>옆</b>에서 때리면 <b>+5%</b>! (높은 곳 보너스와 함께 더해져요)</li><li>나도 마찬가지예요. 적에게 <b>등을 보이면 더 아파요</b> · 뒤에서 맞으면 <b>💨회피도 할 수 없어요</b></li><li>방패 막기는 정면에서 가장 잘 돼요. 옆에서는 막을 확률이 조금 줄고, 뒤에서는 못 막아요</li><li>캐릭터를 누르고 <b>↻ 방향</b>으로 바라보는 쪽을 바꿀 수 있어요</li></ul>'});
  /* 6. 함정 */
  P.push({t:'⚠️ 숲과 동굴의 함정',art:svg(320,150,'<rect width="320" height="150" rx="18" fill="#eef6e0"/><path d="M0 110 H320 V150 H0Z" fill="#b8925a"/>'
   +'<g transform="translate(60 92)"><rect x="-26" y="14" width="52" height="6" fill="#5a4430" '+O+'/>'+[-16,-5,6,17].map(function(x){return'<path d="M'+(x-5)+' 14 L'+x+' -10 L'+(x+5)+' 14Z" fill="#c8ccd4" '+O+'/>'}).join('')+'</g>'
@@ -10408,9 +10316,9 @@ var MANS=(function(){
   +'<text x="268" y="110" text-anchor="middle" font-size="12" font-weight="900" fill="#3a2412">바람의 부츠</text><text x="268" y="126" text-anchor="middle" font-size="11" fill="#3a2412">2단 점프!</text>'
   +'<path d="M120 150 Q160 128 200 150" fill="none" stroke="#7ac8ff" stroke-width="3" stroke-dasharray="6 5"/><path d="M228 150 Q252 120 268 138 Q284 116 308 150" fill="none" stroke="#b47aff" stroke-width="3" stroke-dasharray="6 5"/>'),
   b:'<ul><li>부츠를 신으면 <b>더 빨리 걸어요</b>. 좋은 부츠일수록 민첩성도 올라요</li><li><b>여행자의 부츠</b>부터 <b>점프</b>를 할 수 있어요. <b>바람의 부츠</b>는 공중에서 한 번 더! (2단 점프)</li><li>점프로 <b>함정을 뛰어넘을 수</b> 있어요</li><li>점프 버튼은 오른쪽 아래 · 컴퓨터는 <b>Space</b></li></ul>'});
- /* 8. 회복 아이템 */
+ /* 8. 회복 아이템 */ /* 11-28 선생님: 어두운 동굴 · 보스전 규칙 */ P.push({t:'🌑 어두운 동굴',art:'<div style="font-size:72px;text-align:center;line-height:1.3">🏮🦇</div>',b:'<ul><li>동굴 안은 아주 어두워요. <b>🏮 숲 랜턴</b>이 없으면 내가 주는 피해는 <b>절반</b>, 받는 피해는 <b>+30%</b>가 돼요</li><li>랜턴은 상점에서 한 번만 사면 <b>자동으로 켜져요</b> (창고 칸을 쓰지 않아요)</li></ul>'}); P.push({t:'👑 보스전',art:'<div style="font-size:72px;text-align:center;line-height:1.3">👑🔥💢</div>',b:'<ul><li>보스전은 <b>⚡ 행동력 6</b>이 들고, <b>자동 사냥을 쓸 수 없어요</b></li><li>🧪 회복 아이템은 <b>6개까지만</b> 쓸 수 있어요</li><li>보스는 💫 기절 · ❄️ 빙결 · 🕸️ 거미줄에 걸리지 않고, 멀리 밀려나지도 않아요</li><li>보스에게 치명타는 <b>1.8배</b>예요 (일반 몹 2.5배)</li><li>🛡️ 보스는 <b>스킬 피해 -15% · 필살기 피해 -15%</b>예요 (기본 공격은 그대로)</li><li>보스의 공격은 방어력이 아무리 높아도 <b>공격력의 25%</b>는 들어와요</li><li>🔥 <b>분노</b> (체력 50% 아래): 공격력 +20% · 회피·치명타 +5% · 이동 +1칸 · 부하를 부르는 패시브가 더 빨리 차요 · 받는 피해 <b>-10%</b></li><li>💢 <b>광폭화</b> (체력 20% 아래): 공격력이 처음보다 <b>+40%</b> · 회피·치명타 +5% 더 · 받는 피해 <b>-15%</b> 더</li><li>보스마다 정해진 턴마다 부하를 불러요. 싸우기 전 안내를 꼭 읽어 보세요!</li></ul>'}); 
  P.push({t:'🩹 회복 아이템',art:'<div class="mnpot">'+['potion','potion2','potion3','potion4','potion5','potion6'].map(function(id){var d=CH.ITEMDB[id]||{};return'<div>'+(CH.itemIcon?CH.itemIcon(id,d.ic,44):'')+'<b>'+(d.nm||'')+'</b><small>+'+(d.heal||0)+'</small></div>'}).join('')+'</div>',
-  b:'<ul><li>전투에서 🎒 <b>아이템</b>으로 써요. <b>한 턴에 1개</b>만 쓸 수 있고, 써도 턴은 그대로예요</li><li><b>바로 옆에 붙어 있는 동료</b>에게도 줄 수 있어요</li><li>보물상자 · 의뢰 게시판 · 내 집 약초 화분에서도 얻어요. 탐험을 많이 할수록 보스전이 쉬워져요!</li></ul>'});
+  b:'<ul><li>전투에서 🎒 <b>아이템</b>으로 써요. <b>한 턴에 1개</b>만 쓸 수 있고, 써도 턴은 그대로예요</li><li><b>바로 옆에 붙어 있는 동료</b>에게도 줄 수 있어요</li><li>👑 <b>보스전에서는 회복약을 6개까지만</b> 쓸 수 있어요</li><li>보물상자 · 의뢰 게시판 · 내 집 약초 화분에서도 얻어요. 탐험을 많이 할수록 보스전이 쉬워져요!</li></ul>'});
  /* 8-1. 아이템 등급 (11-24 선생님) */
  P.push({t:'💎 아이템 등급',art:function(){var G=CH.GRADES||{},O=CH.GORDER||[];return'<div class="mngr"><div><em class="grtag" style="background:#fff;color:#7a6a5a;border-color:#d8c8b0">무등급</em><small>언제 어디서든 구하거나 살 수 있는 물건 (표시 없음)</small></div>'+O.map(function(g){var ex={normal:'보스 재료·보스 장비·악세사리·기념품, 강화의 물약 15·20·30%',uncommon:'강화의 물약 50%',rare:'아버지의 유산 (절대 팔 수 없음) · 강화의 물약 100%'}[g]||'아직 없음 — 앞으로의 모험에서!';return'<div><em class="grtag gr-'+g+'">'+G[g][0]+'</em><small>'+ex+'</small></div>'}).join('')+'</div>'},
   b:'아래로 갈수록 <b>귀한 물건</b>이에요: 무등급 → 일반 → 고급 → 희귀 → 영웅 → 전설 → 신화<ul><li>등급은 물건 이름 끝 【 】과 그림 옆 리본으로 보여요 (창고에서는 칸 오른쪽 위)</li><li>등급이 있는 물건은 상점에서 살 수 없어요. 보스·이벤트·숨겨진 곳에서 얻어요</li></ul>'});
@@ -10725,7 +10633,7 @@ var _openGatherS2=openGather;openGather=function(){var q=QS(),dn=esc(archName?ar
  _openGatherS2()};
 var _gpTalkS2=grandpaTalk;grandpaTalk=function(){var q=QS();if(storySaved()&&!q.reunion&&!(q.pend&&q.pend.length)){dlg([{n:'단비 할아버지',t:'…이게 꿈인가. 우리 사위가… 자네 옆에 서 있구먼.'},{n:'단비 할아버지',t:'어서, 어서 <b>단비네 집</b>으로 들어가세. 단비랑 애미가 기다리고 있네.'}]);return}_gpTalkS2()};
 /* 의뢰 게시판: 다 하면 촌장님께 보고 → 촌장님이 보상 */
-function jobRw(j){var m=MON[j.k],rw=[[m.lv>=12?'potion5':m.lv>=7?'potion4':'potion3',1]];if(m.drop&&CH.ITEMDB[m.drop[0]])rw.push([m.drop[0],2]);return rw}
+function jobRw(j){var m=MON[j.k],rw=[[(m.lv0||m.lv)>=12?'potion5':(m.lv0||m.lv)>=7?'potion4':'potion3',1]];if(m.drop&&CH.ITEMDB[m.drop[0]])rw.push([m.drop[0],2]);return rw}
 function jobOk(j){var q=QS();return!j.done&&((q.dex||{})[j.k]||0)-j.s>=j.n}
 var _jobsPanelS2=jobsPanel;jobsPanel=function(){_jobsPanelS2();try{var p=$('vgp');var J=jobsToday();var sub=p&&p.querySelector('.vgsub');if(sub)sub.innerHTML='매일 아침 새 의뢰 2개 · 다 하면 <b>촌장님 댁</b>에 가서 보고하면 촌장님이 보상을 줘요';
  [].forEach.call(document.querySelectorAll('[data-jb]'),function(b){var j=J.l[+b.dataset.jb];var ok=jobOk(j);b.textContent=ok?'📜 촌장님께 보고':'진행 중';b.onclick=function(e){e.stopPropagation();CH.sfx(ok?'tick':'deny');X.toast(ok?'📜 촌장님 댁(분수대 북쪽 끝)에 가서 보고하면 보상을 받아요':'아직 의뢰를 다 못 했어요')}})}catch(e){console.error(e)}};
@@ -11444,7 +11352,7 @@ ZONES.u1={nm:'지하 1-1 · 횃불 계단',size:44,under:1,nMon:8,pool:['g13','g
  exits:[{x:0,z:-19.6,to:'u2',sp:[0,16],lb:'🏛️ 1-2 횃불 회랑'}],traps:{spike:2,spore:1,acorn:0,dmg:3.2},chests:[[-13,6,POT('potion4',2)],[12,-8,POT('potion3',3)],[-12,-15,POT('potion5',1)]]};
 ZONES.u2={nm:'지하 1-2 · 횃불 회랑',size:44,under:1,nMon:7,pool:['g14','g15','g15','g16','g16'],path:[{type:'cobble',w:4,pts:[[0,21],[0,-21]]}],ponds:[],spawn:[0,15],
  exits:[{x:0,z:-19.6,to:'u3',sp:[0,16],lb:'🌊 1-3 물에 잠긴 신전'},{x:0,z:19.6,to:'u1',sp:[0,-16],lb:'⬆️ 1-1 횃불 계단'}],traps:{spike:2,spore:0,acorn:0,dmg:3.4},chests:[[-4.2,8,POT('potion5',1)],[4.2,-2,POT('potion4',2)],[-4.2,-6,POT('potion6',1)]]};
-ZONES.u3={nm:'지하 1-3 · 잠긴 신전',size:44,under:1,nMon:9,pool:['g16','g17','g17','g18','g18'],path:[{type:'cobble',w:3,pts:[[0,21],[0,12],[-2,4],[2,-4],[0,-12],[0,-21]]},{type:'cobble',w:2.4,pts:[[0,12],[11,11]]},{type:'cobble',w:2.4,pts:[[2,-4],[-12,-6]]}],
+ZONES.u3={nm:'지하 1-3 · 물에 잠긴 신전',size:44,under:1,nMon:9,pool:['g16','g17','g17','g18','g18'],path:[{type:'cobble',w:3,pts:[[0,21],[0,12],[-2,4],[2,-4],[0,-12],[0,-21]]},{type:'cobble',w:2.4,pts:[[0,12],[11,11]]},{type:'cobble',w:2.4,pts:[[2,-4],[-12,-6]]}],
  ponds:[[-9,4,4.6],[9,-3,4.6],[-6,-13,3.4],[10,-14,3]],spawn:[0,15],
  exits:[{x:0,z:-19.6,to:'u4',sp:[0,15],lb:'✨ 1-4 빛의 제단'},{x:0,z:19.6,to:'u2',sp:[0,-16],lb:'⬆️ 1-2 횃불 회랑'}],traps:{spike:2,spore:1,acorn:0,dmg:3.6},chests:[[11,11,POT('potion6',1)],[-12,-6,POT('potion5',2)],[13,4,POT('potion4',2)]]};
 ZONES.u4={nm:'지하 1-4 · 빛의 제단',size:44,under:1,nMon:3,pool:['g17','g18'],path:[{type:'cobble',w:3,pts:[[0,21],[0,3]]}],ponds:[],spawn:[0,15],
@@ -11538,7 +11446,7 @@ function bossStand(A,k,x,z,lab){var T=A.T,g=CH.mon3d(T,k);g.scale.setScalar(FS[k
  A.trigger(x,z+3.4,2.8,lab,function(){bossAsk(k)})}
 function rubble(A,x,z,col,ic){var T=A.T;for(var i=0;i<14;i++){var rk=A.add(new T.Mesh(new T.DodecahedronGeometry(.3+Math.random()*.6,0),A.std(col)),false);rk.position.set(x+(Math.random()-.5)*3.4,.25,z+(Math.random()-.5)*3.4);rk.rotation.set(Math.random()*3,Math.random()*3,0)}}
 function bossAsk(k){if(BT)return;var d=MON[k],q=QS();if(q['boss_'+k])return;
- var info=k==='gm19'?'아래로 내려가는 길을 막고 선 도끼창 골렘 장군(Lv.19)! 5턴마다 바위 골렘을 깨우고, 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.18 이상 · 회복 물약 6개(보스전 최대)':'제단을 지키는 고대 골렘(Lv.20)! 마나로 마법을 쓰고, 4턴마다 떼어 낸 코어 파편은 붙으면 자폭해요. 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.19 이상 · 회복 물약 6개(보스전 최대)';
+ var info=k==='gm19'?'아래로 내려가는 길을 막고 선 도끼창 골렘 장군(Lv.19)! 5턴마다 바위 골렘을 깨우고, 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스는 스킬·필살기 피해를 15% 덜 받아요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.18 이상 · 회복약은 6개까지만 쓸 수 있어요':'제단을 지키는 고대 골렘(Lv.20)! 마나로 마법을 쓰고, 4턴마다 떼어 낸 코어 파편은 붙으면 자폭해요. 9턴마다 자수정·덩굴·얼음 골렘 가운데 2마리를 불러내고, 체력이 60% 아래가 되면 8턴마다 작은 블록 골렘 2마리도 깨워요. 보스는 스킬·필살기 피해를 15% 덜 받아요. 보스전은 자동 사냥을 쓸 수 없어요. ⭐ 권장: Lv.19 이상 · 회복약은 6개까지만 쓸 수 있어요';
  X.ask((k==='gm19'?'🪓 ':'💠 ')+d.nm+'와 싸울까요?',info,'⚔️ 싸우러 가기','🎒 조금 더 준비',function(){bossIntro(k)})}
 function NM(){return esc(ST().nm||'나')}function AN(){return esc(archName())}
 function bossIntro(k){var me=NM(),an=AN(),ar=true/* 11-23: 아저씨는 늘 함께 */;
@@ -14356,7 +14264,7 @@ setInterval(function(){try{var q=QS();if(!q.apBack||!WORLD||WORLD.map!=='v'||win
 }catch(e){console.warn('eco1121',e)}})();
 /* 2026-11-22 00:47 보스전 회복 아이템 6개 제한 · 시작할 때 안내 */
 (function(){try{var st=document.createElement('style');st.textContent='.bpotlim{text-align:center;font-size:13px;margin:2px 0 6px;padding:4px 8px;border-radius:10px;background:#fff4d6;color:#7a4a00}.bpotlim.full{background:#ffe0dc;color:#b0281a}';document.head.appendChild(st);
- setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over||B._potNote)return;if(!B.units.some(function(q){return q.boss}))return;B._potNote=1;setTimeout(function(){X.toast('👑 보스전에서는 회복 아이템(반창꼬~물약)을 <b>6개까지만</b> 쓸 수 있어요. 아껴 쓰세요!',true)},2500)}catch(e){}},700)}catch(e){}})();
+ setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over||B._potNote)return;if(!B.units.some(function(q){return q.boss}))return;B._potNote=1;setTimeout(function(){X.toast('👑 보스전에서는 회복약을 6개까지만 쓸 수 있어요',true)},2500)}catch(e){}},700)}catch(e){}})();
 
 /* ===== 2026-11-23 호롱불 랜턴·숲 지도 = 한 번 사면 자동 장착 (창고 칸 안 씀) ===== */
 (function(){try{
@@ -14493,6 +14401,10 @@ try{(function(){var d=document,b=d.createElement('button');b.type='button';b.id=
  setInterval(function(){try{var B=window.__bst&&window.__bst();if(!B||!B.units||B.over)return;if(!B.units.some(function(u){return u.boss&&u.k==='dw'}))return;
   B.units.forEach(function(u){if(u.hero||u.boss||u._w1127||!WK[u.k])return;u._w1127=1;u.atk=(u.atk||0)+5})}catch(e){}},250);
 }catch(e){console.warn('boss1127',e)}})();
+
+/* 11-28 10:42 선생님: 「표기만 바꾸기」 규칙(DLV 표 · 표에 없으면 lv−1) 없애기 — 화면에 보이던 레벨을 진짜 레벨로
+   체력·공격·보상(의뢰)·명중은 예전 값 그대로 (lv0에 예전 레벨 보관) */
+(function(){try{if(window.__lv1128)return;var L={};for(var k in MON){var m=MON[k];if(m&&typeof m==='object'&&m.lv!=null)L[k]=dLv(Object.assign({k:k},m))}for(var k2 in L){MON[k2].lv0=MON[k2].lv;MON[k2].lv=L[k2]}window.__lv1128=1}catch(e){console.warn('lv1128',e)}})();
 
 
 
